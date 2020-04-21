@@ -1,4 +1,4 @@
-module Ant.Typography exposing (fontList, commonFontStyles, headingColorRgba, title, toHtml)
+module Ant.Typography exposing (fontList, commonFontStyles, textSelectionStyles, headingColorRgba, title, toHtml)
 
 import Css exposing (..)
 import Html exposing (Html)
@@ -43,13 +43,19 @@ headingColor =
     color (rgba r g b a)
 
 
-commonFontStyles : List Style
-commonFontStyles =
-    [ fontFamilies fontList
-    , selection
+
+textSelectionStyles : Style
+textSelectionStyles =
+    selection
         [ backgroundColor primaryColor
         , color (hex "#fff")
         ]
+
+
+commonFontStyles : List Style
+commonFontStyles =
+    [ fontFamilies fontList
+    , textSelectionStyles
     ]
 
 
@@ -81,7 +87,7 @@ toHtml (Title options value) =
     toUnstyled
         (heading
             [ css
-                ([ fontSize (px 38)
+                ([ fontSize (px 30)
                 , headingColor
                 , marginBottom (em 0.5)
                 ] ++ commonFontStyles)
