@@ -7,18 +7,32 @@ module Router exposing
     )
 
 import Browser
-import Css exposing (paddingLeft, paddingRight, px, vw, width)
+import Css exposing
+    ( Style
+    , alignItems
+    , center
+    , displayFlex
+    , height
+    , marginRight
+    , paddingLeft
+    , paddingRight
+    , paddingTop
+    , px
+    , vw
+    , width
+    )
 import Dict exposing (Dict)
-import Html as Html exposing (Html, div, li, text, ul)
-import Html.Attributes exposing (style)
+import Html as Html exposing (a, div, li, text, ul, header, nav)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
-import Html.Styled.Attributes exposing (css)
-import Routes.ButtonComponent as ButtonPage
-import Routes.TypographyComponent as TypographyPage
+import Html.Styled.Attributes exposing (css, href, src, alt)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
-import Utils exposing (ComponentCategory(..), styleSheet)
 
+import Routes.ButtonComponent as ButtonPage
+import Routes.TypographyComponent as TypographyPage
+import Typography exposing (logoText)
+import UI
+import Utils exposing (ComponentCategory(..))
 
 type alias Route =
     String
@@ -31,7 +45,7 @@ type alias Model =
 
 type Msg
     = UrlChange Url
-    | ButtonPageMessage ButtonPage.Msg
+    | ButtonPageMessage
 
 
 componentList : List ( Route, ComponentCategory )
@@ -103,18 +117,62 @@ update msg model =
             in
             { model | activeRoute = newRoute }
 
-        ButtonPageMessage buttonPageMsg ->
+        ButtonPageMessage ->
             model
 
 
-navBar : Route -> Html msg
-navBar activeRoute =
+navBar : Styled.Html msg
+navBar =
     let
-        styles =
-            styleSheet
-                [ ( "width", "266px" )
-                ]
+        headerStyles =
+            css
+                [ displayFlex
+                , height (px 64)
+                , Css.boxShadow5 (px 0) (px 2) (px 8) (px 0) (Css.rgb 240 241 242)
+                ]     
 
+        verticalCenteringStyles : List Style
+        verticalCenteringStyles =
+            [ displayFlex, alignItems center ]
+    in
+    Styled.header [ headerStyles ]
+        [ Styled.div
+            [ css
+                (verticalCenteringStyles ++
+                    [ width (px 266), paddingLeft (px 32)]
+                )
+            ]
+            [ Styled.img
+                [ alt "logo"
+                , src "https://github.com/gDelgado14/elm-antd/raw/master/logo.svg"
+                , css [ height (px 50), marginRight (px 10) ]
+                ] []
+            , logoText
+            ]
+        -- Search Bar Placeholder for Algolia Search Bar
+        , Styled.div [ css verticalCenteringStyles ]
+            [ UI.container (Styled.text "search coming soon ...")
+                |> UI.noTopBorder
+                |> UI.noRightBorder
+                |> UI.noBottomBorder
+                |> UI.paddingTop 0
+                |> UI.paddingBottom 0
+                |> UI.paddingLeft 16
+                |> UI.toHtml
+            ]
+        , Styled.nav [ css verticalCenteringStyles ]
+            [ Styled.a [ href "https://ant.design/docs/spec/introduce" ] [ Styled.text "Design" ]
+            , Styled.a [ href "https://github.com/gDelgado14/elm-antd/blob/master/README.md" ] [ Styled.text "Docs" ]
+            , Styled.a [ href "https://ant.design/docs/resources" ] [ Styled.text "Resources" ]
+            , Styled.a [ href "https://github.com/gDelgado14/elm-antd" ] [ Styled.text "gh" ]
+            ]
+        ]
+
+
+
+componentMenu : Route -> Styled.Html msg
+componentMenu activeRoute =
+    let
         getList : Maybe (List Route) -> List Route
         getList =
             Maybe.withDefault []
@@ -138,19 +196,26 @@ navBar activeRoute =
                 Dict.empty
                 componentList
 
-        viewCategoryList : String -> List String -> Html msg
+        viewCategoryList : String -> List String -> Styled.Html msg
         viewCategoryList categoryName componentNames =
             let
                 componenentList =
-                    List.map (\componentName -> li [] [ text componentName ]) componentNames
+                    List.map
+                        (\componentName ->
+                            Styled.li [] [ Styled.text componentName ]
+                        )
+                        componentNames
             in
-            div [] [ text categoryName, ul [] componenentList ]
+            Styled.div [] [ Styled.text categoryName, Styled.ul [] componenentList ]
 
-        navList : List (Html msg)
+        navList : List (Styled.Html msg)
         navList =
-            Dict.foldl (\categoryName componentNames navListAccumulator -> List.append navListAccumulator [ viewCategoryList categoryName componentNames ]) [] categoryDict
+            Dict.foldl
+                (\categoryName componentNames navListAccumulator ->
+                    List.append navListAccumulator [ viewCategoryList categoryName componentNames ]
+                ) [] categoryDict
     in
-    div styles navList
+    Styled.div [ css [ width (px 266) ] ] navList
 
 
 view : (Msg -> msg) -> Model -> Browser.Document msg
@@ -158,9 +223,7 @@ view toMsg model =
     let
         ( label, componentContent ) =
             if model.activeRoute == ButtonPage.title then
-                ButtonPage.view
-                    |> Tuple.mapSecond (Html.map ButtonPageMessage)
-                    |> Tuple.mapSecond (Html.map toMsg)
+                ButtonPage.view (toMsg ButtonPageMessage)
 
             else if model.activeRoute == TypographyPage.title then
                 TypographyPage.view
@@ -177,12 +240,13 @@ view toMsg model =
     in
     { title = label ++ " - Elm Ant Design"
     , body =
-        [ div []
-            [ div [] [ text "navbar" ]
-            , div [ style "display" "flex" ]
-                [ navBar model.activeRoute
-                , toUnstyled componentPageShell
+        [ toUnstyled navBar
+        , toUnstyled <|
+            Styled.div [ css [ paddingTop (px 40)] ]
+                [ Styled.div [ css [ displayFlex ] ]
+                    [ componentMenu model.activeRoute
+                    , componentPageShell
+                    ]
                 ]
-            ]
         ]
     }

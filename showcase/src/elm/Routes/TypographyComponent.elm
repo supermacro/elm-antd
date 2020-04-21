@@ -2,8 +2,9 @@ module Routes.TypographyComponent exposing (category, title, view)
 
 import Ant.Typography as Typography
 import Ant.Typography.Text as Text exposing (strong, text)
-import Html exposing (Html, div)
-import Utils exposing (ComponentCategory(..), documentationText)
+import Html exposing (Html, div, br)
+import Utils exposing (ComponentCategory(..))
+import Typography exposing (documentationText)
 
 
 type alias Title =
@@ -26,6 +27,11 @@ view =
         textComponent =
             text "Ant Design"
                 |> Text.toHtml
+        
+        codeComponent =
+            text "Ant Design"
+                |> Text.code
+                |> Text.toHtml
     in
     ( title
     , div []
@@ -33,5 +39,7 @@ view =
           |> Typography.toHtml
         , documentationText <| Html.text "Basic text writing, including headings, body text, lists, and more."
         , textComponent
+        , br [] []
+        , codeComponent
         ]
     )

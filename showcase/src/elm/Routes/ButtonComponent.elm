@@ -1,43 +1,75 @@
-module Routes.ButtonComponent exposing (category, title, view, Msg)
+module Routes.ButtonComponent exposing (category, title, view)
 
-import Html exposing (Html, div, ul, li, text)
+import Ant.Button as Btn exposing (button)
+import Ant.Typography.Text as Text
+import Html exposing (Html, div, span, text)
+import Typography
+    exposing
+        ( documentationHeading
+        , documentationSubheading
+        , documentationText
+        , documentationUnorderedList
+        )
+import Utils exposing (ComponentCategory(..))
 
-import Utils exposing
-  ( ComponentCategory(..)
-  , documentationHeading
-  , documentationSubheading
-  , documentationText
-  , documentationUnorderedList
-  )
 
-import Ant.Button exposing (button)
+type alias Title =
+    String
 
-type Msg
-  = ButtonClicked
-
-type alias Title = String
 
 title : Title
-title = "Button"
+title =
+    "Button"
+
 
 category : ComponentCategory
-category = General
+category =
+    General
 
-view : (Title, Html Msg)
-view =
-  ( title
-  , div []
-      [ documentationHeading "Button"
-      , documentationText <| text "To trigger an operation."
-      , documentationSubheading "When To Use" True
-      , documentationText <| text "A button means an operation (or a series of operations). Clicking a button will trigger corresponding business logic."
-      , documentationText <| text "In Ant Design we provide 4 types of button."
-      , documentationUnorderedList
-          [ "Primary button: indicate the main action, one primary button at most in one section."
-          , "Default button: indicate a series of actions without priority."
-          , "Dashed button: used for adding action commonly."
-          ]
-      , documentationText <| text "And 4 other properties additionally."
-      , button ButtonClicked
-      ]
-  )
+
+codeText : String -> Html msg
+codeText value =
+    Text.text value
+        |> Text.code
+        |> Text.toHtml
+
+
+view : msg -> ( Title, Html msg )
+view msg =
+    ( title
+    , div []
+        [ documentationHeading "Button"
+        , documentationText <| text "To trigger an operation."
+        , documentationSubheading "When To Use" True
+        , documentationText <| text "A button means an operation (or a series of operations). Clicking a button will trigger corresponding business logic."
+        , documentationText <| text "In Ant Design we provide 4 types of button."
+        , documentationUnorderedList
+            [ text "Primary button: indicate the main action, one primary button at most in one section."
+            , text "Default button: indicate a series of actions without priority."
+            , text "Dashed button: used for adding action commonly."
+            ]
+        , documentationText <| text "And 4 other properties additionally."
+        , documentationUnorderedList
+            [ span []
+                [ codeText "danger"
+                , text ": used for actions of risk, like deletion or authorization."
+                ]
+            , span []
+                [ codeText "ghost"
+                , text ": used in situations with complex background, home pages usually."
+                ]
+            , span []
+                [ codeText "disabled"
+                , text ": when actions are not available."
+                ]
+            , span []
+                [ codeText "loading"
+                , text ": add loading spinner in button, avoiding multiple submits too."
+                ]
+            ]
+        , documentationSubheading "Examples" False
+        , button "Primary"
+            |> Btn.onClick msg
+            |> Btn.toHtml
+        ]
+    )
