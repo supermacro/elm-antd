@@ -1,3 +1,5 @@
+![Elm Ant Logo](https://raw.githubusercontent.com/gDelgado14/elm-antd/master/logo.svg)
+
 # Elm Ant Design
 
 Bringing the amazing [Ant Design](https://ant.design) kit to Elm!
