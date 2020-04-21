@@ -1,4 +1,4 @@
-![Elm Ant Logo](https://raw.githubusercontent.com/gDelgado14/elm-antd/master/logo.svg)
+<img src="https://raw.githubusercontent.com/gDelgado14/elm-antd/master/logo.svg" alt="gDelgado14/elm-antd logo" width="40%" align="right">
 
 # Elm Ant Design
 
@@ -13,6 +13,3 @@ Bringing the amazing [Ant Design](https://ant.design) kit to Elm!
 
 `todo`
 
-## TODO:
-- Don't expose the elm-css api / data structures
-- Consider adding https://github.com/stoeffel/elm-verify-examples
