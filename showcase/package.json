@@ -1,0 +1,21 @@
+{
+  "name": "showcase",
+  "version": "1.0.0",
+  "description": "Showcase of all the Antd Components",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --port 3000",
+    "test": "elm-test"
+  },
+  "keywords": [],
+  "author": "Giorgio Delgado",
+  "license": "MIT",
+  "devDependencies": {
+    "elm-test": "^0.19.1-revision2",
+    "elm-webpack-loader": "^6.0.1",
+    "html-webpack-plugin": "^4.2.0",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  }
+}
