@@ -5,7 +5,6 @@
     <polygon fill="#0A60FF" points="-280,-90 0,190 280,-90" transform="translate(0 -210) rotate(0)"></polygon>
     <polygon fill="#148EFF" points="-280,-90 0,190 280,-90" transform="translate(-210 0) rotate(-90)"></polygon>
     <polygon fill="#29CDFF" points="-198,-66 0,132 198,-66" transform="translate(207 207) rotate(-45)"></polygon>
-    <polygon fill="currentColor" points="-130,0 0,-130 130,0 0,130" transform="translate(150 0) rotate(0)"></polygon>
     <polygon fill="#148EFF" points="-191,61 69,61 191,-61 -69,-61" transform="translate(-89 239) rotate(0)"></polygon>
     <polygon fill="#F74A5C" points="-130,-44 0,86  130,-44" transform="translate(70 35) rotate(-180)"></polygon>
     <polygon fill="#F74A5C" points="-130,-44 0,86  130,-44" transform="translate(256 -150) rotate(-270)"></polygon>
