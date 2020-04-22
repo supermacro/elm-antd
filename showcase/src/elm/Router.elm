@@ -7,6 +7,7 @@ module Router exposing
     )
 
 import Ant.Layout as Layout exposing (LayoutTree)
+import Ant.Menu as Menu exposing (Menu, ItemGroup)
 import Browser
 import Css exposing
     ( Style
@@ -171,7 +172,7 @@ navBar =
 
 
 
-componentMenu : Route -> Styled.Html msg
+componentMenu : Route -> Html msg
 componentMenu activeRoute =
     let
         getList : Maybe (List Route) -> List Route
@@ -197,26 +198,26 @@ componentMenu activeRoute =
                 Dict.empty
                 componentList
 
-        viewCategoryList : String -> List String -> Styled.Html msg
-        viewCategoryList categoryName componentNames =
-            let
-                componenentList =
-                    List.map
-                        (\componentName ->
-                            Styled.li [] [ Styled.text componentName ]
-                        )
-                        componentNames
-            in
-            Styled.div [] [ Styled.text categoryName, Styled.ul [] componenentList ]
+        categoryItemGroup : String -> List String -> ItemGroup msg
+        categoryItemGroup categoryName componentNames =
+            Menu.initItemGroup categoryName <|
+                List.map 
+                    (\componentName ->
+                        Menu.menuItem (text componentName)
+                    )
+                    componentNames
 
-        navList : List (Styled.Html msg)
-        navList =
+        menu : Menu msg
+        menu =
             Dict.foldl
-                (\categoryName componentNames navListAccumulator ->
-                    List.append navListAccumulator [ viewCategoryList categoryName componentNames ]
-                ) [] categoryDict
+                (\categoryName componentNames menuAccumulator ->
+                    Menu.pushItemGroup (categoryItemGroup categoryName componentNames) menuAccumulator
+                )
+                Menu.initMenu
+                categoryDict
+
     in
-    Styled.div [ ] navList
+    Menu.view menu
 
 
 view : (Msg -> msg) -> Model -> Browser.Document msg
@@ -246,7 +247,7 @@ view toMsg model =
             Styled.div [ css [ paddingRight (px 170), paddingLeft (px 64), width (vw 100) ] ] [ styledComponentContent ]
 
         sidebar =
-            Layout.sidebar (toUnstyled <| componentMenu model.activeRoute)
+            Layout.sidebar (componentMenu model.activeRoute)
             |> Layout.sidebarWidth 266
             |> Layout.sidebarToTree
 
