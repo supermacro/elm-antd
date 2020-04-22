@@ -1,4 +1,4 @@
-module Routes.ButtonComponent exposing (category, title, view)
+module Routes.ButtonComponent exposing (route)
 
 import Ant.Button as Btn exposing (button)
 import Ant.Typography.Text as Text
@@ -10,21 +10,15 @@ import Typography
         , documentationText
         , documentationUnorderedList
         )
-import Utils exposing (ComponentCategory(..))
+import Utils exposing (ComponentCategory(..), DocumentationRoute, createRoute)
 
 
-type alias Title =
-    String
-
-
-title : Title
-title =
-    "Button"
-
-
-category : ComponentCategory
-category =
-    General
+route : DocumentationRoute msg
+route = createRoute
+    { title = "Button"
+    , category = General
+    , view = view
+    }
 
 
 codeText : String -> Html msg
@@ -34,10 +28,9 @@ codeText value =
         |> Text.toHtml
 
 
-view : msg -> ( Title, Html msg )
+view : msg -> Html msg
 view msg =
-    ( title
-    , div []
+    div []
         [ documentationHeading "Button"
         , documentationText <| text "To trigger an operation."
         , documentationSubheading "When To Use" True
@@ -72,4 +65,3 @@ view msg =
             |> Btn.onClick msg
             |> Btn.toHtml
         ]
-    )

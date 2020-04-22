@@ -22,7 +22,7 @@ import Css exposing
     , width
     )
 import Dict exposing (Dict)
-import Html as Html exposing (a, div, li, text, ul, header, nav)
+import Html exposing (a, div, li, text, ul, header, nav)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (css, href, src, alt)
 import Url exposing (Url)
@@ -46,12 +46,13 @@ type alias Model =
 type Msg
     = UrlChange Url
     | ButtonPageMessage
+    | TypographyPageMessage
 
 
 componentList : List ( Route, ComponentCategory )
 componentList =
-    [ ( ButtonPage.title, ButtonPage.category )
-    , ( TypographyPage.title, TypographyPage.category )
+    [ ( ButtonPage.route.title, ButtonPage.route.category )
+    , ( TypographyPage.route.title, TypographyPage.route.category )
     ]
 
 
@@ -117,8 +118,7 @@ update msg model =
             in
             { model | activeRoute = newRoute }
 
-        ButtonPageMessage ->
-            model
+        _ -> model
 
 
 navBar : Styled.Html msg
@@ -222,11 +222,11 @@ view : (Msg -> msg) -> Model -> Browser.Document msg
 view toMsg model =
     let
         ( label, componentContent ) =
-            if model.activeRoute == ButtonPage.title then
-                ButtonPage.view (toMsg ButtonPageMessage)
+            if model.activeRoute == ButtonPage.route.title then
+                (model.activeRoute, ButtonPage.route.view (toMsg ButtonPageMessage))
 
-            else if model.activeRoute == TypographyPage.title then
-                TypographyPage.view
+            else if model.activeRoute == TypographyPage.route.title then
+                (model.activeRoute, TypographyPage.route.view (toMsg TypographyPageMessage))
 
             else
                 ( "404", div [] [ text "404 not found" ] )
