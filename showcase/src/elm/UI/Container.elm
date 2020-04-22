@@ -1,4 +1,4 @@
-module UI exposing
+module UI.Container exposing
     ( container
     , noBottomBorder
     , noLeftBorder
@@ -12,11 +12,13 @@ module UI exposing
     )
 
 import Css exposing (Style, borderBottom3, borderLeft3, borderRight3, borderTop3, hex, px, solid)
+import Html exposing (Html)
 import Html.Styled as Styled exposing (div)
 import Html.Styled.Attributes exposing (css)
+-- import Url exposing (Url)
 
 
-type alias ContainerOptions =
+type alias ContainerOptions msg =
     { paddingTop : Style
     , paddingRight : Style
     , paddingBottom : Style
@@ -25,14 +27,15 @@ type alias ContainerOptions =
     , showRightBorder : Bool
     , showBottomBorder : Bool
     , showLeftBorder : Bool
+    , meta : Maybe (ContainerMetaSection msg)
     }
 
 
 type Container msg
-    = Container ContainerOptions (Styled.Html msg)
+    = Container (ContainerOptions msg) (Styled.Html msg)
 
 
-defaultContainerOptions : ContainerOptions
+defaultContainerOptions : ContainerOptions msg
 defaultContainerOptions =
     { paddingTop = Css.paddingTop (px 10)
     , paddingRight = Css.paddingRight (px 10)
@@ -42,6 +45,7 @@ defaultContainerOptions =
     , showRightBorder = True
     , showBottomBorder = True
     , showLeftBorder = True
+    , meta = Nothing
     }
 
 
@@ -121,6 +125,31 @@ paddingLeft val (Container opts children) =
     Container newOpts children
 
 
+
+-- type alias ContainerMetaSectionActions a =
+--     { ellie : Url
+--     , copyCode : Maybe String
+--     , showCode : Cmd msg
+--     }
+
+type alias ContainerMetaSection msg =
+    { title : String
+    , content : Html msg
+    -- , actions : Never
+    }
+
+
+withMetaSection : ContainerMetaSection msg -> Container msg -> Container msg
+withMetaSection meta (Container opts children) =
+    let
+        newOpts =
+            { opts | meta = Just meta }
+    in
+    Container newOpts children
+
+
+-- withMetaSection : String -> Html msg -> Container msg -> Container msg
+-- withMetaSection : sectionLabel content
 
 toHtml : Container msg -> Styled.Html msg
 toHtml (Container opts children) =

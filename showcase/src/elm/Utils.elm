@@ -1,6 +1,6 @@
 module Utils exposing ( ComponentCategory(..), DocumentationRoute )
 
-import Html exposing (Html)
+import Html.Styled as Styled
 
 type ComponentCategory
     = General
@@ -17,5 +17,5 @@ type alias RouteTitle = String
 type alias DocumentationRoute msg =
     { title : RouteTitle
     , category : ComponentCategory
-    , view : msg -> Html msg
+    , view : msg -> Styled.Html msg
     }

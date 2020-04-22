@@ -1,7 +1,6 @@
 module Ant.Typography exposing (fontList, commonFontStyles, textSelectionStyles, headingColorRgba, title, toHtml)
 
 import Css exposing (..)
-import Html exposing (Html)
 import Html.Styled as Styled exposing (toUnstyled)
 import Html.Styled.Attributes exposing (css)
 
@@ -75,7 +74,7 @@ title titleText =
     Title { level = H1 } titleText
 
 
-toHtml : Title -> Html msg
+toHtml : Title -> Styled.Html msg
 toHtml (Title options value) =
     let
         heading = case options.level of
@@ -84,14 +83,12 @@ toHtml (Title options value) =
             H3 -> Styled.h3
             H4 -> Styled.h4
     in
-    toUnstyled
-        (heading
-            [ css
-                ([ fontSize (px 30)
-                , headingColor
-                , marginBottom (em 0.5)
-                ] ++ commonFontStyles)
-            ]
-            [ Styled.text value ]
-        )
+    heading
+        [ css
+            ([ fontSize (px 30)
+            , headingColor
+            , marginBottom (em 0.5)
+            ] ++ commonFontStyles)
+        ]
+        [ Styled.text value ]
         

@@ -1,4 +1,4 @@
-module Typography exposing
+module UI.Typography exposing
     ( logoText
     , documentationHeading
     , documentationSubheading
@@ -11,8 +11,7 @@ import Ant.Typography exposing (fontList, headingColorRgba)
 import Css exposing (..)
 import Css.Global exposing (global, selector)
 import Css.Transitions exposing (transition)
-import Html as Unstyled exposing (Html)
-import Html.Styled as Styled exposing (toUnstyled, fromUnstyled)
+import Html.Styled as Styled
 import Html.Styled.Attributes exposing (class, css, href)
 
 
@@ -50,7 +49,7 @@ logoText =
         Styled.span [ css styles ] [ Styled.text "Elm Ant Design" ]
 
 
-documentationHeading : String -> Html msg
+documentationHeading : String -> Styled.Html msg
 documentationHeading value =
     let
         styles =
@@ -61,15 +60,13 @@ documentationHeading value =
                    , lineHeight (px 38)
                    ]
     in
-    toUnstyled
-        (Styled.h1
-            [ css styles
-            ]
-            [ Styled.text value ]
-        )
+    Styled.h1
+        [ css styles
+        ]
+        [ Styled.text value ]
 
 
-documentationSubheading : String -> Bool -> Html msg
+documentationSubheading : String -> Bool -> Styled.Html msg
 documentationSubheading value withAnchorLink =
     let
         subheadingLink =
@@ -123,12 +120,12 @@ documentationSubheading value withAnchorLink =
                        ]
                 )
     in
-    Unstyled.div []
-        [ toUnstyled (Styled.h2 [ styles, class docSubheadingClass ] ([ Styled.span [] [ Styled.text value ] ] ++ optionalAnchorLink))
-        ]
+    Styled.h2
+        [ styles, class docSubheadingClass ]
+        (Styled.span [] [ Styled.text value ] :: optionalAnchorLink)
 
 
-documentationText : Html msg -> Html msg
+documentationText : Styled.Html msg -> Styled.Html msg
 documentationText content =
     let
         styles =
@@ -137,15 +134,13 @@ documentationText content =
                    , lineHeight (px 28)
                    ]
     in
-    toUnstyled
-        (Styled.p
-            [ css styles
-            ]
-            [ fromUnstyled content ]
-        )
+    Styled.p
+        [ css styles
+        ]
+        [ content ]
 
 
-documentationUnorderedList : List (Html msg) -> Html msg
+documentationUnorderedList : List (Styled.Html msg) -> Styled.Html msg
 documentationUnorderedList =
     let
         styles =
@@ -156,6 +151,8 @@ documentationUnorderedList =
                        ]
                 )
     in
-    toUnstyled
-        << Styled.ul [ styles ]
-        << List.map (\textItem -> Styled.li [ css (lineHeight (px 28) :: commonTextStyles) ] [ fromUnstyled textItem ])
+    Styled.ul [ styles ]
+        << List.map
+            (\textItem ->
+                Styled.li [ css (lineHeight (px 28) :: commonTextStyles) ] [ textItem ]
+            )

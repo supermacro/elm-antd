@@ -6,6 +6,7 @@ module Router exposing
     , view
     )
 
+import Ant.Layout as Layout exposing (LayoutTree)
 import Browser
 import Css exposing
     ( Style
@@ -22,7 +23,7 @@ import Css exposing
     , width
     )
 import Dict exposing (Dict)
-import Html exposing (a, div, li, text, ul, header, nav)
+import Html exposing (Html, a, div, li, text, ul, header, nav)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (css, href, src, alt)
 import Url exposing (Url)
@@ -30,8 +31,8 @@ import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 
 import Routes.ButtonComponent as ButtonPage
 import Routes.TypographyComponent as TypographyPage
-import Typography exposing (logoText)
-import UI
+import UI.Container as Container exposing (container)
+import UI.Typography exposing (logoText)
 import Utils exposing (ComponentCategory(..))
 
 type alias Route =
@@ -151,14 +152,14 @@ navBar =
             ]
         -- Search Bar Placeholder for Algolia Search Bar
         , Styled.div [ css verticalCenteringStyles ]
-            [ UI.container (Styled.text "search coming soon ...")
-                |> UI.noTopBorder
-                |> UI.noRightBorder
-                |> UI.noBottomBorder
-                |> UI.paddingTop 0
-                |> UI.paddingBottom 0
-                |> UI.paddingLeft 16
-                |> UI.toHtml
+            [ container (Styled.text "search coming soon ...")
+                |> Container.noTopBorder
+                |> Container.noRightBorder
+                |> Container.noBottomBorder
+                |> Container.paddingTop 0
+                |> Container.paddingBottom 0
+                |> Container.paddingLeft 16
+                |> Container.toHtml
             ]
         , Styled.nav [ css verticalCenteringStyles ]
             [ Styled.a [ href "https://ant.design/docs/spec/introduce" ] [ Styled.text "Design" ]
@@ -215,7 +216,7 @@ componentMenu activeRoute =
                     List.append navListAccumulator [ viewCategoryList categoryName componentNames ]
                 ) [] categoryDict
     in
-    Styled.div [ css [ width (px 266) ] ] navList
+    Styled.div [ ] navList
 
 
 view : (Msg -> msg) -> Model -> Browser.Document msg
@@ -223,10 +224,16 @@ view toMsg model =
     let
         ( label, componentContent ) =
             if model.activeRoute == ButtonPage.route.title then
-                (model.activeRoute, ButtonPage.route.view (toMsg ButtonPageMessage))
+                ( model.activeRoute
+                , ButtonPage.route.view (toMsg ButtonPageMessage)
+                    |> toUnstyled
+                )
 
             else if model.activeRoute == TypographyPage.route.title then
-                (model.activeRoute, TypographyPage.route.view (toMsg TypographyPageMessage))
+                ( model.activeRoute
+                , TypographyPage.route.view (toMsg TypographyPageMessage)
+                    |> toUnstyled
+                )
 
             else
                 ( "404", div [] [ text "404 not found" ] )
@@ -237,16 +244,20 @@ view toMsg model =
                     fromUnstyled componentContent
             in
             Styled.div [ css [ paddingRight (px 170), paddingLeft (px 64), width (vw 100) ] ] [ styledComponentContent ]
+
+        sidebar =
+            Layout.sidebar (toUnstyled <| componentMenu model.activeRoute)
+            |> Layout.sidebarWidth 266
+            |> Layout.sidebarToTree
+
+        layout : LayoutTree msg
+        layout =
+            Layout.layout2
+                (Layout.header <| toUnstyled navBar)
+                (Layout.layout2
+                    sidebar
+                    (Layout.content <| toUnstyled componentPageShell))
     in
     { title = label ++ " - Elm Ant Design"
-    , body =
-        [ toUnstyled navBar
-        , toUnstyled <|
-            Styled.div [ css [ paddingTop (px 40)] ]
-                [ Styled.div [ css [ displayFlex ] ]
-                    [ componentMenu model.activeRoute
-                    , componentPageShell
-                    ]
-                ]
-        ]
+    , body = [ Layout.toHtml layout ]
     }

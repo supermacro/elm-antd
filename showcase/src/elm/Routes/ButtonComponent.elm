@@ -2,14 +2,16 @@ module Routes.ButtonComponent exposing (route)
 
 import Ant.Button as Btn exposing (button)
 import Ant.Typography.Text as Text
-import Html exposing (Html, div, span, text)
-import Typography
+import Html.Styled as Styled exposing (fromUnstyled, div, text, span)
+import UI.Typography
     exposing
         ( documentationHeading
         , documentationSubheading
         , documentationText
         , documentationUnorderedList
         )
+
+import UI.Container as Container exposing (container) 
 import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
@@ -21,14 +23,15 @@ route =
     }
 
 
-codeText : String -> Html msg
+codeText : String -> Styled.Html msg
 codeText value =
     Text.text value
         |> Text.code
         |> Text.toHtml
+        |> fromUnstyled
 
 
-view : msg -> Html msg
+view : msg -> Styled.Html msg
 view msg =
     div []
         [ documentationHeading "Button"
@@ -61,7 +64,13 @@ view msg =
                 ]
             ]
         , documentationSubheading "Examples" False
-        , button "Primary"
-            |> Btn.onClick msg
-            |> Btn.toHtml
+        , Container.toHtml <|
+            container <|
+                div []
+                    [ text "children"
+                    , button "Primary"
+                        |> Btn.onClick msg
+                        |> Btn.toHtml
+                        |> fromUnstyled
+                    ]
         ]
