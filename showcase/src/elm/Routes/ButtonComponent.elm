@@ -10,11 +10,11 @@ import Typography
         , documentationText
         , documentationUnorderedList
         )
-import Utils exposing (ComponentCategory(..), DocumentationRoute, createRoute)
+import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
 route : DocumentationRoute msg
-route = createRoute
+route =
     { title = "Button"
     , category = General
     , view = view

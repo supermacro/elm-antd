@@ -4,11 +4,11 @@ import Ant.Typography as Typography
 import Ant.Typography.Text as Text exposing (text)
 import Html exposing (Html, br, div)
 import Typography exposing (documentationText)
-import Utils exposing (ComponentCategory(..), DocumentationRoute, createRoute)
+import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
 route : DocumentationRoute msg
-route = createRoute
+route =
     { title = "Typography"
     , category = General
     , view = view

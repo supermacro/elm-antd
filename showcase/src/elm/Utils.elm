@@ -1,4 +1,4 @@
-module Utils exposing ( ComponentCategory(..), DocumentationRoute, createRoute )
+module Utils exposing ( ComponentCategory(..), DocumentationRoute )
 
 import Html exposing (Html)
 
@@ -19,11 +19,3 @@ type alias DocumentationRoute msg =
     , category : ComponentCategory
     , view : msg -> Html msg
     }
-
-createRoute :
-    { title : RouteTitle
-    , category : ComponentCategory
-    , view : msg -> Html msg
-    }
-    -> DocumentationRoute msg
-createRoute { title, category, view } = DocumentationRoute title category view
