@@ -198,30 +198,32 @@ componentMenu activeRoute =
                 Dict.empty
                 componentList
 
-        categoryItemGroup : String -> List String -> ItemGroup msg
-        categoryItemGroup categoryName componentNames =
-            Menu.initItemGroup categoryName <|
-                List.map 
-                    (\componentName ->
-                        let
-                            menuItem =
-                                Menu.initMenuItem
-                                    ("/components/" ++ String.toLower componentName)
-                                    (text componentName)
-                        in
-                        if activeRoute == componentName then
-                            Menu.selected menuItem
-                        else
-                            menuItem
-                    )
-                    componentNames
+        addItemGroup : String -> List String -> Menu msg -> Menu msg
+        addItemGroup categoryName componentNames currentMenu =
+            let
+                itemGroup =
+                    Menu.initItemGroup categoryName <|
+                        List.map 
+                            (\componentName ->
+                                let
+                                    menuItem =
+                                        Menu.initMenuItem
+                                            ("/components/" ++ String.toLower componentName)
+                                            (text componentName)
+                                in
+                                if activeRoute == componentName then
+                                    Menu.selected menuItem
+                                else
+                                    menuItem
+                            )
+                            componentNames
+            in
+            Menu.pushItemGroup itemGroup currentMenu
 
         menu : Menu msg
         menu =
             Dict.foldl
-                (\categoryName componentNames menuAccumulator ->
-                    Menu.pushItemGroup (categoryItemGroup categoryName componentNames) menuAccumulator
-                )
+                addItemGroup
                 Menu.initMenu
                 categoryDict
 
