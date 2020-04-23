@@ -5,6 +5,7 @@ module Ant.Typography.Text exposing
     , textType
     , strong
     , toHtml
+    , textColorRgba
     )
 
 import Ant.Typography exposing (fontList, textSelectionStyles)
@@ -33,9 +34,21 @@ type Text
     = Text TextOptions String
 
 
+textColorRgba : { r : Int, g : Int, b : Int, a : Float }
+textColorRgba =
+    { r = 0
+    , g = 0
+    , b = 0
+    , a = 0.65
+    }
+
+
 textColor : Style
 textColor =
-    color (rgba 0 0 0 0.65)
+    let
+        { r, g, b, a } = textColorRgba
+    in
+    color (rgba r g b a)
 
 
 defaultTextOptions : TextOptions
