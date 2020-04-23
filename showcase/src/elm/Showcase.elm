@@ -2,7 +2,6 @@ module Showcase exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, div, text)
 import Url
 
 import Router
@@ -48,22 +47,22 @@ view model =
   Router.view RouterMsg model.router
 
 
-updateRouter : Router.Msg -> Model -> ( Model, Cmd Msg )
-updateRouter routerMsg model =
+updateRouter : Nav.Key -> Router.Msg -> Model -> ( Model, Cmd Msg )
+updateRouter navKey routerMsg model =
   let
-    newRouterModel = Router.update routerMsg model.router
+    (newRouterModel, routerCommand ) = Router.update navKey routerMsg model.router
   in
-    ( { model | router =  newRouterModel }, Cmd.none )
+    ( { model | router = newRouterModel }, routerCommand )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     RouterMsg routerMsg ->
-      updateRouter routerMsg model
+      updateRouter model.navKey routerMsg model
 
     UrlChanged url ->
-      updateRouter (Router.UrlChange url) model
+      updateRouter model.navKey (Router.UrlChanged url) model
 
     LinkClicked urlRequest ->
       case urlRequest of

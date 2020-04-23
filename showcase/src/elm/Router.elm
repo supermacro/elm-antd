@@ -7,8 +7,9 @@ module Router exposing
     )
 
 import Ant.Layout as Layout exposing (LayoutTree)
-import Ant.Menu as Menu exposing (Menu, ItemGroup)
+import Ant.Menu as Menu exposing (Menu)
 import Browser
+import Browser.Navigation as Nav
 import Css exposing
     ( Style
     , alignItems
@@ -20,11 +21,10 @@ import Css exposing
     , paddingRight
     , paddingTop
     , px
-    , vw
     , width
     )
 import Dict exposing (Dict)
-import Html exposing (Html, a, div, li, text, ul, header, nav)
+import Html exposing (Html, a, div, text, header, nav)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (css, href, src, alt)
 import Url exposing (Url)
@@ -45,10 +45,14 @@ type alias Model =
     }
 
 
+type alias Href = String
+
 type Msg
-    = UrlChange Url
+    = UrlChanged Url
+    | MenuItemClicked Href
     | ButtonPageMessage
     | TypographyPageMessage
+
 
 
 componentList : List ( Route, ComponentCategory )
@@ -110,17 +114,20 @@ init url =
     )
 
 
-update : Msg -> Model -> Model
-update msg model =
+update : Nav.Key -> Msg -> Model -> ( Model, Cmd msg )
+update navKey msg model =
     case msg of
-        UrlChange url ->
+        UrlChanged url ->
             let
                 newRoute =
                     fromUrl url
             in
-            { model | activeRoute = newRoute }
+            ( { model | activeRoute = newRoute }, Cmd.none )
 
-        _ -> model
+        MenuItemClicked hrefString ->
+            ( model, Nav.pushUrl navKey hrefString )
+            
+        _ -> ( model, Cmd.none )
 
 
 navBar : Styled.Html msg
@@ -172,7 +179,7 @@ navBar =
 
 
 
-componentMenu : Route -> Html msg
+componentMenu : Route -> Html Msg
 componentMenu activeRoute =
     let
         getList : Maybe (List Route) -> List Route
@@ -198,7 +205,7 @@ componentMenu activeRoute =
                 Dict.empty
                 componentList
 
-        addItemGroup : String -> List String -> Menu msg -> Menu msg
+        addItemGroup : String -> List String -> Menu Msg -> Menu Msg
         addItemGroup categoryName componentNames currentMenu =
             let
                 itemGroup =
@@ -208,7 +215,7 @@ componentMenu activeRoute =
                                 let
                                     menuItem =
                                         Menu.initMenuItem
-                                            ("/components/" ++ String.toLower componentName)
+                                            (MenuItemClicked <| "/components/" ++ String.toLower componentName)
                                             (text componentName)
                                 in
                                 if activeRoute == componentName then
@@ -220,7 +227,7 @@ componentMenu activeRoute =
             in
             Menu.pushItemGroup itemGroup currentMenu
 
-        menu : Menu msg
+        menu : Menu Msg
         menu =
             Dict.foldl
                 addItemGroup
@@ -237,13 +244,13 @@ view toMsg model =
         ( label, componentContent ) =
             if model.activeRoute == ButtonPage.route.title then
                 ( model.activeRoute
-                , ButtonPage.route.view (toMsg ButtonPageMessage)
+                , ButtonPage.route.view ButtonPageMessage
                     |> toUnstyled
                 )
 
             else if model.activeRoute == TypographyPage.route.title then
                 ( model.activeRoute
-                , TypographyPage.route.view (toMsg TypographyPageMessage)
+                , TypographyPage.route.view TypographyPageMessage
                     |> toUnstyled
                 )
 
@@ -268,7 +275,7 @@ view toMsg model =
             |> Layout.sidebarWidth 300
             |> Layout.sidebarToTree
 
-        layout : LayoutTree msg
+        layout : LayoutTree Msg
         layout =
             Layout.layout2
                 (Layout.header <| toUnstyled navBar)
@@ -277,5 +284,5 @@ view toMsg model =
                     (Layout.content <| toUnstyled componentPageShell))
     in
     { title = label ++ " - Elm Ant Design"
-    , body = [ Layout.toHtml layout ]
+    , body = [ Html.map toMsg <| Layout.toHtml layout ]
     }

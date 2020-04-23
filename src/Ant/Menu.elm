@@ -27,10 +27,11 @@ import Ant.Typography.Text as Text exposing (textColorRgba)
 import Ant.Palette exposing (primaryColor)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
-import Html exposing (Html, div, text, span, ul, li)
+import Html exposing (Html, div, text, ul, li)
 import Html.Attributes exposing (style)
 import Html.Styled as Styled exposing (toUnstyled, fromUnstyled)
-import Html.Styled.Attributes exposing (css, href)
+import Html.Styled.Attributes exposing (css)
+import Html.Styled.Events exposing (onClick)
 
 type alias MenuItemState =
     { selected : Bool
@@ -46,12 +47,11 @@ defaultMenuItemState =
     }
 
 
-type alias Href = String
-type MenuItem msg = MenuItem Href MenuItemState (Html msg) 
+type MenuItem msg = MenuItem msg MenuItemState (Html msg) 
 
 
-initMenuItem : Href -> Html msg -> MenuItem msg
-initMenuItem hrefString = MenuItem hrefString defaultMenuItemState
+initMenuItem : msg -> Html msg -> MenuItem msg
+initMenuItem msg = MenuItem msg defaultMenuItemState
 
 
 selected : MenuItem msg -> MenuItem msg
@@ -208,18 +208,8 @@ menuItemColor =
 
 
 viewMenuItem : MenuItem msg -> Styled.Html msg
-viewMenuItem (MenuItem hrefString state itemContents) =
+viewMenuItem (MenuItem msg state itemContents) =
     let
-        styledLinkedItemContens =
-            Styled.a
-                [ css
-                    [ textDecoration none
-                    , visited [ color (hex primaryColor) ]
-                    ]
-                , href hrefString
-                ]
-                [  styledMenuItem ]
-
         selectedItemStyles =
             if state.selected then
                 batch
@@ -233,25 +223,23 @@ viewMenuItem (MenuItem hrefString state itemContents) =
                     , hover
                         [ color (hex primaryColor) ]
                     ]
-
-        styledMenuItem =
-            Styled.li
-                [ css
-                    [ selectedItemStyles
-                    , fontFamilies fontList
-                    , fontSize (px 14)
-                    , paddingLeft (px 40)
-                    , paddingRight (px 16)
-                    , marginTop (px 4)
-                    , marginBottom (px 8)
-                    , lineHeight (px 40)
-                    , transition [ Css.Transitions.color 250 ]
-                    ]
-                ]
-                [  fromUnstyled itemContents ]
     in
-    styledLinkedItemContens
-
+    Styled.li
+        [ onClick msg
+        , css
+            [ selectedItemStyles
+            , fontFamilies fontList
+            , fontSize (px 14)
+            , paddingLeft (px 40)
+            , paddingRight (px 16)
+            , marginTop (px 4)
+            , marginBottom (px 8)
+            , lineHeight (px 40)
+            , transition [ Css.Transitions.color 250 ]
+            , cursor pointer 
+            ]
+        ]
+        [  fromUnstyled itemContents ]
 
 
 viewItemGroup : ItemGroup msg -> Styled.Html msg
