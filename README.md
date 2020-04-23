@@ -6,7 +6,7 @@ Bringing the amazing [Ant Design](https://ant.design) kit to Elm!
 
 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 
 
-> Elm Ant Design is both not fully implemented and in a exploratory phase. The current API is subject to change without notice. As a courtesy, semver rules will be followed.
+> Elm Ant Design is not fully implemented and in a exploratory phase. The current API is subject to change without notice until it lands at a `v1.0.0` release. At which point, semver rules will be properly followed.
 
 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 
 
