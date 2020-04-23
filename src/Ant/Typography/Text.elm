@@ -8,8 +8,9 @@ module Ant.Typography.Text exposing
     , textColorRgba
     )
 
+import Ant.Palette exposing (warningColor, dangerColor)
 import Ant.Typography exposing (fontList, textSelectionStyles)
-import Css exposing (Style, border3, borderRadius, color, rgba, px, qt, solid, padding3)
+import Css exposing (border3, borderRadius, hex, color, rgba, px, qt, solid, padding3)
 import Html exposing (Html)
 import Html.Styled as Styled exposing (text, toUnstyled)
 import Html.Styled.Attributes exposing (css, disabled)
@@ -41,14 +42,6 @@ textColorRgba =
     , b = 0
     , a = 0.65
     }
-
-
-textColor : Style
-textColor =
-    let
-        { r, g, b, a } = textColorRgba
-    in
-    color (rgba r g b a)
 
 
 defaultTextOptions : TextOptions
@@ -114,6 +107,27 @@ toHtml (Text opts value) =
 
             else
                 Css.fontWeight Css.normal
+
+        textColor =
+            case opts.type_ of
+                Primary ->
+                    let
+                        { r, g, b, a } = textColorRgba
+                    in
+                    color (rgba r g b a)
+                
+                Secondary ->
+                    let
+                        { r, g, b } = textColorRgba
+                    in 
+                        color (rgba r g b 0.45)
+
+                Warning ->
+                    color (hex warningColor)
+
+                Danger -> 
+                    color (hex dangerColor)
+
 
         textStyles =
             if opts.code then

@@ -18,11 +18,12 @@ module Ant.Menu exposing
     , MenuItemState
     , defaultMenuItemState
     , defaultSubMenuState
+    , MenuMode(..)
     )
 
 
 import Ant.Typography exposing (fontList)
-import Ant.Typography.Text exposing (textColorRgba)
+import Ant.Typography.Text as Text exposing (textColorRgba)
 import Ant.Palette exposing (primaryColor)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
@@ -44,6 +45,7 @@ defaultMenuItemState =
     , title = Nothing
     }
 
+
 type alias Href = String
 type MenuItem msg = MenuItem Href MenuItemState (Html msg) 
 
@@ -60,13 +62,28 @@ selected (MenuItem hrefString currentState contents) =
         MenuItem hrefString newState contents
 
 
+type MenuMode = Vertical | Horizontal | Inline
+
+type alias MenuConfig =
+    { mode : MenuMode
+    , verticalOrInlineCollapsed : Bool
+    }
+
+
+defaultMenuConfig : MenuConfig
+defaultMenuConfig =
+    { mode = Vertical
+    , verticalOrInlineCollapsed = False
+    }
+
+
 type MenuContent msg
     = Item (MenuItem msg)
     | Sub (SubMenu msg)
     | Group (ItemGroup msg)
 
 
-type Menu msg = Menu (List (MenuContent msg))
+type Menu msg = Menu MenuConfig (List (MenuContent msg))
 
 
 
@@ -77,23 +94,23 @@ type Menu msg = Menu (List (MenuContent msg))
 ------ Menu Logic
 
 initMenu : Menu msg
-initMenu = Menu []
+initMenu = Menu defaultMenuConfig []
 
 {-| push a menu item to the end of the menu
 -}
 pushItem : MenuItem msg -> Menu msg -> Menu msg
-pushItem newMenuItem (Menu currentMenuList) =
-    Menu (currentMenuList ++ [ Item newMenuItem ])
+pushItem newMenuItem (Menu config currentMenuList) =
+    Menu config (currentMenuList ++ [ Item newMenuItem ])
 
 
 pushSubMenu : SubMenu msg -> Menu msg -> Menu msg
-pushSubMenu subMenu (Menu currentMenuList) =
-    Menu (currentMenuList ++ [ Sub subMenu ])
+pushSubMenu subMenu (Menu config currentMenuList) =
+    Menu config (currentMenuList ++ [ Sub subMenu ])
   
 
 pushItemGroup : ItemGroup msg -> Menu msg -> Menu msg
-pushItemGroup itemGroup (Menu currentMenuList) =
-    Menu (currentMenuList ++ [ Group itemGroup ])
+pushItemGroup itemGroup (Menu config currentMenuList) =
+    Menu config (currentMenuList ++ [ Group itemGroup ])
 
 
 
@@ -190,7 +207,7 @@ menuItemColor =
     color (rgba r g b a)
 
 
-viewMenuItem : MenuItem msg -> Html msg
+viewMenuItem : MenuItem msg -> Styled.Html msg
 viewMenuItem (MenuItem hrefString state itemContents) =
     let
         styledLinkedItemContens =
@@ -233,20 +250,31 @@ viewMenuItem (MenuItem hrefString state itemContents) =
                 ]
                 [  fromUnstyled itemContents ]
     in
-    toUnstyled styledLinkedItemContens
+    styledLinkedItemContens
 
 
 
-viewItemGroup : ItemGroup msg -> Html msg
+viewItemGroup : ItemGroup msg -> Styled.Html msg
 viewItemGroup (ItemGroup title menuItems) =
-    div []
-        [ span [] [ text title ]
-        , ul [] <|
+    let
+        itemGroupLabel =
+            fromUnstyled
+                (Text.text title
+                |> Text.textType Text.Secondary
+                |> Text.toHtml)
+    in
+    Styled.div []
+        [ Styled.div
+            [ css
+                [ padding4 (px 8) (px 16) (px 8) (px 32) ]
+            ]
+            [ itemGroupLabel ]
+        , Styled.ul [] <|
             List.map viewMenuItem menuItems
         ]
 
 
-viewSubMenuContent : SubMenuContent msg -> Html msg
+viewSubMenuContent : SubMenuContent msg -> Styled.Html msg
 viewSubMenuContent subMenuContent =
     case subMenuContent of
         SubMenuItem menuItem ->
@@ -254,23 +282,22 @@ viewSubMenuContent subMenuContent =
 
         SubMenuGroup itemGroup ->
             viewItemGroup itemGroup
-
         
         NestedSubMenu subMenu -> 
             viewSubMenu subMenu
 
 
 
-viewSubMenu : SubMenu msg -> Html msg
+viewSubMenu : SubMenu msg -> Styled.Html msg
 viewSubMenu (SubMenu state subMenuContentList) =
-    li []
-        [ ul [] <|
+    Styled.li []
+        [ Styled.ul [] <|
             List.map viewSubMenuContent subMenuContentList
         ]
 
 
 
-viewMenuContent : MenuContent msg -> Html msg
+viewMenuContent : MenuContent msg -> Styled.Html msg
 viewMenuContent menuContent =
     case menuContent of 
         Item menuItem ->
@@ -285,9 +312,9 @@ viewMenuContent menuContent =
 
 
 view : Menu msg -> Html msg
-view (Menu menuContents) =
+view (Menu config menuContents) =
     ul
         [ style "border-right" "1px solid #f0f0f0"
         , style "height" "100%"
         ]
-        (List.map viewMenuContent menuContents)
+        (List.map (toUnstyled << viewMenuContent) menuContents)
