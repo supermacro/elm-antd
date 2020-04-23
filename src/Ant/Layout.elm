@@ -16,7 +16,7 @@ module Ant.Layout exposing
 
 
 import Css exposing (width, px)
-import Html exposing (Html, Attribute, div, text, aside)
+import Html exposing (Html, Attribute, div, aside)
 import Html.Styled as Styled exposing (toUnstyled, fromUnstyled)
 import Html.Attributes exposing (style)
 import Html.Styled.Attributes exposing (css)
