@@ -203,7 +203,16 @@ componentMenu activeRoute =
             Menu.initItemGroup categoryName <|
                 List.map 
                     (\componentName ->
-                        Menu.menuItem (text componentName)
+                        let
+                            menuItem =
+                                Menu.initMenuItem
+                                    ("/components/" ++ String.toLower componentName)
+                                    (text componentName)
+                        in
+                        if activeRoute == componentName then
+                            Menu.selected menuItem
+                        else
+                            menuItem
                     )
                     componentNames
 
@@ -244,7 +253,14 @@ view toMsg model =
                 styledComponentContent =
                     fromUnstyled componentContent
             in
-            Styled.div [ css [ paddingRight (px 170), paddingLeft (px 64), width (vw 100) ] ] [ styledComponentContent ]
+            Styled.div
+                [ css
+                    [ paddingRight (px 170)
+                    , paddingLeft (px 64)
+                    , width (vw 100)
+                    ]
+                ]
+                [ styledComponentContent ]
 
         sidebar =
             Layout.sidebar (componentMenu model.activeRoute)
