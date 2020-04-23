@@ -259,14 +259,13 @@ view toMsg model =
                 [ css
                     [ paddingRight (px 170)
                     , paddingLeft (px 64)
-                    , width (vw 100)
                     ]
                 ]
                 [ styledComponentContent ]
 
         sidebar =
             Layout.sidebar (componentMenu model.activeRoute)
-            |> Layout.sidebarWidth 266
+            |> Layout.sidebarWidth 300
             |> Layout.sidebarToTree
 
         layout : LayoutTree msg
