@@ -2,6 +2,7 @@ module Ant.Grid exposing
     ( row
     , col
     , toHtml
+    , breakPoints
     , VerticalAlignment(..)
     , ColSpan(..)
     )
@@ -13,6 +14,27 @@ import Html exposing (Html, div, text)
 -------------------------------------------
 -------------------------------------------
 ------ Row
+
+type alias BreakPoints =
+    { xs : String
+    , sm : String
+    , md : String
+    , lg : String
+    , xl : String
+    , xxl : String
+    }
+
+breakPoints : BreakPoints
+breakPoints =
+    { xs = "480px"
+    , sm = "576px"
+    , md = "768px"
+    , lg = "992px"
+    , xl = "1200px"
+    , xxl = "1600px"
+    }
+
+
 
 type VerticalAlignment = Top | Middle | Bottom
 
