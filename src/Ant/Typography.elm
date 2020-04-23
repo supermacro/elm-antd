@@ -1,7 +1,14 @@
-module Ant.Typography exposing (fontList, commonFontStyles, textSelectionStyles, headingColorRgba, title, toHtml)
+module Ant.Typography exposing
+    ( fontList
+    , commonFontStyles
+    , textSelectionStyles
+    , headingColorRgba
+    , title
+    , toHtml
+    )
 
 import Css exposing (..)
-import Html.Styled as Styled exposing (toUnstyled)
+import Html.Styled as Styled
 import Html.Styled.Attributes exposing (css)
 
 import Ant.Palette exposing (primaryColor)
@@ -46,7 +53,7 @@ headingColor =
 textSelectionStyles : Style
 textSelectionStyles =
     selection
-        [ backgroundColor primaryColor
+        [ backgroundColor (hex primaryColor)
         , color (hex "#fff")
         ]
 

@@ -1,12 +1,10 @@
 module Ant.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
 
-import Css exposing (Color, hex)
+primaryColor : String
+primaryColor = "#1890ff"
 
-primaryColor : Color
-primaryColor = hex "#1890ff"
+primaryColorFaded : String
+primaryColorFaded = "#40a9ff"
 
-primaryColorFaded : Color
-primaryColorFaded = hex "#40a9ff"
-
-primaryColorStrong : Color
-primaryColorStrong = hex "#096dd9"
+primaryColorStrong : String
+primaryColorStrong = "#096dd9"

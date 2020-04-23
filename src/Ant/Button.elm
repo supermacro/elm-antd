@@ -80,24 +80,24 @@ toHtml (Button options label) =
         defaultAttributes =
             [ css
                 [ borderRadius (px 2)
-                , backgroundColor primaryColor
+                , backgroundColor (hex primaryColor)
                 , padding2 (px 4) (px 15)
-                , border3 (px 2) solid primaryColor
+                , border3 (px 2) solid (hex primaryColor)
                 , color (hex "#fff")
                 , fontSize (px 14)
                 , height (px 34)
                 , outline none
                 , focus
-                    [ backgroundColor primaryColorFaded
-                    , borderColor primaryColorFaded
+                    [ backgroundColor (hex primaryColorFaded)
+                    , borderColor (hex primaryColorFaded)
                     ]
                 , hover
-                    [ backgroundColor primaryColorFaded
-                    , borderColor primaryColorFaded
+                    [ backgroundColor (hex primaryColorFaded)
+                    , borderColor (hex primaryColorFaded)
                     ]
                 , active
-                    [ backgroundColor primaryColorStrong
-                    , borderColor primaryColorStrong
+                    [ backgroundColor (hex primaryColorStrong)
+                    , borderColor (hex primaryColorStrong)
                     ]
                 ]
             ]

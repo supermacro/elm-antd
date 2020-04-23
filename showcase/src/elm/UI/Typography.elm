@@ -19,7 +19,7 @@ commonStyles : List Style
 commonStyles =
     [ color (rgba headingColorRgba.r headingColorRgba.g headingColorRgba.b headingColorRgba.a)
     , selection
-        [ backgroundColor primaryColor
+        [ backgroundColor (hex primaryColor)
         , color (hex "#fff")
         ]
     ]
@@ -77,10 +77,10 @@ documentationSubheading value withAnchorLink =
                 [ href ("#" ++ subheadingLink)
                 , css
                     [ textDecoration none
-                    , color Palette.primaryColor
+                    , color (hex Palette.primaryColor)
                     , marginLeft (px 8)
                     , hover
-                        [ color Palette.primaryColorFaded
+                        [ color (hex Palette.primaryColorFaded)
                         ]
                     ]
                 ]
