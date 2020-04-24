@@ -8,17 +8,17 @@ module UI.Container exposing
     , paddingRight
     , paddingBottom
     , paddingLeft
+    , withMetaSection
     , toHtml
     )
 
-import Css exposing (Style, borderBottom3, borderLeft3, borderRight3, borderTop3, hex, px, solid)
-import Html exposing (Html)
-import Html.Styled as Styled exposing (div)
+import Css exposing (..)
+import Html.Styled as Styled exposing (div, text)
 import Html.Styled.Attributes exposing (css)
--- import Url exposing (Url)
+import UI.Typography exposing (commonTextStyles)
 
 
-type alias ContainerOptions msg =
+type alias ContainerOptions =
     { paddingTop : Style
     , paddingRight : Style
     , paddingBottom : Style
@@ -27,15 +27,15 @@ type alias ContainerOptions msg =
     , showRightBorder : Bool
     , showBottomBorder : Bool
     , showLeftBorder : Bool
-    , meta : Maybe (ContainerMetaSection msg)
+    , meta : Maybe ContainerMetaSection
     }
 
 
 type Container msg
-    = Container (ContainerOptions msg) (Styled.Html msg)
+    = Container ContainerOptions (Styled.Html msg)
 
 
-defaultContainerOptions : ContainerOptions msg
+defaultContainerOptions : ContainerOptions
 defaultContainerOptions =
     { paddingTop = Css.paddingTop (px 10)
     , paddingRight = Css.paddingRight (px 10)
@@ -132,14 +132,13 @@ paddingLeft val (Container opts children) =
 --     , showCode : Cmd msg
 --     }
 
-type alias ContainerMetaSection msg =
+type alias ContainerMetaSection =
     { title : String
-    , content : Html msg
-    -- , actions : Never
+    , content : String
     }
 
 
-withMetaSection : ContainerMetaSection msg -> Container msg -> Container msg
+withMetaSection : ContainerMetaSection -> Container msg -> Container msg
 withMetaSection meta (Container opts children) =
     let
         newOpts =
@@ -171,6 +170,17 @@ toHtml (Container opts children) =
                 , ( borderBottom3, opts.showBottomBorder )
                 , ( borderLeft3, opts.showLeftBorder )
                 ]
+
+        metaSectionContent =
+            case opts.meta of
+                Just { title, content } ->
+                    [ div [ css commonTextStyles ]
+                        [ div [ css [ fontWeight (int 500) ] ] [ text title ]
+                        , text content
+                        ]
+                    ]
+
+                Nothing -> []
     in
     div
         [ css
@@ -182,4 +192,4 @@ toHtml (Container opts children) =
                    ]
             )
         ]
-        [ children ]
+        (children :: metaSectionContent)
