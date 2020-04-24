@@ -1,7 +1,14 @@
-module Ant.Button exposing (button, onClick, toHtml)
+module Ant.Button exposing
+    ( button
+    , onClick
+    , toHtml
+    , withType
+    , ButtonType(..)
+    )
 
 import Ant.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
 import Css exposing (..)
+import Css.Transitions exposing (transition)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
 import Html.Styled.Attributes exposing (css)
@@ -16,7 +23,7 @@ import Html.Styled.Events as Events
 
 type ButtonType
     = Primary
-    | DefaultButton
+    | Default
     | Dashed
     | Link
 
@@ -66,6 +73,14 @@ button label =
     Button defaultOptions label
 
 
+withType : ButtonType -> Button msg -> Button msg
+withType buttonType (Button options label) =
+    let
+        newOptions = { options | type_ = buttonType }
+    in
+        Button newOptions label
+
+
 onClick : msg -> Button msg -> Button msg
 onClick msg (Button opts label) =
   let
@@ -98,6 +113,10 @@ toHtml (Button options label) =
                 , active
                     [ backgroundColor (hex primaryColorStrong)
                     , borderColor (hex primaryColorStrong)
+                    ]
+                , transition
+                    [ Css.Transitions.backgroundColor 150
+                    , Css.Transitions.borderColor 150
                     ]
                 ]
             ]
