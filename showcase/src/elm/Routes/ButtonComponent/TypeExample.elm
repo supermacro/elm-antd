@@ -9,6 +9,7 @@ example =
     let
         primaryButton =
             button "Primary"
+            |> Btn.withType Primary
             |> toHtml
 
         defaultButotn =

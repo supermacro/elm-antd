@@ -7,6 +7,7 @@ module Ant.Button exposing
     )
 
 import Ant.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
+import Ant.Typography.Text exposing (textColorRgba)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
 import Html exposing (Html)
@@ -40,7 +41,6 @@ type alias Options msg =
     , color : String
     , disabled : Bool
     , loading : Bool
-    , primary : Bool
     , href : Maybe String
     , onClick : Maybe msg
     
@@ -53,12 +53,11 @@ type alias Options msg =
 
 defaultOptions : Options msg
 defaultOptions =
-    { type_ = Primary
+    { type_ = Default
     , size = DefaultSize
     , color = "#fff"
     , disabled = False
     , loading = False
-    , primary = True
     , href = Nothing
     , onClick = Nothing
     }
@@ -89,45 +88,90 @@ onClick msg (Button opts label) =
     Button newOpts label
 
 
+textColor : Color
+textColor =
+    let
+        { r, g, b, a } = textColorRgba
+    in
+        rgba r g b a
+
+
 toHtml : Button msg -> Html msg
 toHtml (Button options label) =
     let
-        defaultAttributes =
-            [ css
-                [ borderRadius (px 2)
-                , backgroundColor (hex primaryColor)
-                , padding2 (px 4) (px 15)
-                , border3 (px 2) solid (hex primaryColor)
-                , color (hex "#fff")
-                , fontSize (px 14)
-                , height (px 34)
-                , outline none
-                , focus
-                    [ backgroundColor (hex primaryColorFaded)
-                    , borderColor (hex primaryColorFaded)
-                    ]
-                , hover
-                    [ backgroundColor (hex primaryColorFaded)
-                    , borderColor (hex primaryColorFaded)
-                    ]
-                , active
-                    [ backgroundColor (hex primaryColorStrong)
-                    , borderColor (hex primaryColorStrong)
-                    ]
-                , transition
-                    [ Css.Transitions.backgroundColor 150
-                    , Css.Transitions.borderColor 150
-                    ]
+        transitionDuration = 350
+
+        baseAttributes =
+            [ borderRadius (px 2)
+            , padding2 (px 4) (px 15)
+            , borderWidth (px 1)
+            , borderStyle solid
+            , fontSize (px 14)
+            , height (px 34)
+            , outline none
+            , Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
+            ]
+
+        defaultButtonAttributes =
+            [ color textColor
+            , backgroundColor (hex "#fff")
+            , borderColor <| rgb 217 217 217
+            , focus
+                [ borderColor (hex primaryColorFaded)
+                , color (hex primaryColorFaded)
+                ]
+            , hover
+                [ borderColor (hex primaryColorFaded)
+                , color (hex primaryColorFaded)
+                ]
+            , active
+                [ borderColor (hex primaryColor)
+                , color (hex primaryColor)
+                ]
+            , transition
+                [ Css.Transitions.borderColor transitionDuration 
+                , Css.Transitions.color transitionDuration
                 ]
             ]
-        
+
+        primaryButtonAttributes =
+            [ color (hex "#fff")
+            , backgroundColor (hex primaryColor)
+            , borderColor (hex primaryColor)
+            , focus
+                [ backgroundColor (hex primaryColorFaded)
+                , borderColor (hex primaryColorFaded)
+                ]
+            , hover
+                [ backgroundColor (hex primaryColorFaded)
+                , borderColor (hex primaryColorFaded)
+                ]
+            , active
+                [ backgroundColor (hex primaryColorStrong)
+                , borderColor (hex primaryColorStrong)
+                ]
+            , transition
+                [ Css.Transitions.backgroundColor transitionDuration
+                , Css.Transitions.borderColor transitionDuration
+                ]
+            ]
+
+        buttonTypeAttributes =
+            case options.type_ of
+                Default -> defaultButtonAttributes
+                Primary -> primaryButtonAttributes
+                _ -> []
+
+        combinedButtonStyles =
+            baseAttributes ++ buttonTypeAttributes
+
         attributes =
             case options.onClick of
                 Just msg ->
-                    Events.onClick msg :: defaultAttributes
+                    [ Events.onClick msg, css combinedButtonStyles ]
 
                 Nothing ->
-                    defaultAttributes                
+                    [ css combinedButtonStyles ]
 
     in
     toUnstyled
