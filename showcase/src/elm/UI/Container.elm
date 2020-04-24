@@ -181,15 +181,20 @@ toHtml (Container opts children) =
                     ]
 
                 Nothing -> []
+        
+        mainContainerSection =
+            div
+                [ css
+                    (borderStyles
+                        ++ [ opts.paddingTop
+                        , opts.paddingRight
+                        , opts.paddingBottom
+                        , opts.paddingLeft
+                        ]
+                    )
+                ]
+                [ children ]
+
     in
-    div
-        [ css
-            (borderStyles
-                ++ [ opts.paddingTop
-                   , opts.paddingRight
-                   , opts.paddingBottom
-                   , opts.paddingLeft
-                   ]
-            )
-        ]
-        (children :: metaSectionContent)
+    div []
+        (mainContainerSection :: metaSectionContent)
