@@ -1,8 +1,12 @@
 module Routes.ButtonComponent exposing (route)
 
-import Ant.Button as Btn exposing (button)
+import Ant.Space as Space
 import Ant.Typography.Text as Text
-import Html.Styled as Styled exposing (fromUnstyled, div, text, span)
+import Css exposing (displayFlex)
+import Html.Styled as Styled exposing (div, span, text, fromUnstyled)
+import Html.Styled.Attributes exposing (css)
+import Routes.ButtonComponent.TypeExample as TypeExample
+import UI.Container as Container exposing (container)
 import UI.Typography
     exposing
         ( documentationHeading
@@ -10,8 +14,6 @@ import UI.Typography
         , documentationText
         , documentationUnorderedList
         )
-
-import UI.Container as Container exposing (container) 
 import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
@@ -22,13 +24,27 @@ route =
     , view = view
     }
 
-
 codeText : String -> Styled.Html msg
 codeText value =
     Text.text value
         |> Text.code
         |> Text.toHtml
         |> fromUnstyled
+
+typeExample : Styled.Html msg
+typeExample =
+    let
+        styledTypeExampleContents =
+            fromUnstyled TypeExample.example
+
+    in
+    container
+        (div [ css [ displayFlex ] ] [ styledTypeExampleContents ] )
+        |> Container.withMetaSection
+            { title = "Type"
+            , content = "There are various kinds of button \"types\"."
+            }
+        |> Container.toHtml
 
 
 view : msg -> Styled.Html msg
@@ -64,13 +80,6 @@ view msg =
                 ]
             ]
         , documentationSubheading "Examples" False
-        , Container.toHtml <|
-            container <|
-                div []
-                    [ text "children"
-                    , button "Primary"
-                        |> Btn.onClick msg
-                        |> Btn.toHtml
-                        |> fromUnstyled
-                    ]
+        , div []
+            [ div [] [ typeExample ], div [] [ ] ]
         ]

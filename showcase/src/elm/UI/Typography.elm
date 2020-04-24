@@ -4,6 +4,7 @@ module UI.Typography exposing
     , documentationText
     , documentationUnorderedList
     , logoText
+    , commonTextStyles
     )
 
 import Ant.Palette as Palette exposing (primaryColor)
