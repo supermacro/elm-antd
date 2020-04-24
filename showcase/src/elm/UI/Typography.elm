@@ -1,9 +1,9 @@
 module UI.Typography exposing
-    ( logoText
-    , documentationHeading
+    ( documentationHeading
     , documentationSubheading
     , documentationText
     , documentationUnorderedList
+    , logoText
     )
 
 import Ant.Palette as Palette exposing (primaryColor)
@@ -44,9 +44,10 @@ commonHeadingStyles =
 logoText : Styled.Html msg
 logoText =
     let
-        styles = fontSize (px 18) :: commonHeadingStyles
+        styles =
+            fontSize (px 18) :: commonHeadingStyles
     in
-        Styled.span [ css styles ] [ Styled.text "Elm Ant Design" ]
+    Styled.span [ css styles ] [ Styled.text "Elm Ant Design" ]
 
 
 documentationHeading : String -> Styled.Html msg
@@ -154,5 +155,14 @@ documentationUnorderedList =
     Styled.ul [ styles ]
         << List.map
             (\textItem ->
-                Styled.li [ css (lineHeight (px 28) :: commonTextStyles) ] [ textItem ]
+                Styled.li
+                    [ css
+                        (commonTextStyles ++
+                            [ lineHeight (px 28)
+                            , marginTop (px 2.8)
+                            , marginBottom (px 2.8)
+                            ]
+                        )
+                    ]
+                    [ textItem ]
             )
