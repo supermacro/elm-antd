@@ -41,6 +41,8 @@ type alias Route =
 
 type alias Model =
     { activeRoute : Route
+    , buttonPageModel : ButtonPage.Model
+    , typographyPageModel : TypographyPage.Model
     }
 
 
@@ -49,7 +51,7 @@ type alias Href = String
 type Msg
     = UrlChanged Url
     | MenuItemClicked Href
-    | ButtonPageMessage
+    | ButtonPageMessage ButtonPage.Msg
     | TypographyPageMessage
 
 
@@ -108,7 +110,10 @@ init url =
         route =
             fromUrl url
     in
-    ( { activeRoute = route }
+    ( { activeRoute = route
+      , buttonPageModel = ButtonPage.route.initialModel
+      , typographyPageModel = TypographyPage.route.initialModel
+      }
     , Cmd.none
     )
 
@@ -125,6 +130,13 @@ update navKey msg model =
 
         MenuItemClicked hrefString ->
             ( model, Nav.pushUrl navKey hrefString )
+
+        ButtonPageMessage buttonPageMsg ->
+            ( { model |
+                    buttonPageModel = ButtonPage.route.update buttonPageMsg model.buttonPageModel
+            }
+            , Cmd.none
+            )
             
         _ -> ( model, Cmd.none )
 
@@ -236,13 +248,15 @@ view toMsg model =
         ( label, componentContent ) =
             if model.activeRoute == ButtonPage.route.title then
                 ( model.activeRoute
-                , ButtonPage.route.view ButtonPageMessage
+                , ButtonPage.route.view model.buttonPageModel
+                    |> Styled.map ButtonPageMessage
                     |> toUnstyled
                 )
 
             else if model.activeRoute == TypographyPage.route.title then
                 ( model.activeRoute
-                , TypographyPage.route.view TypographyPageMessage
+                , TypographyPage.route.view model.typographyPageModel
+                    |> Styled.map never
                     |> toUnstyled
                 )
 

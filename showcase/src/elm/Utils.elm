@@ -14,8 +14,10 @@ type ComponentCategory
 
 type alias RouteTitle = String
 
-type alias DocumentationRoute msg =
+type alias DocumentationRoute model msg =
     { title : RouteTitle
+    , update : msg -> model -> model
     , category : ComponentCategory
-    , view : msg -> Styled.Html msg
+    , view : model -> Styled.Html msg
+    , initialModel : model
     }

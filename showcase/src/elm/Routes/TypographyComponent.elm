@@ -1,4 +1,4 @@
-module Routes.TypographyComponent exposing (route)
+module Routes.TypographyComponent exposing (route, Model)
 
 import Ant.Typography as Typography
 import Ant.Typography.Text as Text exposing (text)
@@ -7,15 +7,19 @@ import UI.Typography exposing (documentationText)
 import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
-route : DocumentationRoute msg
+type alias Model = ()
+
+route : DocumentationRoute Model Never
 route =
     { title = "Typography"
     , category = General
     , view = view
+    , initialModel = ()
+    , update = \_ _ -> ()
     }
 
 
-view : msg -> Styled.Html msg
+view : model -> Styled.Html Never
 view _ =
     let
         textComponent =

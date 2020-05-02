@@ -4,7 +4,9 @@ module UI.Container exposing
     , paddingRight
     , paddingBottom
     , paddingLeft
-    , toHtml
+    , update
+    , view
+    , Msg
     )
 
 import Ant.Icons as Icons
@@ -12,11 +14,24 @@ import Css exposing (..)
 import Css.Transitions exposing (transition)
 import Html.Styled as Styled exposing (fromUnstyled, div, span, text)
 import Html.Styled.Attributes exposing (css)
+import Html.Styled.Events exposing (onClick)
 import UI.Typography exposing (commonTextStyles)
 
 
 
+type alias Model =
+    { sourceCodeVisible : Bool
+    }
 
+
+type Msg
+    = SourceCodeVisibilityToggled
+
+
+update : Msg -> Model -> Model
+update _ currentModel =
+    { currentModel | sourceCodeVisible = not currentModel.sourceCodeVisible
+    }
 
 
 type alias ContainerOptions =
@@ -28,8 +43,8 @@ type alias ContainerOptions =
     }
 
 
-type Container msg
-    = Container ContainerOptions (Styled.Html msg)
+type Container
+    = Container ContainerOptions (Styled.Html Msg)
 
 
 defaultContainerOptions : ContainerMetaSection -> ContainerOptions
@@ -42,12 +57,12 @@ defaultContainerOptions metaSection =
     }
 
 
-container : ContainerMetaSection -> Styled.Html msg -> Container msg
+container : ContainerMetaSection -> Styled.Html Msg -> Container
 container =
     Container << defaultContainerOptions
 
 
-paddingTop : Float -> Container msg -> Container msg
+paddingTop : Float -> Container -> Container
 paddingTop val (Container opts children) =
     let
         newOpts =
@@ -56,7 +71,7 @@ paddingTop val (Container opts children) =
     Container newOpts children
 
 
-paddingRight : Float -> Container msg -> Container msg
+paddingRight : Float -> Container -> Container
 paddingRight val (Container opts children) =
     let
         newOpts =
@@ -64,7 +79,7 @@ paddingRight val (Container opts children) =
     in
     Container newOpts children
 
-paddingBottom : Float -> Container msg -> Container msg
+paddingBottom : Float -> Container -> Container
 paddingBottom val (Container opts children) =
     let
         newOpts =
@@ -73,7 +88,7 @@ paddingBottom val (Container opts children) =
     Container newOpts children
 
 
-paddingLeft : Float -> Container msg -> Container msg
+paddingLeft : Float -> Container -> Container
 paddingLeft val (Container opts children) =
     let
         newOpts =
@@ -97,7 +112,7 @@ type alias ContainerMetaSection =
     }
 
 
-demoBox : ContainerMetaSection -> Styled.Html msg -> Container msg
+demoBox : ContainerMetaSection -> Styled.Html Msg -> Container
 demoBox meta content =
     container meta content
         |> paddingBottom 50
@@ -107,8 +122,8 @@ demoBox meta content =
 
 
 
-toHtml : Container msg -> Styled.Html msg
-toHtml (Container opts children) =
+view : Model -> Container -> Styled.Html Msg
+view model (Container opts children) =
     let
         borderColor =
             hex "#f0f0f0"
@@ -131,7 +146,7 @@ toHtml (Container opts children) =
                     transition
                         [ Css.Transitions.opacity 250 ]
 
-                iconContainer icon extraStyles =
+                iconContainer icon msg extraStyles =
                     span
                         [ css
                             [ opacity inherit
@@ -139,6 +154,7 @@ toHtml (Container opts children) =
                                 [ opacity (num 1) ]
                             , opacityTransition
                             ]
+                        , onClick msg
                         ]
                         [ fromUnstyled <| icon <| extraStyles ++ commonIconStyles ]
 
@@ -156,10 +172,16 @@ toHtml (Container opts children) =
                             , opacityTransition
                             ]
                         ]
-                        [ iconContainer Icons.ellieLogo [ ("width", "12px") ]
-                        , iconContainer Icons.copyToClipboard [ ("width", "16px") ]
-                        , iconContainer Icons.codeOpenBrackets [ ("width", "17px") ]
+                        [ iconContainer Icons.ellieLogo SourceCodeVisibilityToggled [ ("width", "12px") ]
+                        , iconContainer Icons.copyToClipboard SourceCodeVisibilityToggled [ ("width", "16px") ]
+                        , iconContainer Icons.codeOpenBrackets SourceCodeVisibilityToggled [ ("width", "17px") ]
                         ]
+
+                sourceCodeView =
+                    if model.sourceCodeVisible then
+                        div [] [ text opts.meta.sourceCode ]
+                    else
+                        div [] []
             in
             [ div
                 [ css metaSectionStyles
@@ -182,6 +204,7 @@ toHtml (Container opts children) =
                     ]
                     [ text opts.meta.content ]
                 , callToActionIcons
+                , sourceCodeView
                 ]
             ]
         

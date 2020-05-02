@@ -1,4 +1,4 @@
-module Routes.ButtonComponent exposing (route)
+module Routes.ButtonComponent exposing (route, Model, Msg)
 
 import Ant.Typography.Text as Text
 import Css exposing (displayFlex)
@@ -46,12 +46,48 @@ example =
 """
 
 
-route : DocumentationRoute msg
+type alias Model =
+    { typeExampleSourceCodeVisible : Bool
+    , iconExampleSourceCodeVisible : Bool
+    }
+
+
+type DemoBox
+    = ButtonType
+    | ButtonWithIcon
+
+
+type Msg = DemoBoxMsg DemoBox Container.Msg
+
+update : Msg -> Model -> Model
+update (DemoBoxMsg demobox demoboxMsg) model =
+    case demobox of
+        ButtonType ->
+            let
+                { sourceCodeVisible } =
+                    Container.update demoboxMsg { sourceCodeVisible = model.typeExampleSourceCodeVisible }
+            in
+                { model | typeExampleSourceCodeVisible = sourceCodeVisible }
+        ButtonWithIcon ->
+            let
+                { sourceCodeVisible } =
+                    Container.update demoboxMsg { sourceCodeVisible = model.iconExampleSourceCodeVisible }
+            in
+                { model | iconExampleSourceCodeVisible = sourceCodeVisible }
+
+
+route : DocumentationRoute Model Msg
 route =
     { title = "Button"
     , category = General
     , view = view
+    , update = update
+    , initialModel =
+        { typeExampleSourceCodeVisible = False
+        , iconExampleSourceCodeVisible = False
+        }
     }
+
 
 codeText : String -> Styled.Html msg
 codeText value =
@@ -60,8 +96,9 @@ codeText value =
         |> Text.toHtml
         |> fromUnstyled
 
-typeExample : Styled.Html msg
-typeExample =
+
+typeExample : Model -> Styled.Html Msg
+typeExample { typeExampleSourceCodeVisible } =
     let
         styledTypeExampleContents =
             fromUnstyled TypeExample.example
@@ -78,11 +115,13 @@ typeExample =
 
     in
     Container.demoBox metaInfo styledDemoContents
-        |> Container.toHtml
+        |> Container.view { sourceCodeVisible = typeExampleSourceCodeVisible }
+        |> Styled.map (DemoBoxMsg ButtonType)
 
 
-view : msg -> Styled.Html msg
-view msg =
+
+view : Model -> Styled.Html Msg
+view model =
     div []
         [ documentationHeading "Button"
         , documentationText <| text "To trigger an operation."
@@ -115,5 +154,5 @@ view msg =
             ]
         , documentationSubheading "Examples" False
         , div []
-            [ div [] [ typeExample ], div [] [ ] ]
+            [ div [] [ typeExample model ], div [] [ ] ]
         ]
