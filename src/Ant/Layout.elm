@@ -135,6 +135,8 @@ getDisplayStyle tree =
     case tree of
         LayoutTree2 (SideBarNode _) _ -> style "display" "flex"
         LayoutTree2 _ (SideBarNode _) -> style "display" "flex"
+        LayoutTree3 (SideBarNode _) _ _ -> style "display" "flex"
+        LayoutTree3 _ (SideBarNode _) _ -> style "display" "flex"
         _ -> style "display" "block"
 
 
