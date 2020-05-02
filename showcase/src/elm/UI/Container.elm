@@ -1,10 +1,5 @@
 module UI.Container exposing
-    ( container
-    , demoBox
-    , noBottomBorder
-    , noLeftBorder
-    , noRightBorder
-    , noTopBorder
+    ( demoBox
     , paddingTop
     , paddingRight
     , paddingBottom
@@ -20,6 +15,10 @@ import Html.Styled.Attributes exposing (css)
 import UI.Typography exposing (commonTextStyles)
 
 
+
+
+
+
 type alias ContainerOptions =
     { paddingTop : Style
     , paddingRight : Style
@@ -29,7 +28,7 @@ type alias ContainerOptions =
     , showRightBorder : Bool
     , showBottomBorder : Bool
     , showLeftBorder : Bool
-    , meta : Maybe ContainerMetaSection
+    , meta : ContainerMetaSection
     }
 
 
@@ -37,8 +36,8 @@ type Container msg
     = Container ContainerOptions (Styled.Html msg)
 
 
-defaultContainerOptions : ContainerOptions
-defaultContainerOptions =
+defaultContainerOptions : ContainerMetaSection -> ContainerOptions
+defaultContainerOptions metaSection =
     { paddingTop = Css.paddingTop (px 10)
     , paddingRight = Css.paddingRight (px 10)
     , paddingBottom = Css.paddingBottom (px 10)
@@ -47,49 +46,13 @@ defaultContainerOptions =
     , showRightBorder = True
     , showBottomBorder = True
     , showLeftBorder = True
-    , meta = Nothing
+    , meta = metaSection
     }
 
 
-container : Styled.Html msg -> Container msg
+container : ContainerMetaSection -> Styled.Html msg -> Container msg
 container =
-    Container defaultContainerOptions
-
-
-noTopBorder : Container msg -> Container msg
-noTopBorder (Container opts children) =
-    let
-        newOpts =
-            { opts | showTopBorder = False }
-    in
-    Container newOpts children
-
-
-noRightBorder : Container msg -> Container msg
-noRightBorder (Container opts children) =
-    let
-        newOpts =
-            { opts | showRightBorder = False }
-    in
-    Container newOpts children
-
-
-noBottomBorder : Container msg -> Container msg
-noBottomBorder (Container opts children) =
-    let
-        newOpts =
-            { opts | showBottomBorder = False }
-    in
-    Container newOpts children
-
-
-noLeftBorder : Container msg -> Container msg
-noLeftBorder (Container opts children) =
-    let
-        newOpts =
-            { opts | showLeftBorder = False }
-    in
-    Container newOpts children
+    Container << defaultContainerOptions
 
 
 paddingTop : Float -> Container msg -> Container msg
@@ -142,25 +105,14 @@ type alias ContainerMetaSection =
     }
 
 
-withMetaSection : ContainerMetaSection -> Container msg -> Container msg
-withMetaSection meta (Container opts children) =
-    let
-        newOpts =
-            { opts | meta = Just meta }
-    in
-    Container newOpts children
-
-
-
-
 demoBox : ContainerMetaSection -> Styled.Html msg -> Container msg
 demoBox meta content =
-    container content
+    container meta content
         |> paddingBottom 50
         |> paddingTop 30
         |> paddingRight 24
         |> paddingLeft 24
-        |> withMetaSection meta
+
 
 
 toHtml : Container msg -> Styled.Html msg
@@ -169,107 +121,87 @@ toHtml (Container opts children) =
         borderColor =
             hex "#f0f0f0"
 
-        borderStyles =
-            List.map
-                (\( borderRule, enabled ) ->
-                    if enabled then
-                        borderRule (px 1) solid borderColor
-
-                    else
-                        borderRule (px 0) solid borderColor
-                )
-                [ ( borderTop3, opts.showTopBorder )
-                , ( borderRight3, opts.showRightBorder )
-                , ( borderBottom3, opts.showBottomBorder )
-                , ( borderLeft3, opts.showLeftBorder )
-                ]
-
         metaSectionContent =
-            case opts.meta of
-                Just { title, content } ->
-                    let
-                        metaSectionStyles = commonTextStyles ++
-                            [ position relative
-                            , borderBottom3 (px 1) solid borderColor
-                            , borderRight3 (px 1) solid borderColor
-                            , borderLeft3 (px 1) solid borderColor
-                            ]
-
-                        commonIconStyles =
-                            [ ("margin-right", "10px")
-                            , ("margin-left", "10px")
-                            ]
-
-                        opacityTransition =
-                            transition
-                                [ Css.Transitions.opacity 250 ]
-
-                        iconContainer icon extraStyles =
-                            span
-                                [ css
-                                    [ opacity inherit
-                                    , hover
-                                        [ opacity (num 1) ]
-                                    , opacityTransition
-                                    ]
-                                ]
-                                [ fromUnstyled <| icon <| extraStyles ++ commonIconStyles ]
-
-                        callToActionIcons =
-                            div
-                                [ css
-                                    [ Css.paddingTop (px 12)
-                                    , textAlign center
-                                    , borderTop3 (px 1) dashed borderColor
-                                    , Css.paddingTop (px 15)
-                                    , Css.paddingBottom (px 15)
-                                    , opacity (num 0.5)
-                                    , hover
-                                        [ opacity (num 0.6) ]
-                                    , opacityTransition
-                                    ]
-                                ]
-                                [ iconContainer Icons.ellieLogo [ ("width", "12px") ]
-                                , iconContainer Icons.copyToClipboard [ ("width", "16px") ]
-                                , iconContainer Icons.codeOpenBrackets [ ("width", "17px") ]
-                                ]
-                    in
-                    [ div
-                        [ css metaSectionStyles
-                        ]
-                        [ div
-                            [ css
-                                [ fontWeight (int 500)
-                                , Css.position Css.absolute
-                                , top (px -10)
-                                , Css.paddingLeft (px 8)
-                                , Css.paddingRight (px 8)
-                                , backgroundColor (rgb 255 255 255)
-                                , left (px 16)
-                                ]
-                            ]
-                            [ text title ]
-                        , div
-                            [ css
-                                [ padding4 (px 18) (px 24) (px 12) (px 24) ]
-                            ]
-                            [ text content ]
-                        , callToActionIcons
-                        ]
+            let
+                metaSectionStyles = commonTextStyles ++
+                    [ position relative
+                    , borderBottom3 (px 1) solid borderColor
+                    , borderRight3 (px 1) solid borderColor
+                    , borderLeft3 (px 1) solid borderColor
                     ]
 
-                Nothing -> []
+                commonIconStyles =
+                    [ ("margin-right", "10px")
+                    , ("margin-left", "10px")
+                    ]
+
+                opacityTransition =
+                    transition
+                        [ Css.Transitions.opacity 250 ]
+
+                iconContainer icon extraStyles =
+                    span
+                        [ css
+                            [ opacity inherit
+                            , hover
+                                [ opacity (num 1) ]
+                            , opacityTransition
+                            ]
+                        ]
+                        [ fromUnstyled <| icon <| extraStyles ++ commonIconStyles ]
+
+                callToActionIcons =
+                    div
+                        [ css
+                            [ Css.paddingTop (px 12)
+                            , textAlign center
+                            , borderTop3 (px 1) dashed borderColor
+                            , Css.paddingTop (px 15)
+                            , Css.paddingBottom (px 15)
+                            , opacity (num 0.5)
+                            , hover
+                                [ opacity (num 0.6) ]
+                            , opacityTransition
+                            ]
+                        ]
+                        [ iconContainer Icons.ellieLogo [ ("width", "12px") ]
+                        , iconContainer Icons.copyToClipboard [ ("width", "16px") ]
+                        , iconContainer Icons.codeOpenBrackets [ ("width", "17px") ]
+                        ]
+            in
+            [ div
+                [ css metaSectionStyles
+                ]
+                [ div
+                    [ css
+                        [ fontWeight (int 500)
+                        , Css.position Css.absolute
+                        , top (px -10)
+                        , Css.paddingLeft (px 8)
+                        , Css.paddingRight (px 8)
+                        , backgroundColor (rgb 255 255 255)
+                        , left (px 16)
+                        ]
+                    ]
+                    [ text opts.meta.title ]
+                , div
+                    [ css
+                        [ padding4 (px 18) (px 24) (px 12) (px 24) ]
+                    ]
+                    [ text opts.meta.content ]
+                , callToActionIcons
+                ]
+            ]
         
         mainContainerSection =
             div
                 [ css
-                    (borderStyles
-                        ++ [ opts.paddingTop
-                        , opts.paddingRight
-                        , opts.paddingBottom
-                        , opts.paddingLeft
-                        ]
-                    )
+                    [ border3 (px 1) solid borderColor
+                    , opts.paddingTop
+                    , opts.paddingRight
+                    , opts.paddingBottom
+                    , opts.paddingLeft
+                    ]
                 ]
                 [ children ]
 

@@ -19,7 +19,6 @@ import Css exposing
     , marginRight
     , paddingLeft
     , paddingRight
-    , paddingTop
     , px
     , width
     )
@@ -32,7 +31,6 @@ import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 
 import Routes.ButtonComponent as ButtonPage
 import Routes.TypographyComponent as TypographyPage
-import UI.Container as Container exposing (container)
 import UI.Typography exposing (logoText)
 import UI.Footer exposing (footer)
 import Utils exposing (ComponentCategory(..))
@@ -161,14 +159,7 @@ navBar =
             ]
         -- Search Bar Placeholder for Algolia Search Bar
         , Styled.div [ css verticalCenteringStyles ]
-            [ container (Styled.text "search coming soon ...")
-                |> Container.noTopBorder
-                |> Container.noRightBorder
-                |> Container.noBottomBorder
-                |> Container.paddingTop 0
-                |> Container.paddingBottom 0
-                |> Container.paddingLeft 16
-                |> Container.toHtml
+            [ Styled.text "search coming soon ..."
             ]
         , Styled.nav [ css verticalCenteringStyles ]
             [ Styled.a [ href "https://ant.design/docs/spec/introduce" ] [ Styled.text "Design" ]

@@ -1,12 +1,11 @@
 module Routes.ButtonComponent exposing (route)
 
-import Ant.Space as Space
 import Ant.Typography.Text as Text
 import Css exposing (displayFlex)
 import Html.Styled as Styled exposing (div, span, text, fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Routes.ButtonComponent.TypeExample as TypeExample
-import UI.Container as Container exposing (container)
+import UI.Container as Container
 import UI.Typography
     exposing
         ( documentationHeading
