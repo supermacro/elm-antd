@@ -38,11 +38,11 @@ typeExample =
             fromUnstyled TypeExample.example
 
     in
-    container
+    Container.demoBox
         (div [ css [ displayFlex ] ] [ styledTypeExampleContents ] )
         |> Container.withMetaSection
             { title = "Type"
-            , content = "There are various kinds of button \"types\"."
+            , content = "There are \"primary\", \"default\", \"dashed\" and \"link\" buttons in Elm Antd."
             }
         |> Container.toHtml
 
