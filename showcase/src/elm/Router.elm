@@ -34,6 +34,7 @@ import Routes.ButtonComponent as ButtonPage
 import Routes.TypographyComponent as TypographyPage
 import UI.Container as Container exposing (container)
 import UI.Typography exposing (logoText)
+import UI.Footer exposing (footer)
 import Utils exposing (ComponentCategory(..))
 
 type alias Route =
@@ -281,7 +282,11 @@ view toMsg model =
                 (Layout.header <| toUnstyled navBar)
                 (Layout.layout2
                     sidebar
-                    (Layout.content <| toUnstyled componentPageShell))
+                    (Layout.layout2
+                        (Layout.content <| toUnstyled componentPageShell)
+                        (Layout.footer <| toUnstyled footer))
+                )
+
     in
     { title = label ++ " - Elm Ant Design"
     , body = [ Html.map toMsg <| Layout.toHtml layout ]
