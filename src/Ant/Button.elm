@@ -20,6 +20,7 @@ import Html.Styled.Events as Events
 -- TODO:
 -- animate click: https://webdevtrick.com/pure-css-click-effect/
 -- https://old.reddit.com/r/css/comments/g5fho5/how_to_create_ants_button_onclick_box_shadow_fade/
+-- https://codesandbox.io/s/laughing-ride-v3ot1
 
 
 type ButtonType
@@ -110,6 +111,8 @@ toHtml (Button options label) =
             , height (px 34)
             , outline none
             , Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
+            , hover
+                [ cursor pointer ]
             ]
 
         defaultButtonAttributes =
