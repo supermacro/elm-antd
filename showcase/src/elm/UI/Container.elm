@@ -9,13 +9,13 @@ module UI.Container exposing
     , paddingRight
     , paddingBottom
     , paddingLeft
-    , withMetaSection
     , toHtml
     )
 
 import Ant.Icons as Icons
 import Css exposing (..)
-import Html.Styled as Styled exposing (fromUnstyled, div, text)
+import Css.Transitions exposing (transition)
+import Html.Styled as Styled exposing (fromUnstyled, div, span, text)
 import Html.Styled.Attributes exposing (css)
 import UI.Typography exposing (commonTextStyles)
 
@@ -137,6 +137,8 @@ paddingLeft val (Container opts children) =
 type alias ContainerMetaSection =
     { title : String
     , content : String
+    , ellieDemo : String
+    , sourceCode : String
     }
 
 
@@ -149,16 +151,16 @@ withMetaSection meta (Container opts children) =
     Container newOpts children
 
 
--- withMetaSection : String -> Html msg -> Container msg -> Container msg
--- withMetaSection : sectionLabel content
 
-demoBox : Styled.Html msg -> Container msg
-demoBox content =
+
+demoBox : ContainerMetaSection -> Styled.Html msg -> Container msg
+demoBox meta content =
     container content
         |> paddingBottom 50
         |> paddingTop 30
         |> paddingRight 24
         |> paddingLeft 24
+        |> withMetaSection meta
 
 
 toHtml : Container msg -> Styled.Html msg
@@ -198,6 +200,21 @@ toHtml (Container opts children) =
                             , ("margin-left", "10px")
                             ]
 
+                        opacityTransition =
+                            transition
+                                [ Css.Transitions.opacity 250 ]
+
+                        iconContainer icon extraStyles =
+                            span
+                                [ css
+                                    [ opacity inherit
+                                    , hover
+                                        [ opacity (num 1) ]
+                                    , opacityTransition
+                                    ]
+                                ]
+                                [ fromUnstyled <| icon <| extraStyles ++ commonIconStyles ]
+
                         callToActionIcons =
                             div
                                 [ css
@@ -206,11 +223,15 @@ toHtml (Container opts children) =
                                     , borderTop3 (px 1) dashed borderColor
                                     , Css.paddingTop (px 15)
                                     , Css.paddingBottom (px 15)
+                                    , opacity (num 0.5)
+                                    , hover
+                                        [ opacity (num 0.6) ]
+                                    , opacityTransition
                                     ]
                                 ]
-                                [ fromUnstyled <| Icons.ellieLogo <| ("width", "10px") :: commonIconStyles
-                                , fromUnstyled <| Icons.copyToClipboard <| ("width", "14px") :: commonIconStyles
-                                , fromUnstyled <| Icons.codeOpenBrackets <| ("width", "15px") :: commonIconStyles
+                                [ iconContainer Icons.ellieLogo [ ("width", "12px") ]
+                                , iconContainer Icons.copyToClipboard [ ("width", "16px") ]
+                                , iconContainer Icons.codeOpenBrackets [ ("width", "17px") ]
                                 ]
                     in
                     [ div

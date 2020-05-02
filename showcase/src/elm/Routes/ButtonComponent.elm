@@ -17,6 +17,36 @@ import UI.Typography
 import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
+
+typeExampleStr : String
+typeExampleStr = """module Routes.ButtonComponent.TypeExample exposing (example)
+
+import Ant.Button as Btn exposing (button, toHtml, ButtonType(..))
+import Ant.Space as Space
+import Html exposing (Html)
+
+example : Html msg
+example =
+    let
+        primaryButton =
+            button "Primary"
+            |> Btn.withType Primary
+            |> toHtml
+
+        defaultButotn =
+            button "Default"
+            |> Btn.withType Default
+            |> toHtml
+    
+    in
+    Space.toHtml <|
+        Space.space
+            [ primaryButton
+            , defaultButotn
+            ]
+"""
+
+
 route : DocumentationRoute msg
 route =
     { title = "Button"
@@ -37,13 +67,18 @@ typeExample =
         styledTypeExampleContents =
             fromUnstyled TypeExample.example
 
-    in
-    Container.demoBox
-        (div [ css [ displayFlex ] ] [ styledTypeExampleContents ] )
-        |> Container.withMetaSection
+        metaInfo = 
             { title = "Type"
             , content = "There are \"primary\", \"default\", \"dashed\" and \"link\" buttons in Elm Antd."
+            , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
+            , sourceCode = typeExampleStr
             }
+
+        styledDemoContents =
+            div [ css [ displayFlex ] ] [ styledTypeExampleContents ]
+
+    in
+    Container.demoBox metaInfo styledDemoContents
         |> Container.toHtml
 
 
