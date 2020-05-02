@@ -1,5 +1,6 @@
 module UI.Container exposing
     ( container
+    , demoBox
     , noBottomBorder
     , noLeftBorder
     , noRightBorder
@@ -12,8 +13,9 @@ module UI.Container exposing
     , toHtml
     )
 
+import Ant.Icons as Icons
 import Css exposing (..)
-import Html.Styled as Styled exposing (div, text)
+import Html.Styled as Styled exposing (fromUnstyled, div, text)
 import Html.Styled.Attributes exposing (css)
 import UI.Typography exposing (commonTextStyles)
 
@@ -150,6 +152,15 @@ withMetaSection meta (Container opts children) =
 -- withMetaSection : String -> Html msg -> Container msg -> Container msg
 -- withMetaSection : sectionLabel content
 
+demoBox : Styled.Html msg -> Container msg
+demoBox content =
+    container content
+        |> paddingBottom 50
+        |> paddingTop 30
+        |> paddingRight 24
+        |> paddingLeft 24
+
+
 toHtml : Container msg -> Styled.Html msg
 toHtml (Container opts children) =
     let
@@ -174,9 +185,55 @@ toHtml (Container opts children) =
         metaSectionContent =
             case opts.meta of
                 Just { title, content } ->
-                    [ div [ css commonTextStyles ]
-                        [ div [ css [ fontWeight (int 500) ] ] [ text title ]
-                        , text content
+                    let
+                        metaSectionStyles = commonTextStyles ++
+                            [ position relative
+                            , borderBottom3 (px 1) solid borderColor
+                            , borderRight3 (px 1) solid borderColor
+                            , borderLeft3 (px 1) solid borderColor
+                            ]
+
+                        commonIconStyles =
+                            [ ("margin-right", "10px")
+                            , ("margin-left", "10px")
+                            ]
+
+                        callToActionIcons =
+                            div
+                                [ css
+                                    [ Css.paddingTop (px 12)
+                                    , textAlign center
+                                    , borderTop3 (px 1) dashed borderColor
+                                    , Css.paddingTop (px 15)
+                                    , Css.paddingBottom (px 15)
+                                    ]
+                                ]
+                                [ fromUnstyled <| Icons.ellieLogo <| ("width", "10px") :: commonIconStyles
+                                , fromUnstyled <| Icons.copyToClipboard <| ("width", "14px") :: commonIconStyles
+                                , fromUnstyled <| Icons.codeOpenBrackets <| ("width", "15px") :: commonIconStyles
+                                ]
+                    in
+                    [ div
+                        [ css metaSectionStyles
+                        ]
+                        [ div
+                            [ css
+                                [ fontWeight (int 500)
+                                , Css.position Css.absolute
+                                , top (px -10)
+                                , Css.paddingLeft (px 8)
+                                , Css.paddingRight (px 8)
+                                , backgroundColor (rgb 255 255 255)
+                                , left (px 16)
+                                ]
+                            ]
+                            [ text title ]
+                        , div
+                            [ css
+                                [ padding4 (px 18) (px 24) (px 12) (px 24) ]
+                            ]
+                            [ text content ]
+                        , callToActionIcons
                         ]
                     ]
 
