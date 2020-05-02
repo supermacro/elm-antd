@@ -24,10 +24,6 @@ type alias ContainerOptions =
     , paddingRight : Style
     , paddingBottom : Style
     , paddingLeft : Style
-    , showTopBorder : Bool
-    , showRightBorder : Bool
-    , showBottomBorder : Bool
-    , showLeftBorder : Bool
     , meta : ContainerMetaSection
     }
 
@@ -42,10 +38,6 @@ defaultContainerOptions metaSection =
     , paddingRight = Css.paddingRight (px 10)
     , paddingBottom = Css.paddingBottom (px 10)
     , paddingLeft = Css.paddingLeft (px 10)
-    , showTopBorder = True
-    , showRightBorder = True
-    , showBottomBorder = True
-    , showLeftBorder = True
     , meta = metaSection
     }
 
