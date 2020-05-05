@@ -24,13 +24,14 @@ import Css exposing
     )
 import Dict exposing (Dict)
 import Html exposing (Html, a, div, text, header, nav)
-import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
+import Html.Styled as Styled exposing (toUnstyled)
 import Html.Styled.Attributes exposing (css, href, src, alt)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 
 import Routes.ButtonComponent as ButtonPage
 import Routes.TypographyComponent as TypographyPage
+import Routes.TooltipComponent as TooltipComponent
 import UI.Typography exposing (logoText)
 import UI.Footer exposing (footer)
 import Utils exposing (ComponentCategory(..))
@@ -56,10 +57,24 @@ type Msg
 
 
 
-componentList : List ( Route, ComponentCategory )
+componentList : List ( Route, ComponentCategory, Model -> Styled.Html Msg )
 componentList =
-    [ ( ButtonPage.route.title, ButtonPage.route.category )
-    , ( TypographyPage.route.title, TypographyPage.route.category )
+    let
+        buttonPageView model =
+            ButtonPage.route.view model.buttonPageModel
+                |> Styled.map ButtonPageMessage
+        
+        typographyPageView model = 
+            TypographyPage.route.view model.typographyPageModel
+                |> Styled.map never
+
+        tolltipPageView _ =
+            TooltipComponent.route.view ()
+                |> Styled.map never
+    in
+    [ ( ButtonPage.route.title, ButtonPage.route.category, buttonPageView )
+    , ( TypographyPage.route.title, TypographyPage.route.category, typographyPageView )
+    , ( TooltipComponent.route.title, TooltipComponent.route.category, tolltipPageView )
     ]
 
 
@@ -93,7 +108,7 @@ parser =
     let
         routeParsers =
             List.map
-                (\( pageTitle, _ ) -> Parser.map pageTitle (s "components" </> s (String.toLower pageTitle)))
+                (\( pageTitle, _, _ ) -> Parser.map pageTitle (s "components" </> s (String.toLower pageTitle)))
                 componentList
     in
     oneOf routeParsers
@@ -193,7 +208,7 @@ componentMenu activeRoute =
         categoryDict : Dict String (List Route)
         categoryDict =
             List.foldl
-                (\( pageTitle, componentCategory ) categoryDictAccumulator ->
+                (\( pageTitle, componentCategory, _ ) categoryDictAccumulator ->
                     let
                         categoryString =
                             categoryToString componentCategory
@@ -242,39 +257,37 @@ componentMenu activeRoute =
     Menu.view menu
 
 
+
+getPageTitleAndContentView : Route -> ( Route, Model -> Styled.Html Msg)
+getPageTitleAndContentView activeRoute =
+    let
+        notFoundPage = 
+            ( "404", \_ -> Styled.div [] [ Styled.text "404 not found" ] )
+    in
+    List.filter
+        (\(pageTitle, _, _) -> pageTitle == activeRoute)
+        componentList
+    |> List.map
+        (\(pageTitle, _, content) -> (pageTitle, content))
+    |> List.head
+    |> Maybe.withDefault notFoundPage
+
+
+
 view : (Msg -> msg) -> Model -> Browser.Document msg
 view toMsg model =
     let
-        ( label, componentContent ) =
-            if model.activeRoute == ButtonPage.route.title then
-                ( model.activeRoute
-                , ButtonPage.route.view model.buttonPageModel
-                    |> Styled.map ButtonPageMessage
-                    |> toUnstyled
-                )
-
-            else if model.activeRoute == TypographyPage.route.title then
-                ( model.activeRoute
-                , TypographyPage.route.view model.typographyPageModel
-                    |> Styled.map never
-                    |> toUnstyled
-                )
-
-            else
-                ( "404", div [] [ text "404 not found" ] )
+        ( label, componentContentView ) =
+            getPageTitleAndContentView model.activeRoute
 
         componentPageShell =
-            let
-                styledComponentContent =
-                    fromUnstyled componentContent
-            in
             Styled.div
                 [ css
                     [ paddingRight (px 170)
                     , paddingLeft (px 64)
                     ]
                 ]
-                [ styledComponentContent ]
+                [ componentContentView model ]
 
         sidebar =
             Layout.sidebar (componentMenu model.activeRoute)
