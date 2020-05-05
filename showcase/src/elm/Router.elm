@@ -31,7 +31,7 @@ import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 
 import Routes.ButtonComponent as ButtonPage
 import Routes.TypographyComponent as TypographyPage
-import Routes.TooltipComponent as TooltipComponent
+import Routes.TooltipComponent as TooltipPage
 import UI.Typography exposing (logoText)
 import UI.Footer exposing (footer)
 import Utils exposing (ComponentCategory(..))
@@ -44,6 +44,7 @@ type alias Model =
     { activeRoute : Route
     , buttonPageModel : ButtonPage.Model
     , typographyPageModel : TypographyPage.Model
+    , tooltipPageModel : TooltipPage.Model
     }
 
 
@@ -53,6 +54,7 @@ type Msg
     = UrlChanged Url
     | MenuItemClicked Href
     | ButtonPageMessage ButtonPage.Msg
+    | TooltipPageMessage TooltipPage.Msg
     | TypographyPageMessage
 
 
@@ -68,13 +70,13 @@ componentList =
             TypographyPage.route.view model.typographyPageModel
                 |> Styled.map never
 
-        tolltipPageView _ =
-            TooltipComponent.route.view ()
-                |> Styled.map never
+        tooltipPageView model =
+            TooltipPage.route.view model.tooltipPageModel
+                |> Styled.map TooltipPageMessage
     in
     [ ( ButtonPage.route.title, ButtonPage.route.category, buttonPageView )
     , ( TypographyPage.route.title, TypographyPage.route.category, typographyPageView )
-    , ( TooltipComponent.route.title, TooltipComponent.route.category, tolltipPageView )
+    , ( TooltipPage.route.title, TooltipPage.route.category, tooltipPageView )
     ]
 
 
@@ -128,6 +130,7 @@ init url =
     ( { activeRoute = route
       , buttonPageModel = ButtonPage.route.initialModel
       , typographyPageModel = TypographyPage.route.initialModel
+      , tooltipPageModel = TooltipPage.route.initialModel
       }
     , Cmd.none
     )
@@ -152,9 +155,16 @@ update navKey msg model =
             }
             , Cmd.none
             )
-            
-        _ -> ( model, Cmd.none )
 
+        TooltipPageMessage tooltipPageMessage ->
+            ( { model |
+                    tooltipPageModel = TooltipPage.route.update tooltipPageMessage model.tooltipPageModel }
+            , Cmd.none
+            )
+
+        TypographyPageMessage ->
+            ( model, Cmd.none )
+            
 
 navBar : Styled.Html msg
 navBar =

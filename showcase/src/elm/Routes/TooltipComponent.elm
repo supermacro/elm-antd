@@ -1,12 +1,17 @@
-module Routes.TooltipComponent exposing (route, Model)
+module Routes.TooltipComponent exposing (route, Model, Msg)
 
-import Html.Styled as Styled exposing (div, text)
+import Css exposing (displayFlex)
+import Html.Styled as Styled exposing (div, text, fromUnstyled)
+import Html.Styled.Attributes exposing (css)
 
+import Routes.TooltipComponent.BasicExample as BasicExample
+import UI.Container as Container
 import UI.Typography as Typography
     exposing
         ( documentationHeading
         , documentationText
         , documentationSubheading
+        , documentationUnorderedList
         )
 
 import Utils exposing (ComponentCategory(..), DocumentationRoute)
@@ -15,23 +20,110 @@ import Utils exposing (ComponentCategory(..), DocumentationRoute)
 title : String
 title = "Tooltip"
 
-type alias Model = ()
+type alias Model =
+    { basicExampleSourceCodeVisible : Bool
+    , placementExampleSourceCodeVisible : Bool
+    }
+
+type DemoBox
+    = BasicDemo
+    | PlacementDemo
 
 
-route : DocumentationRoute Model Never
+type Msg = DemoBoxMsg DemoBox Container.Msg
+
+
+route : DocumentationRoute Model Msg
 route =
     { title = title
     , category = DataDisplay
     , view = view
-    , update = \_ m -> m
-    , initialModel = ()
+    , update = update
+    , initialModel =
+        { basicExampleSourceCodeVisible = False
+        , placementExampleSourceCodeVisible = False
+        }
     }
 
-view : Model -> Styled.Html Never
-view _ =
+
+update : Msg -> Model -> Model
+update (DemoBoxMsg demobox demoboxMsg) model =
+    case demobox of
+        BasicDemo ->
+            let
+                { sourceCodeVisible } =
+                    Container.update demoboxMsg { sourceCodeVisible = model.basicExampleSourceCodeVisible }
+            in
+                { model | basicExampleSourceCodeVisible = sourceCodeVisible }
+        PlacementDemo ->
+            let
+                { sourceCodeVisible } =
+                    Container.update demoboxMsg { sourceCodeVisible = model.placementExampleSourceCodeVisible }
+            in
+                { model | placementExampleSourceCodeVisible = sourceCodeVisible }
+
+
+basicExampleStr : String
+basicExampleStr = """module Routes.TooltipComponent.BasicExample exposing (example)
+
+import Ant.Button as Btn exposing (button, toHtml, ButtonType(..))
+import Ant.Space as Space
+import Html exposing (Html)
+
+example : Html msg
+example =
+    let
+        primaryButton =
+            button "Primary"
+            |> Btn.withType Primary
+            |> toHtml
+
+        defaultButotn =
+            button "Default"
+            |> Btn.withType Default
+            |> toHtml
+    
+    in
+    Space.toHtml <|
+        Space.space
+            [ primaryButton
+            , defaultButotn
+            ]
+"""
+
+basicExample : Model -> Styled.Html Msg
+basicExample { basicExampleSourceCodeVisible } =
+    let
+        styledTypeExampleContents =
+            fromUnstyled BasicExample.example
+
+        metaInfo = 
+            { title = "Basic"
+            , content = "The simplest usage."
+            , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
+            , sourceCode = basicExampleStr
+            }
+
+        styledDemoContents =
+            div [ css [ displayFlex ] ] [ styledTypeExampleContents ]
+
+    in
+    Container.demoBox metaInfo styledDemoContents
+        |> Container.view { sourceCodeVisible = basicExampleSourceCodeVisible }
+        |> Styled.map (DemoBoxMsg BasicDemo)
+
+
+view : Model -> Styled.Html Msg
+view model =
     div []
         [ documentationHeading title
         , documentationText <| text "A simple text popup tip."
         , documentationSubheading Typography.WithAnchorLink "When To Use"
+        , documentationUnorderedList
+            [ text "The tip is shown on mouse enter, and is hidden on mouse leave. The Tooltip doesn't support complex text or operations."
+            , text "To provide an explanation of a button/text/operation. It's often used instead of the html title attribute."
+            ]
+        , documentationSubheading Typography.WithoutAnchorLink "Examples"
+        , div []
+            [ div [] [ basicExample model ], div [] [ ] ]
         ]
-        
