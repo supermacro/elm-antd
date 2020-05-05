@@ -12,9 +12,12 @@ module UI.Container exposing
 import Ant.Icons as Icons
 import Css exposing (..)
 import Css.Transitions exposing (transition)
+import Html as Unstyled
 import Html.Styled as Styled exposing (fromUnstyled, div, span, text)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
+import SyntaxHighlight exposing (useTheme, gitHub, elm, toBlockHtml)
+
 import UI.Typography exposing (commonTextStyles)
 
 
@@ -121,13 +124,33 @@ demoBox meta content =
         |> paddingLeft 24
 
 
+borderColor : Color
+borderColor =
+    hex "#f0f0f0"
+
+viewSourceCode : String -> Styled.Html Msg
+viewSourceCode sourceCode =
+    let
+        unstyledSourceCodeView =
+            elm sourceCode
+                |> Result.map (toBlockHtml Nothing)
+                |> Result.withDefault
+                    (Unstyled.code [] [ Unstyled.text sourceCode ])
+    in
+    div
+        [ css
+            [ padding2 (px 15) (px 25)
+            , borderTop3 (px 1) dashed borderColor
+            ]
+        ]
+        [ fromUnstyled <| useTheme gitHub
+        , fromUnstyled unstyledSourceCodeView
+        ]
+
 
 view : Model -> Container -> Styled.Html Msg
 view model (Container opts children) =
     let
-        borderColor =
-            hex "#f0f0f0"
-
         metaSectionContent =
             let
                 metaSectionStyles = commonTextStyles ++
@@ -140,6 +163,7 @@ view model (Container opts children) =
                 commonIconStyles =
                     [ ("margin-right", "10px")
                     , ("margin-left", "10px")
+                    , ("cursor", "pointer")
                     ]
 
                 opacityTransition =
@@ -179,7 +203,7 @@ view model (Container opts children) =
 
                 sourceCodeView =
                     if model.sourceCodeVisible then
-                        div [] [ text opts.meta.sourceCode ]
+                        viewSourceCode opts.meta.sourceCode
                     else
                         div [] []
             in
