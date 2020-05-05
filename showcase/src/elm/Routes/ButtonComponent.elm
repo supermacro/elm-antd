@@ -6,7 +6,7 @@ import Html.Styled as Styled exposing (div, span, text, fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Routes.ButtonComponent.TypeExample as TypeExample
 import UI.Container as Container
-import UI.Typography
+import UI.Typography as Typography
     exposing
         ( documentationHeading
         , documentationSubheading
@@ -125,7 +125,7 @@ view model =
     div []
         [ documentationHeading "Button"
         , documentationText <| text "To trigger an operation."
-        , documentationSubheading "When To Use" True
+        , documentationSubheading Typography.WithAnchorLink "When To Use"
         , documentationText <| text "A button means an operation (or a series of operations). Clicking a button will trigger corresponding business logic."
         , documentationText <| text "In Ant Design we provide 4 types of button."
         , documentationUnorderedList
@@ -152,7 +152,7 @@ view model =
                 , text ": add loading spinner in button, avoiding multiple submits too."
                 ]
             ]
-        , documentationSubheading "Examples" False
+        , documentationSubheading Typography.WithoutAnchorLink "Examples"
         , div []
             [ div [] [ typeExample model ], div [] [ ] ]
         ]

@@ -1,5 +1,6 @@
 module UI.Typography exposing
-    ( documentationHeading
+    ( SubHeadingOptions(..)
+    , documentationHeading
     , documentationSubheading
     , documentationText
     , documentationUnorderedList
@@ -68,8 +69,10 @@ documentationHeading value =
         [ Styled.text value ]
 
 
-documentationSubheading : String -> Bool -> Styled.Html msg
-documentationSubheading value withAnchorLink =
+type SubHeadingOptions = WithAnchorLink | WithoutAnchorLink
+
+documentationSubheading : SubHeadingOptions -> String -> Styled.Html msg
+documentationSubheading opts value =
     let
         subheadingLink =
             String.replace " " "-" value
@@ -106,11 +109,11 @@ documentationSubheading value withAnchorLink =
             ]
 
         optionalAnchorLink =
-            if withAnchorLink then
-                [ styledAnchorLink, global hoverAnimationCss ]
+            case opts of
+                WithAnchorLink -> 
+                    [ styledAnchorLink, global hoverAnimationCss ]
 
-            else
-                []
+                _ -> []
 
         styles =
             css
