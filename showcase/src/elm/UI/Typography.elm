@@ -5,16 +5,26 @@ module UI.Typography exposing
     , documentationText
     , documentationUnorderedList
     , logoText
+    , codeText
     , commonTextStyles
     )
 
 import Ant.Palette as Palette exposing (primaryColor)
 import Ant.Typography exposing (fontList, headingColorRgba)
+import Ant.Typography.Text as Text
 import Css exposing (..)
 import Css.Global exposing (global, selector)
 import Css.Transitions exposing (transition)
-import Html.Styled as Styled
+import Html.Styled as Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (class, css, href)
+
+
+codeText : String -> Styled.Html msg
+codeText value =
+    Text.text value
+        |> Text.code
+        |> Text.toHtml
+        |> fromUnstyled
 
 
 commonStyles : List Style

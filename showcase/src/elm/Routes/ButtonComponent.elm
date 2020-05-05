@@ -1,6 +1,5 @@
 module Routes.ButtonComponent exposing (route, Model, Msg)
 
-import Ant.Typography.Text as Text
 import Css exposing (displayFlex)
 import Html.Styled as Styled exposing (div, span, text, fromUnstyled)
 import Html.Styled.Attributes exposing (css)
@@ -12,6 +11,7 @@ import UI.Typography as Typography
         , documentationSubheading
         , documentationText
         , documentationUnorderedList
+        , codeText
         )
 import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
@@ -87,14 +87,6 @@ route =
         , iconExampleSourceCodeVisible = False
         }
     }
-
-
-codeText : String -> Styled.Html msg
-codeText value =
-    Text.text value
-        |> Text.code
-        |> Text.toHtml
-        |> fromUnstyled
 
 
 typeExample : Model -> Styled.Html Msg
