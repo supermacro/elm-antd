@@ -4,6 +4,8 @@
 
 Bringing the amazing [Ant Design](https://ant.design) kit to Elm!
 
+Styled entirely using `elm-css`! No external stylesheet needed. Just `elm install supermacro/elm-antd` and you're all good to go!
+
 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 
 
 > Elm Ant Design is not fully implemented and in a exploratory phase. The current API is subject to change without notice until it lands at a `v1.0.0` release. At which point, semver rules will be properly followed.
