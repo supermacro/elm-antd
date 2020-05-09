@@ -10,9 +10,10 @@ module UI.Container exposing
     )
 
 import Ant.Icons as Icons
+import Ant.Tooltip as Tooltip exposing (tooltip)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
-import Html as Unstyled
+import Html as Unstyled exposing (Html)
 import Html.Styled as Styled exposing (fromUnstyled, div, span, text)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
@@ -148,6 +149,44 @@ viewSourceCode sourceCode =
         ]
 
 
+opacityTransition : Style
+opacityTransition =
+    transition
+        [ Css.Transitions.opacity 250 ]
+
+
+iconContainer :
+    (List (String, String) -> Html msg)
+    -> String
+    -> msg 
+    -> List ( String, String )
+    -> Styled.Html msg
+iconContainer icon tooltipText msg extraStyles =
+    let
+        commonIconStyles =
+            [ ("margin-right", "10px")
+            , ("margin-left", "10px")
+            , ("cursor", "pointer")
+            ]
+
+        unstyledIconWithTooltip =
+            icon (extraStyles ++ commonIconStyles)
+            |> tooltip tooltipText
+            |> Tooltip.toHtml
+    in
+    span
+        [ css
+            [ opacity inherit
+            , hover
+                [ opacity (num 1) ]
+            , opacityTransition
+            ]
+        , onClick msg
+        ]
+        [ fromUnstyled unstyledIconWithTooltip ]
+
+
+
 view : Model -> Container -> Styled.Html Msg
 view model (Container opts children) =
     let
@@ -159,28 +198,6 @@ view model (Container opts children) =
                     , borderRight3 (px 1) solid borderColor
                     , borderLeft3 (px 1) solid borderColor
                     ]
-
-                commonIconStyles =
-                    [ ("margin-right", "10px")
-                    , ("margin-left", "10px")
-                    , ("cursor", "pointer")
-                    ]
-
-                opacityTransition =
-                    transition
-                        [ Css.Transitions.opacity 250 ]
-
-                iconContainer icon msg extraStyles =
-                    span
-                        [ css
-                            [ opacity inherit
-                            , hover
-                                [ opacity (num 1) ]
-                            , opacityTransition
-                            ]
-                        , onClick msg
-                        ]
-                        [ fromUnstyled <| icon <| extraStyles ++ commonIconStyles ]
 
                 callToActionIcons =
                     div
@@ -196,9 +213,23 @@ view model (Container opts children) =
                             , opacityTransition
                             ]
                         ]
-                        [ iconContainer Icons.ellieLogo SourceCodeVisibilityToggled [ ("width", "12px") ]
-                        , iconContainer Icons.copyToClipboard SourceCodeVisibilityToggled [ ("width", "16px") ]
-                        , iconContainer Icons.codeOpenBrackets SourceCodeVisibilityToggled [ ("width", "17px") ]
+                        [ iconContainer
+                            Icons.ellieLogo
+                            "Open in Ellie"
+                            SourceCodeVisibilityToggled
+                            [ ("width", "12px") ]
+
+                        , iconContainer
+                            Icons.copyToClipboard
+                            "Copy code"
+                            SourceCodeVisibilityToggled
+                            [ ("width", "16px") ]
+
+                        , iconContainer
+                            Icons.codeOpenBrackets
+                            "Show code"
+                            SourceCodeVisibilityToggled
+                            [ ("width", "17px") ]
                         ]
 
                 sourceCodeView =
