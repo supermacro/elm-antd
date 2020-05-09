@@ -1,7 +1,8 @@
 module Ant.Tooltip exposing
     ( tooltip
-    , topRight
     , toHtml
+    , withPosition
+    , TooltipPosition(..)
     )
 
 
@@ -16,6 +17,7 @@ import Html.Styled.Attributes exposing (css)
 https://www.bitdegree.org/learn/css-tooltip
 https://codepen.io/pure-css/pen/bddggP
 https://kazzkiq.github.io/balloon.css/
+https://webdesign.tutsplus.com/tutorials/css-tooltip-magic--cms-28082
 --}
 
 -- you have to escape the text to ensure that the `val` value
@@ -58,41 +60,84 @@ tooltip : String -> Html msg -> Tooltip msg
 tooltip = Tooltip defaultTooltipOptions
 
 
-topRight : Tooltip msg -> Tooltip msg
-topRight (Tooltip opts tooltipText childNode) =
+withPosition : TooltipPosition -> Tooltip msg -> Tooltip msg
+withPosition position (Tooltip opts tooltipText childNode) =
     let
-        newOpts = { opts | position = TopRight }
+        newOpts = { opts | position = position }
     in
     Tooltip newOpts tooltipText childNode
+    
 
-
-arrowHeight : Px
-arrowHeight = px 3
+arrowSize : Px
+arrowSize = px 3
 
 boxAndArrowColor : Color
 boxAndArrowColor = rgba 0 0 0 0.8
 
+tooltipOffsetY : Pct
+tooltipOffsetY = pct 120
 
+tooltipOffsetX : Pct
+tooltipOffsetX = pct 105
+
+
+-- represents ::before
 getPositionSpecificTooltipBoxStyles : TooltipPosition -> List Style
 getPositionSpecificTooltipBoxStyles position =
     case position of
         Top ->
-            [ bottom (calc (pct 120) plus arrowHeight)
+            [ bottom <| calc tooltipOffsetY plus arrowSize
             , left (pct 50)
             , transform <| translateX (pct -50)
             ]
-        _ ->
-            []
+        Right ->
+            [ top (pct 50) 
+            , left <| calc tooltipOffsetX plus arrowSize
+            , transform <| translateY (pct -50)
+            ]
+        Bottom ->
+            [ top <| calc tooltipOffsetY plus arrowSize
+            , left (pct 50)
+            , transform <| translateX (pct -50)
+            ]
+        Left ->
+            [ top (pct 50)
+            , right <| calc tooltipOffsetX plus arrowSize
+            , transform <| translateY (pct -50)
+            ]
+        _ -> []
 
+-- represents ::after
 getPositionSpecificTooltipArrowStyles : TooltipPosition -> List Style
 getPositionSpecificTooltipArrowStyles position =
     case position of
         Top ->
-            [ bottom (pct 120)
+            [ bottom tooltipOffsetY
             , left (pct 50)
             , borderTopColor boxAndArrowColor
             , borderBottomWidth (px 0)
             , transform <| translateX (pct -50)
+            ]
+        Right ->
+            [ borderRightColor boxAndArrowColor
+            , borderLeftWidth zero
+            , top (pct 50)
+            , left tooltipOffsetX
+            , transform <| translateY (pct -50)
+            ]
+        Bottom ->
+            [ top tooltipOffsetY
+            , left (pct 50)
+            , borderBottomColor boxAndArrowColor
+            , borderTopWidth zero
+            , transform <| translateX (pct -50)
+            ]
+        Left ->
+            [ borderLeftColor boxAndArrowColor
+            , borderRightWidth zero
+            , top (pct 50)
+            , right tooltipOffsetX
+            , transform <| translateY (pct -50)
             ]
         _ -> []
 
@@ -130,7 +175,7 @@ toHtml (Tooltip opts tooltipText childNode) =
             , display none
             , width zero
             , height zero
-            , border3 arrowHeight solid transparent
+            , border3 arrowSize solid transparent
             , content ""
             ]
 
