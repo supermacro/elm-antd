@@ -202,6 +202,7 @@ toHtml (Tooltip opts tooltipText childNode) =
             span
                 [ css
                     [ position relative
+                    , display inlineBlock
                     , before tooltipBoxStyles
                     , after tooltipArrowStyles
                     , hoverRules

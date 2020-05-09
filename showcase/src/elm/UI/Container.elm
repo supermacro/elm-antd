@@ -14,7 +14,7 @@ import Ant.Tooltip as Tooltip exposing (tooltip)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
 import Html as Unstyled exposing (Html)
-import Html.Styled as Styled exposing (fromUnstyled, div, span, text)
+import Html.Styled as Styled exposing (fromUnstyled, toUnstyled, div, span, text)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import SyntaxHighlight exposing (useTheme, gitHub, elm, toBlockHtml)
@@ -169,21 +169,23 @@ iconContainer icon tooltipText msg extraStyles =
             , ("cursor", "pointer")
             ]
 
-        unstyledIconWithTooltip =
-            icon (extraStyles ++ commonIconStyles)
-            |> tooltip tooltipText
-            |> Tooltip.toHtml
+        bareIconContainer = 
+            span
+                [ css
+                    [ opacity inherit
+                    , display inlineBlock
+                    , marginTop (px 5)
+                    , hover
+                        [ opacity (num 1) ]
+                    , opacityTransition
+                    ]
+                , onClick msg
+                ]
+                [ fromUnstyled <| icon (extraStyles ++ commonIconStyles) ]
     in
-    span
-        [ css
-            [ opacity inherit
-            , hover
-                [ opacity (num 1) ]
-            , opacityTransition
-            ]
-        , onClick msg
-        ]
-        [ fromUnstyled unstyledIconWithTooltip ]
+    tooltip tooltipText (toUnstyled bareIconContainer)
+    |> Tooltip.toHtml
+    |> fromUnstyled
 
 
 
