@@ -66,29 +66,17 @@ update (DemoBoxMsg demobox demoboxMsg) model =
 basicExampleStr : String
 basicExampleStr = """module Routes.TooltipComponent.BasicExample exposing (example)
 
-import Ant.Button as Btn exposing (button, toHtml, ButtonType(..))
-import Ant.Space as Space
-import Html exposing (Html)
+import Ant.Tooltip as Tooltip exposing (tooltip)
+import Ant.Typography.Text as Text
+import Html exposing (Html, text)
 
 example : Html msg
 example =
-    let
-        primaryButton =
-            button "Primary"
-            |> Btn.withType Primary
-            |> toHtml
+    Text.text "Tooltip will show on mouse enter."
+    |> Text.toHtml
+    |> tooltip "prompt text"
+    |> Tooltip.toHtml
 
-        defaultButotn =
-            button "Default"
-            |> Btn.withType Default
-            |> toHtml
-    
-    in
-    Space.toHtml <|
-        Space.space
-            [ primaryButton
-            , defaultButotn
-            ]
 """
 
 basicExample : Model -> Styled.Html Msg
