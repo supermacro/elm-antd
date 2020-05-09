@@ -173,7 +173,7 @@ toHtml (Tooltip opts tooltipText childNode) =
         positionSpecificStyles = getPositionSpecificTooltipBoxStyles opts.position
 
         tooltipBoxStyles =
-            before (baseTooltipBoxStyles ++ positionSpecificStyles)
+            baseTooltipBoxStyles ++ positionSpecificStyles
 
         baseTooltipArrowStyles = baseSharedStyles ++
             [ position absolute
@@ -187,7 +187,7 @@ toHtml (Tooltip opts tooltipText childNode) =
         positionSpecificArrowStyles = getPositionSpecificTooltipArrowStyles opts.position
 
         tooltipArrowStyles =
-            after (baseTooltipArrowStyles ++ positionSpecificArrowStyles)
+            baseTooltipArrowStyles ++ positionSpecificArrowStyles
 
         sharedHoverStyles =
             [ opacity (num 1)
@@ -202,8 +202,8 @@ toHtml (Tooltip opts tooltipText childNode) =
             span
                 [ css
                     [ position relative
-                    , tooltipBoxStyles
-                    , tooltipArrowStyles
+                    , before tooltipBoxStyles
+                    , after tooltipArrowStyles
                     , hoverRules
                     ]
                 ]
