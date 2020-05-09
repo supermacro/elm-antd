@@ -15,7 +15,7 @@ Styled entirely using `elm-css`! No external stylesheet needed. Just `elm instal
 ## Inspiration:
 - https://github.com/aforemny/elm-mdc
 - https://github.com/EdutainmentLIVE/elm-bootstrap
-
+- https://github.com/NoRedInk/noredink-ui
 
 ## Getting Started:
 
