@@ -145,23 +145,29 @@ getPositionSpecificTooltipArrowStyles position =
 toHtml : Tooltip msg -> Html msg
 toHtml (Tooltip opts tooltipText childNode) =
     let
-        baseTooltipBoxStyles =
-            [ display none
-            , pointerEvents none
-            , property "transition" "all 0.18s ease-out 0.18s"
+        baseSharedStyles =
+            [ opacity zero
+            , property "transition" "font-size 0.18s ease 0.18s, padding 0.18s ease 0.18s, opacity 0.13s ease 0.13s"
+            ]
+
+        baseTooltipBoxStyles = baseSharedStyles ++
+            [ pointerEvents none
             , textIndent zero
             , fontFamilies fontList
-            , fontSize (px 14)
+            , fontSize (px 12)
             , backgroundColor boxAndArrowColor
             , color (hex "#fff")
-            , padding (px 10)
+            , padding (px 8)
             , content tooltipText
             , position absolute
             , whiteSpace noWrap
             , zIndex (int 10)
             , transform <| translate2 (pct -50) (px 0)
             , borderRadius (px 2)
-            , hover [ display inlineBlock ]
+            , hover
+                [ fontSize (px 14)
+                , padding (px 10)
+                ]
             ]
 
         positionSpecificStyles = getPositionSpecificTooltipBoxStyles opts.position
@@ -169,10 +175,9 @@ toHtml (Tooltip opts tooltipText childNode) =
         tooltipBoxStyles =
             before (baseTooltipBoxStyles ++ positionSpecificStyles)
 
-        baseTooltipArrowStyles =
+        baseTooltipArrowStyles = baseSharedStyles ++
             [ position absolute
             , zIndex (int 8)
-            , display none
             , width zero
             , height zero
             , border3 arrowSize solid transparent
@@ -185,7 +190,9 @@ toHtml (Tooltip opts tooltipText childNode) =
             after (baseTooltipArrowStyles ++ positionSpecificArrowStyles)
 
         sharedHoverStyles =
-            [ display inlineBlock, pointerEvents none ]
+            [ opacity (num 1)
+            , pointerEvents none
+            ]
 
         hoverRules =
             hover
