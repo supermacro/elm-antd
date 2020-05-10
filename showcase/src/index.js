@@ -2,4 +2,9 @@
 
 const Elm = require('./elm/Showcase.elm').Elm;
 
-Elm.Showcase.init();
+
+const app = Elm.Showcase.init();
+
+app.ports.copySourceToClipboard.subscribe((src) => {
+  navigator.clipboard.writeText(src)
+})

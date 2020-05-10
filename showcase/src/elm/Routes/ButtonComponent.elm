@@ -16,7 +16,6 @@ import UI.Typography as Typography
 import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
-
 typeExampleStr : String
 typeExampleStr = """module Routes.ButtonComponent.TypeExample exposing (example)
 
@@ -47,8 +46,8 @@ example =
 
 
 type alias Model =
-    { typeExampleSourceCodeVisible : Bool
-    , iconExampleSourceCodeVisible : Bool
+    { typeExample : Container.Model
+    , iconExample : Container.Model
     }
 
 
@@ -57,23 +56,34 @@ type DemoBox
     | ButtonWithIcon
 
 
-type Msg = DemoBoxMsg DemoBox Container.Msg
+type Msg
+    = DemoBoxMsg DemoBox Container.Msg
+    | SourceCopiedToClipboard DemoBox
 
-update : Msg -> Model -> Model
-update (DemoBoxMsg demobox demoboxMsg) model =
-    case demobox of
-        ButtonType ->
-            let
-                { sourceCodeVisible } =
-                    Container.update demoboxMsg { sourceCodeVisible = model.typeExampleSourceCodeVisible }
-            in
-                { model | typeExampleSourceCodeVisible = sourceCodeVisible }
-        ButtonWithIcon ->
-            let
-                { sourceCodeVisible } =
-                    Container.update demoboxMsg { sourceCodeVisible = model.iconExampleSourceCodeVisible }
-            in
-                { model | iconExampleSourceCodeVisible = sourceCodeVisible }
+
+update : Msg -> Model -> (Model, Cmd msg)
+update msg model =
+    case msg of
+        DemoBoxMsg demobox demoboxMsg ->
+            case demobox of
+                ButtonType ->
+                    let
+                        (typeExampleModel, typeExampleCmd) =
+                            Container.update demoboxMsg model.typeExample
+                    in
+                    ({ model | typeExample = typeExampleModel }, typeExampleCmd)
+
+                ButtonWithIcon ->
+                    let
+                        (iconExampleModel, iconExampleCmd) =
+                            Container.update demoboxMsg model.iconExample
+                    in
+                    ({ model | iconExample = iconExampleModel }, iconExampleCmd)
+
+        
+        SourceCopiedToClipboard demobox ->
+            (model, Cmd.none)
+
 
 
 route : DocumentationRoute Model Msg
@@ -83,14 +93,14 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { typeExampleSourceCodeVisible = False
-        , iconExampleSourceCodeVisible = False
+        { typeExample = { sourceCodeVisible = False, sourceCode = typeExampleStr }
+        , iconExample = { sourceCodeVisible = False, sourceCode = "" }
         }
     }
 
 
 typeExample : Model -> Styled.Html Msg
-typeExample { typeExampleSourceCodeVisible } =
+typeExample model =
     let
         styledTypeExampleContents =
             fromUnstyled TypeExample.example
@@ -107,7 +117,7 @@ typeExample { typeExampleSourceCodeVisible } =
 
     in
     Container.demoBox metaInfo styledDemoContents
-        |> Container.view { sourceCodeVisible = typeExampleSourceCodeVisible }
+        |> Container.view model.typeExample
         |> Styled.map (DemoBoxMsg ButtonType)
 
 

@@ -7,6 +7,7 @@ module UI.Container exposing
     , update
     , view
     , Msg
+    , Model
     )
 
 import Ant.Icons as Icons
@@ -20,22 +21,18 @@ import Html.Styled.Events exposing (onClick)
 import SyntaxHighlight exposing (useTheme, gitHub, elm, toBlockHtml)
 
 import UI.Typography exposing (commonTextStyles)
-
+import Utils
 
 
 type alias Model =
     { sourceCodeVisible : Bool
+    , sourceCode : String
     }
 
 
 type Msg
     = SourceCodeVisibilityToggled
-
-
-update : Msg -> Model -> Model
-update _ currentModel =
-    { currentModel | sourceCodeVisible = not currentModel.sourceCodeVisible
-    }
+    | CopySourceToClipboardRequested
 
 
 type alias ContainerOptions =
@@ -59,6 +56,38 @@ defaultContainerOptions metaSection =
     , paddingLeft = Css.paddingLeft (px 10)
     , meta = metaSection
     }
+
+
+
+
+
+
+update : Msg -> Model -> (Model, Cmd msg)
+update msg model =
+    case msg of
+        SourceCodeVisibilityToggled -> 
+            ( { model | sourceCodeVisible = not model.sourceCodeVisible
+            }
+            , Cmd.none
+            )
+
+        CopySourceToClipboardRequested ->
+            ( model, Utils.copySourceToClipboard model.sourceCode )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- View code
 
 
 container : ContainerMetaSection -> Styled.Html Msg -> Container
@@ -224,7 +253,7 @@ view model (Container opts children) =
                         , iconContainer
                             Icons.copyToClipboard
                             "Copy code"
-                            SourceCodeVisibilityToggled
+                            CopySourceToClipboardRequested
                             [ ("width", "16px") ]
 
                         , iconContainer

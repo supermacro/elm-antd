@@ -21,13 +21,13 @@ title : String
 title = "Tooltip"
 
 type alias Model =
-    { basicExampleSourceCodeVisible : Bool
-    , placementExampleSourceCodeVisible : Bool
+    { basicExample : Container.Model
+    , placementExample : Container.Model
     }
 
 type DemoBox
-    = BasicDemo
-    | PlacementDemo
+    = Basic
+    | Placement
 
 
 type Msg = DemoBoxMsg DemoBox Container.Msg
@@ -40,27 +40,27 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { basicExampleSourceCodeVisible = False
-        , placementExampleSourceCodeVisible = False
+        { basicExample = { sourceCodeVisible = False, sourceCode = basicExampleStr }
+        , placementExample = { sourceCodeVisible = False, sourceCode = "" }
         }
     }
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> (Model, Cmd Msg)
 update (DemoBoxMsg demobox demoboxMsg) model =
     case demobox of
-        BasicDemo ->
+        Basic ->
             let
-                { sourceCodeVisible } =
-                    Container.update demoboxMsg { sourceCodeVisible = model.basicExampleSourceCodeVisible }
+                (basicModel, basicCmd)=
+                    Container.update demoboxMsg model.basicExample
             in
-                { model | basicExampleSourceCodeVisible = sourceCodeVisible }
-        PlacementDemo ->
+                ({ model | basicExample = basicModel }, basicCmd)
+        Placement ->
             let
-                { sourceCodeVisible } =
-                    Container.update demoboxMsg { sourceCodeVisible = model.placementExampleSourceCodeVisible }
+                (placementModel, placementCmd) =
+                    Container.update demoboxMsg model.placementExample
             in
-                { model | placementExampleSourceCodeVisible = sourceCodeVisible }
+                ({ model | placementExample = placementModel }, placementCmd)
 
 
 basicExampleStr : String
@@ -80,7 +80,7 @@ example =
 """
 
 basicExample : Model -> Styled.Html Msg
-basicExample { basicExampleSourceCodeVisible } =
+basicExample model =
     let
         styledTypeExampleContents =
             fromUnstyled BasicExample.example
@@ -97,8 +97,8 @@ basicExample { basicExampleSourceCodeVisible } =
 
     in
     Container.demoBox metaInfo styledDemoContents
-        |> Container.view { sourceCodeVisible = basicExampleSourceCodeVisible }
-        |> Styled.map (DemoBoxMsg BasicDemo)
+        |> Container.view model.basicExample
+        |> Styled.map (DemoBoxMsg Basic)
 
 
 view : Model -> Styled.Html Msg

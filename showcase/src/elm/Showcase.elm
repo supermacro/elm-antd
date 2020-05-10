@@ -5,6 +5,15 @@ import Browser.Navigation as Nav
 import Url
 
 import Router
+import Utils
+
+
+
+type Msg
+  = UrlChanged Url.Url
+  | LinkClicked Browser.UrlRequest
+  | RouterMsg Router.Msg
+
 
 type alias Model =
   { navKey : Nav.Key
@@ -24,6 +33,7 @@ main =
     }
 
 
+
 init : () -> Url.Url -> Nav.Key -> (Model, Cmd Msg)
 init _ url key =
   let
@@ -36,10 +46,7 @@ init _ url key =
   )
 
 
-type Msg
-  = UrlChanged Url.Url
-  | LinkClicked Browser.UrlRequest
-  | RouterMsg Router.Msg
+
 
 -- model -> Document msg
 view : Model -> Browser.Document Msg
@@ -52,7 +59,7 @@ updateRouter navKey routerMsg model =
   let
     (newRouterModel, routerCommand ) = Router.update navKey routerMsg model.router
   in
-    ( { model | router = newRouterModel }, routerCommand )
+    ( { model | router = newRouterModel }, Cmd.map RouterMsg routerCommand )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

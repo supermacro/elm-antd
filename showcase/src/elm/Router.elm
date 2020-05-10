@@ -58,7 +58,6 @@ type Msg
     | TypographyPageMessage
 
 
-
 componentList : List ( Route, ComponentCategory, Model -> Styled.Html Msg )
 componentList =
     let
@@ -136,7 +135,7 @@ init url =
     )
 
 
-update : Nav.Key -> Msg -> Model -> ( Model, Cmd msg )
+update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
 update navKey msg model =
     case msg of
         UrlChanged url ->
@@ -150,16 +149,26 @@ update navKey msg model =
             ( model, Nav.pushUrl navKey hrefString )
 
         ButtonPageMessage buttonPageMsg ->
+            let
+                (buttonPageModel, buttonPageCmd) =
+                    ButtonPage.route.update buttonPageMsg model.buttonPageModel
+
+            in
             ( { model |
-                    buttonPageModel = ButtonPage.route.update buttonPageMsg model.buttonPageModel
-            }
-            , Cmd.none
+                buttonPageModel = buttonPageModel
+              }
+            , Cmd.map ButtonPageMessage buttonPageCmd
             )
 
         TooltipPageMessage tooltipPageMessage ->
+            let
+                (tooltipPageModel, tooltipPageCmd ) =
+                    TooltipPage.route.update tooltipPageMessage model.tooltipPageModel
+            in
             ( { model |
-                    tooltipPageModel = TooltipPage.route.update tooltipPageMessage model.tooltipPageModel }
-            , Cmd.none
+                tooltipPageModel =  tooltipPageModel
+              }
+            , Cmd.map TooltipPageMessage tooltipPageCmd
             )
 
         TypographyPageMessage ->
@@ -268,7 +277,7 @@ componentMenu activeRoute =
 
 
 
-getPageTitleAndContentView : Route -> ( Route, Model -> Styled.Html Msg)
+getPageTitleAndContentView : Route -> ( Route, Model -> Styled.Html Msg )
 getPageTitleAndContentView activeRoute =
     let
         notFoundPage = 

@@ -15,7 +15,7 @@ route =
     , category = General
     , view = view
     , initialModel = ()
-    , update = \_ _ -> ()
+    , update = \_ model -> (model, Cmd.none)
     }
 
 
