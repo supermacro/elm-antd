@@ -162,7 +162,7 @@ documentationUnorderedList =
             css
                 (commonTextStyles
                     ++ [ listStyle circle
-                       , listStylePosition inside
+                       , listStylePosition outside
                        ]
                 )
     in
@@ -175,6 +175,7 @@ documentationUnorderedList =
                             [ lineHeight (px 28)
                             , marginTop (px 2.8)
                             , marginBottom (px 2.8)
+                            , marginLeft (px 20)
                             ]
                         )
                     ]

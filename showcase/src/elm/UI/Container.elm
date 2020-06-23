@@ -307,5 +307,5 @@ view model (Container opts children) =
                 [ children ]
 
     in
-    div []
+    div [ css [ marginBottom (em 1) ] ]
         (mainContainerSection :: metaSectionContent)

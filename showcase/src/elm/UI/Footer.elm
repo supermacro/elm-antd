@@ -22,4 +22,4 @@ footerStyles =
 footer : Styled.Html msg
 footer =
     Styled.footer [ css footerStyles ]
-        [ div [ ] [ text "Made with ❤ by greptail"] ]
+        [ div [ ] [ text "Made with ❤ by supermacro (and you?)"] ]
