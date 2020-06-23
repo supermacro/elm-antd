@@ -55,7 +55,7 @@ type Msg
     | MenuItemClicked Href
     | ButtonPageMessage ButtonPage.Msg
     | TooltipPageMessage TooltipPage.Msg
-    | TypographyPageMessage
+    | TypographyPageMessage TypographyPage.Msg
 
 
 componentList : List ( Route, ComponentCategory, Model -> Styled.Html Msg )
@@ -67,7 +67,7 @@ componentList =
         
         typographyPageView model = 
             TypographyPage.route.view model.typographyPageModel
-                |> Styled.map never
+                |> Styled.map TypographyPageMessage 
 
         tooltipPageView model =
             TooltipPage.route.view model.tooltipPageModel
@@ -171,8 +171,15 @@ update navKey msg model =
             , Cmd.map TooltipPageMessage tooltipPageCmd
             )
 
-        TypographyPageMessage ->
-            ( model, Cmd.none )
+        TypographyPageMessage typographyPageMessage ->
+            let
+                ( typographyPageModel, typographyPageCmd ) =
+                    TypographyPage.route.update typographyPageMessage model.typographyPageModel
+            in
+            ( { model | typographyPageModel = typographyPageModel
+              }
+            , Cmd.map TypographyPageMessage typographyPageCmd
+            )
             
 
 navBar : Styled.Html msg
