@@ -1,7 +1,12 @@
-module Ant.Space exposing (space, toHtml)
+module Ant.Space exposing
+    ( space
+    , direction
+    , SpaceDirection(..)
+    , toHtml
+    )
 
 
-import Css exposing (displayFlex, marginRight, px, Px)
+import Css exposing (displayFlex, marginRight, marginBottom, px, Px, flexDirection, column, row)
 import Css.Global exposing (global, selector)
 import Html exposing (Html)
 import Html.Styled exposing (div, toUnstyled, fromUnstyled)
@@ -41,6 +46,15 @@ space =
     Space defaultSpaceConfig
 
 
+direction : SpaceDirection -> Space msg -> Space msg
+direction dir (Space config children) =
+    let
+        newConfig =
+            { config | direction = dir }
+    in
+    Space newConfig children
+
+
 spaceSizeToPixels : SpaceSize -> Px
 spaceSizeToPixels size =
     case size of
@@ -55,19 +69,27 @@ toHtml (Space config children) =
     let
         spaceClass = "elm-antd__space_container"
 
+        marginRule = case config.direction of
+            Horizontal -> marginRight
+            Vertical -> marginBottom 
+
         spacingStyle =
             global
                 [ selector ("." ++ spaceClass ++ " > *:not(:last-child)")
-                    [ marginRight <| spaceSizeToPixels config.size ]
+                    [ marginRule <| spaceSizeToPixels config.size ]
                 ]
 
         styledChildren =
             List.map fromUnstyled children
 
+        direction_ = case config.direction of
+            Horizontal -> row
+            Vertical -> column
+
         styledSpace =
             div
                 [ class spaceClass
-                , css [ displayFlex ]
+                , css [ displayFlex, flexDirection direction_ ]
                 ]
                 (spacingStyle :: styledChildren)
     

@@ -20,8 +20,13 @@ typeExampleStr : String
 typeExampleStr = """module Routes.ButtonComponent.TypeExample exposing (example)
 
 import Ant.Button as Btn exposing (button, toHtml, ButtonType(..))
-import Ant.Space as Space
+import Ant.Space as Space exposing (SpaceDirection(..))
 import Html exposing (Html)
+
+horizontalSpace : List (Html msg) -> Html msg
+horizontalSpace =
+    Space.toHtml << Space.direction Horizontal << Space.space
+
 
 example : Html msg
 example =
@@ -37,11 +42,11 @@ example =
             |> toHtml
     
     in
-    Space.toHtml <|
-        Space.space
+    horizontalSpace
             [ primaryButton
             , defaultButotn
             ]
+
 """
 
 
