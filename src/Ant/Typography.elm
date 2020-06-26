@@ -10,12 +10,10 @@ module Ant.Typography exposing
 @docs title, Level, level, toHtml
 -}
 import Css exposing (..)
-import Ant.Internals.Typography exposing (headingColorRgba)
+import Ant.Internals.Typography exposing (headingColorRgba, commonFontStyles)
 import Html.Styled as Styled exposing (toUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Html exposing (Html)
-
-import Ant.Internals.Typography exposing (commonFontStyles)
 
 headingColor : Style
 headingColor =

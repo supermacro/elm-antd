@@ -3,6 +3,7 @@ module Ant.Space exposing
     , direction
     , SpaceDirection(..)
     , toHtml
+    , SpaceSize(..)
     )
 
 {-| Utilities for setting spacing between components

@@ -5,6 +5,7 @@ module Ant.Button exposing
     , toHtml
     , withType
     , ButtonType(..)
+    , ButtonSize(..)
     )
 
 {-| Button component
@@ -13,7 +14,7 @@ module Ant.Button exposing
 
 # Customizing the Button
 
-@docs button, onClick, ButtonType, withType
+@docs button, onClick, ButtonType, withType, ButtonSize
 
 @docs toHtml
 -}
@@ -29,12 +30,6 @@ import Html.Styled.Events as Events
 
 
 
--- TODO:
--- animate click: https://webdevtrick.com/pure-css-click-effect/
--- https://old.reddit.com/r/css/comments/g5fho5/how_to_create_ants_button_onclick_box_shadow_fade/
--- https://codesandbox.io/s/laughing-ride-v3ot1
-
-
 {-| The type of the button
 -}
 type ButtonType
@@ -44,6 +39,8 @@ type ButtonType
     | Link
 
 
+{-| Determines the size of the button
+-}
 type ButtonSize
     = Large
     | DefaultSize

@@ -319,7 +319,7 @@ viewSubMenuContent subMenuContent =
 
 
 viewSubMenu : SubMenu msg -> Styled.Html msg
-viewSubMenu (SubMenu state subMenuContentList) =
+viewSubMenu (SubMenu _ subMenuContentList) =
     Styled.li []
         [ Styled.ul [] <|
             List.map viewSubMenuContent subMenuContentList
@@ -344,7 +344,7 @@ viewMenuContent menuContent =
 {-| Turn your Menu into a `Html msg`
 -}
 toHtml : Menu msg -> Html msg
-toHtml (Menu config menuContents) =
+toHtml (Menu _ menuContents) =
     ul
         [ style "border-right" "1px solid #f0f0f0"
         , style "height" "100%"

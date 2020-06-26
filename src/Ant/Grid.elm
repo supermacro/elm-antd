@@ -5,6 +5,7 @@ module Ant.Grid exposing
     , breakPoints
     , VerticalAlignment(..)
     , ColSpan(..)
+    , HorizontalArrangement(..)
     )
 
 {-| Primitives for buildign a 24-grid system based on rows and columns
@@ -111,6 +112,7 @@ type ColSpan
     -- | Fraction ( ColSpan, ColSpan )
 
 
+{-
 colspanToInt : ColSpan -> Int
 colspanToInt colSpan =
     case colSpan of
@@ -139,7 +141,7 @@ colspanToInt colSpan =
         TwentyTwo -> 22
         TwentyThree -> 23
         TwentyFour -> 24
-
+-}
 
 type alias ColumnOptions =
     { span : ColSpan
@@ -168,5 +170,5 @@ col children =
     
 
 toHtml : List (Row msg) -> Html msg
-toHtml grid =
+toHtml _ =
     div [] [ text "GRID" ]
