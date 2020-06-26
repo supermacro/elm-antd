@@ -1,7 +1,9 @@
 todo
 blah/
+.DS_Store
 css/
 elm-stuff/
 showcase/todo
+showcase/dist/
 showcase/elm-stuff/
 showcase/node_modules/
