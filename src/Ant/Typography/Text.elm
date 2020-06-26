@@ -12,17 +12,23 @@ module Ant.Typography.Text exposing
     , underlined
     , lineThrough
     , highlighted
-    , textColorRgba
     )
 
-import Ant.Palette exposing (warningColor, dangerColor)
-import Ant.Typography exposing (fontList, textSelectionStyles)
+{-| Create decorated text values
+
+@docs TextType, Text, text, code, keyboard, textType, strong, disabled, underlined, lineThrough, highlighted, toHtml, listToHtml
+
+-}
+import Ant.Internals.Palette exposing (warningColor, dangerColor)
+import Ant.Internals.Typography exposing (fontList, textSelectionStyles, textColorRgba)
 import Css exposing (..)
 import Html exposing (Html)
 import Html.Styled as Styled exposing (text, toUnstyled)
 import Html.Styled.Attributes as A exposing (css)
 
 
+{-| What kind of text is it?
+-}
 type TextType
     = Primary
     | Secondary
@@ -44,17 +50,10 @@ type alias TextOptions =
     }
 
 
+{-| A text value
+-}
 type Text
     = Text TextOptions String
-
-textColorRgba : { r : Int, g : Int, b : Int, a : Float }
-textColorRgba =
-    { r = 0
-    , g = 0
-    , b = 0
-    , a = 0.65
-    }
-
 
 defaultTextOptions : TextOptions
 defaultTextOptions =
@@ -68,11 +67,26 @@ defaultTextOptions =
     }
 
 
+{-| Create a text value
+
+By default the text looks just like any regular text. To decorate it, you need to apply one or more of the below options.
+
+   text "hello, world!"
+   |> textType Warning
+   |> underlined True
+   |> strong
+   |> toHtml
+-}
 text : String -> Text
 text value =
     Text defaultTextOptions value
 
 
+{-| Change the text's type
+    text "Elm"
+    |> textType Secondary
+    |> toHtml
+-}
 textType : TextType -> Text -> Text
 textType textType_ (Text textOptions value) =
     let
@@ -83,6 +97,12 @@ textType textType_ (Text textOptions value) =
 
 
 
+{-| Turn your Text value into a styled in-line code block
+
+    text "<h1>I LOVE CATS</h1>"
+    |> code
+    |> toHtml
+-}
 code : Text -> Text
 code (Text textOptions value) =
     let
@@ -92,6 +112,12 @@ code (Text textOptions value) =
     Text newTextOptions value
 
 
+{-| Turn your Text value into a styled button-looking block (in-line)
+
+    text "CMD"
+    |> keyboard
+    |> toHtml
+-}
 keyboard : Text -> Text
 keyboard (Text textOptions value) =
     let
@@ -101,6 +127,12 @@ keyboard (Text textOptions value) =
     Text newTextOptions value
 
 
+{-| Add an underline to your text
+
+    text "this is important"
+    |> underlined True
+    |> toHtml
+-}
 underlined : Bool -> Text -> Text
 underlined underlined_ (Text textOptions value) =
     let
@@ -110,7 +142,12 @@ underlined underlined_ (Text textOptions value) =
     Text newTextOptions value
     
 
-    
+{-| Set a striked line through your Text element
+
+    text "forget about this"
+    |> lineThrough True
+    |> toHtml
+-}    
 lineThrough : Bool -> Text -> Text
 lineThrough lineThrough_ (Text textOptions value) =
     let
@@ -120,6 +157,12 @@ lineThrough lineThrough_ (Text textOptions value) =
     Text newTextOptions value
 
 
+{-| Set your Text element as bold
+
+    text "look at me"
+    |> strong
+    |> toHtml
+-}
 strong : Text -> Text
 strong (Text textOptions value) = 
     let
@@ -129,6 +172,12 @@ strong (Text textOptions value) =
     Text strongTextOptions value
 
 
+{-| Set your Text element as disabled (the cursor icon changes)
+
+    text "can't touch this'"
+    |> disabled True
+    |> toHtml
+-}
 disabled : Bool -> Text -> Text
 disabled disabled_ (Text textOptions value) =
     let
@@ -138,6 +187,12 @@ disabled disabled_ (Text textOptions value) =
     Text newOptions value
 
 
+{-| Style the Text as highlighted
+
+    text "super important"
+    |> highlighted True
+    |> toHtml
+-}
 highlighted : Bool -> Text -> Text
 highlighted highlighted_ (Text textOptions value) =
     let
@@ -147,12 +202,16 @@ highlighted highlighted_ (Text textOptions value) =
     Text newOptions value
 
 
+{-| Render a list of Text elements into a span
+-}
 listToHtml : List Text -> Html msg
 listToHtml =
     Html.span [] <<
         List.map toHtml
 
 
+{-| Render your Text node into plain old `Html msg`
+-}
 toHtml : Text -> Html msg
 toHtml (Text opts value) =
     let

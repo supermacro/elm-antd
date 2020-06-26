@@ -1,11 +1,19 @@
 {
     "type": "package",
-    "name": "gDelgado14/elm-antd",
-    "summary": "elm-antd is an implementation of the Ant design system",
+    "name": "supermacro/elm-antd",
+    "summary": "elm-antd is an implementation of the Ant design system for Elm",
     "license": "MIT",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "exposed-modules": [
-        "Main"
+        "Ant.Button",
+        "Ant.Icons",
+        "Ant.Layout",
+        "Ant.Menu",
+        "Ant.Space",
+        "Ant.Tooltip",
+        "Ant.Typography",
+        "Ant.Typography.Text",
+        "Ant.Typography.Paragraph"
     ],
     "elm-version": "0.19.0 <= v < 0.20.0",
     "dependencies": {

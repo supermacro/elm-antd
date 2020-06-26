@@ -280,7 +280,7 @@ componentMenu activeRoute =
                 categoryDict
 
     in
-    Menu.view menu
+    Menu.toHtml menu
 
 
 

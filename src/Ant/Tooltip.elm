@@ -1,14 +1,20 @@
 module Ant.Tooltip exposing
     ( tooltip
+    , Tooltip
     , toHtml
     , withPosition
     , TooltipPosition(..)
     )
 
 
-import Ant.Typography exposing (fontList)
+{-| Tooltips for your enjoyment!
+
+@docs tooltip, Tooltip, toHtml, withPosition, TooltipPosition
+
+-}
+
+import Ant.Internals.Typography exposing (fontList)
 import Css exposing (..)
--- import Css.Transitions exposing (transition, easeOut)
 import Html exposing (Html)
 import Html.Styled exposing (span, fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (css)
@@ -27,6 +33,8 @@ content val =
     property "content" ("\"" ++ val ++ "\"")
 
 
+{-| Defines the positioning of the Tooltip
+-}
 type TooltipPosition
     = TopLeft
     | Top
@@ -47,6 +55,8 @@ type alias Options =
     }
 
 
+{-| Represents a customizeable tooltip
+-}
 type Tooltip msg
     = Tooltip Options String (Html msg)
 
@@ -56,10 +66,22 @@ defaultTooltipOptions =
     { position = Top }
 
 
+{-| Create a Tooltip
+
+
+    tooltip "helpful message"
+    |> toHtml
+-}
 tooltip : String -> Html msg -> Tooltip msg
 tooltip = Tooltip defaultTooltipOptions
 
 
+{-| Change the default positioning of the tooltip
+
+    tooltip "on the right"
+    |> withPosition Right
+    |> toHtml
+-}
 withPosition : TooltipPosition -> Tooltip msg -> Tooltip msg
 withPosition position (Tooltip opts tooltipText childNode) =
     let
@@ -142,6 +164,8 @@ getPositionSpecificTooltipArrowStyles position =
         _ -> []
 
 
+{-| Convert the Tooltip into a `Html msg`
+-}
 toHtml : Tooltip msg -> Html msg
 toHtml (Tooltip opts tooltipText childNode) =
     let

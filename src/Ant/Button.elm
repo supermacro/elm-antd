@@ -1,13 +1,25 @@
 module Ant.Button exposing
     ( button
+    , Button
     , onClick
     , toHtml
     , withType
     , ButtonType(..)
     )
 
-import Ant.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
-import Ant.Typography.Text exposing (textColorRgba)
+{-| Button component
+
+@docs Button
+
+# Customizing the Button
+
+@docs button, onClick, ButtonType, withType
+
+@docs toHtml
+-}
+
+import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
+import Ant.Internals.Typography exposing (textColorRgba)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
 import Html exposing (Html)
@@ -23,6 +35,8 @@ import Html.Styled.Events as Events
 -- https://codesandbox.io/s/laughing-ride-v3ot1
 
 
+{-| The type of the button
+-}
 type ButtonType
     = Primary
     | Default
@@ -64,15 +78,29 @@ defaultOptions =
     }
 
 
+{-| Represents a button component
+-}
 type Button msg
     = Button (Options msg) String
 
 
+{-| Create a Button component. 
+
+    button "Click Me!"
+    |> toHtml
+-}
 button : String -> Button msg
 button label =
     Button defaultOptions label
 
 
+
+{-| Change the default type of the Button
+
+    button "submit"
+    |> withType Dashed
+    |> toHtml
+-}
 withType : ButtonType -> Button msg -> Button msg
 withType buttonType (Button options label) =
     let
@@ -81,6 +109,12 @@ withType buttonType (Button options label) =
         Button newOptions label
 
 
+{-| Make your button emit messages. By default, clicking a button does nothing.
+
+    button "submit"
+    |> onClick FinalCheckoutFormSubmitted
+    |> toHtml
+-}
 onClick : msg -> Button msg -> Button msg
 onClick msg (Button opts label) =
   let
@@ -97,6 +131,8 @@ textColor =
         rgba r g b a
 
 
+{-| Turn your Button into Html msg
+-}
 toHtml : Button msg -> Html msg
 toHtml (Button options label) =
     let

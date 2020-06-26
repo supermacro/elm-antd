@@ -1,47 +1,21 @@
 module Ant.Typography exposing
-    ( fontList
-    , commonFontStyles
-    , textSelectionStyles
-    , headingColorRgba
-    , title
+    ( title
     , level
     , Level(..)
     , toHtml
     )
 
+{-| Typography components for Elm Antd
+
+@docs title, Level, level, toHtml
+-}
 import Css exposing (..)
+import Ant.Internals.Typography exposing (headingColorRgba)
 import Html.Styled as Styled exposing (toUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Html exposing (Html)
 
-import Ant.Palette exposing (primaryColor)
-
-
-fontList : List String
-fontList =
-    [ "-apple-system"
-    , "BlinkMacSystemFont"
-    , qt "Segoe UI"
-    , "Roboto"
-    , qt "Helvetica Neue"
-    , "Arial"
-    , qt "Noto Sans"
-    , "sans-serif"
-    , qt "Apple Color Emoji"
-    , qt "Segoe UI Emoji"
-    , qt "Segoe UI Symbol"
-    , qt "Noto Color Emoji"
-    ]
-
-
-headingColorRgba : { r : Int, g : Int, b : Int, a : Float }
-headingColorRgba =
-    { r = 0
-    , g = 0
-    , b = 0
-    , a = 0.85
-    }
-
+import Ant.Internals.Typography exposing (commonFontStyles)
 
 headingColor : Style
 headingColor =
@@ -53,21 +27,8 @@ headingColor =
 
 
 
-textSelectionStyles : Style
-textSelectionStyles =
-    selection
-        [ backgroundColor (hex primaryColor)
-        , color (hex "#fff")
-        ]
-
-
-commonFontStyles : List Style
-commonFontStyles =
-    [ fontFamilies fontList
-    , textSelectionStyles
-    ]
-
-
+{-| Level of your headings
+-}
 type Level = H1 | H2 | H3 | H4
 
 type alias TitleOptions =
@@ -79,11 +40,20 @@ type Title
     = Title TitleOptions String
 
 
+{-| Create a `Title` / header component
+
+By default, the `Title` produced is a `H1`
+-}
 title : String -> Title
 title titleText =
     Title { level = H1 } titleText
 
+{-| Change the heading level of your `Title` component
 
+    title "Elm is cool"
+    |> level H3
+    |> toHtml
+-}
 level : Level -> Title -> Title
 level level_ (Title _ titleText) =
     Title { level = level_ } titleText
@@ -121,6 +91,8 @@ h4Css =
     ]
 
 
+{-| Render your title / header
+-}
 toHtml : Title -> Html msg
 toHtml (Title options value) =
     let

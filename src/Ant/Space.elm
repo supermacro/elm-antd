@@ -5,13 +5,29 @@ module Ant.Space exposing
     , toHtml
     )
 
+{-| Utilities for setting spacing between components
 
+# Creating a Space value
+@docs space
+
+Note that by default, a Space value is set to be vertically layed out with a "small" space between elements
+
+# Customizing the layout between components
+@docs direction, SpaceDirection
+
+# Rendering your Space component
+
+@docs toHtml
+
+-}
 import Css exposing (displayFlex, marginRight, marginBottom, px, Px, flexDirection, column, row)
 import Css.Global exposing (global, selector)
 import Html exposing (Html)
 import Html.Styled exposing (div, toUnstyled, fromUnstyled)
 import Html.Styled.Attributes exposing (css, class)
 
+{-| Direction of the layout (think flexbox direction)
+-}
 type SpaceDirection
     = Horizontal
     | Vertical
@@ -41,11 +57,20 @@ type Space msg
     = Space SpaceConfig (List (Html msg))
 
 
+{-| Create a Space value with default values
+
+    space [ myEl, myOtherEl, mySuperCoolEl ]
+-}
 space : List (Html msg) -> Space msg
 space =
     Space defaultSpaceConfig
 
 
+{-| Set the direction of your Space value\
+
+    space myElementList
+        |> direction Horizontal
+-}
 direction : SpaceDirection -> Space msg -> Space msg
 direction dir (Space config children) =
     let
@@ -64,6 +89,8 @@ spaceSizeToPixels size =
         Custom val -> px val
 
 
+{-| Convert your Space into a `Html msg`
+-}
 toHtml : Space msg -> Html msg
 toHtml (Space config children) =
     let

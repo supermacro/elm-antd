@@ -7,6 +7,9 @@ module Ant.Grid exposing
     , ColSpan(..)
     )
 
+{-| Primitives for buildign a 24-grid system based on rows and columns
+
+-}
 
 import Html exposing (Html, div, text)
 

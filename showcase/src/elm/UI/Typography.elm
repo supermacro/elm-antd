@@ -9,8 +9,8 @@ module UI.Typography exposing
     , commonTextStyles
     )
 
-import Ant.Palette as Palette exposing (primaryColor)
-import Ant.Typography exposing (fontList, headingColorRgba)
+import Ant.Internals.Palette as Palette exposing (primaryColor)
+import Ant.Internals.Typography exposing (fontList, headingColorRgba)
 import Ant.Typography.Text as Text
 import Css exposing (..)
 import Css.Global exposing (global, selector)

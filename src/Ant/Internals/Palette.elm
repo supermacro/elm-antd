@@ -1,4 +1,4 @@
-module Ant.Palette exposing
+module Ant.Internals.Palette exposing
     ( primaryColor
     , primaryColorFaded
     , primaryColorStrong
