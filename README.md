@@ -4,6 +4,10 @@
 
 Bringing the amazing [Ant Design](https://ant.design) kit to Elm!
 
+Component gallery can be viewed here:
+
+https://elm-antd.netlify.app
+
 Styled entirely using `elm-css`! No external stylesheet needed. Just `elm install supermacro/elm-antd` and you're all good to go!
 
 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 🚨 
