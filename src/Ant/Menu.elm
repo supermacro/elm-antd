@@ -102,7 +102,7 @@ type MenuContent msg
     | Group (ItemGroup msg)
 
 
-{-| Represents a Menu, it's configuration and the Menu's content
+{-| Represents a Menu, its configuration and the Menu's content
 -}
 type Menu msg = Menu MenuConfig (List (MenuContent msg))
 
