@@ -8,18 +8,19 @@ import UI.Typography exposing (commonTextStyles)
 
 footerStyles : List Css.Style
 footerStyles =
-    commonTextStyles ++
-        [ height (px 100)
-        , color (hex "#fff")
-        , backgroundColor (hex "#000")
-        , marginTop (px 100)
-        , paddingTop (px 50)
-        , paddingRight (px 50)
-        , paddingLeft (px 50)
-        , textAlign center
-        ]
+    commonTextStyles
+        ++ [ height (px 100)
+           , color (hex "#fff")
+           , backgroundColor (hex "#000")
+           , marginTop (px 100)
+           , paddingTop (px 50)
+           , paddingRight (px 50)
+           , paddingLeft (px 50)
+           , textAlign center
+           ]
+
 
 footer : Styled.Html msg
 footer =
     Styled.footer [ css footerStyles ]
-        [ div [ ] [ text "Made with ❤ by supermacro (and you?)"] ]
+        [ div [] [ text "Made with ❤ by supermacro (and you?)" ] ]

@@ -1,14 +1,14 @@
-module Routes.TypographyComponent exposing (route, Model, Msg)
+module Routes.TypographyComponent exposing (Model, Msg, route)
 
 import Ant.Typography.Text as Text exposing (text)
 import Css exposing (displayFlex)
 import Html.Styled as Styled exposing (br, div, fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Routes.TypographyComponent.BasicExample as BasicExample
-import Routes.TypographyComponent.TitleComponent as TitleComponentExample
 import Routes.TypographyComponent.TextExample as TextExample
+import Routes.TypographyComponent.TitleComponent as TitleComponentExample
 import UI.Container as Container
-import UI.Typography exposing (documentationText, documentationHeading, documentationSubheading, SubHeadingOptions(..), documentationUnorderedList)
+import UI.Typography exposing (SubHeadingOptions(..), documentationHeading, documentationSubheading, documentationText, documentationUnorderedList)
 import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
@@ -32,45 +32,47 @@ route =
     , update = update
     }
 
+
 type DemoBox
     = Basic
     | TitleComponent
     | TextComponent
 
 
-type Msg = DemoBoxMsg DemoBox Container.Msg
+type Msg
+    = DemoBoxMsg DemoBox Container.Msg
 
 
-update : Msg -> Model -> (Model, Cmd msg)
+update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
         DemoBoxMsg demobox demoboxMsg ->
             case demobox of
                 Basic ->
                     let
-                        (basicExampleModel, basicExampleCmd) =
+                        ( basicExampleModel, basicExampleCmd ) =
                             Container.update demoboxMsg model.basicExample
                     in
-                    ({ model | basicExample = basicExampleModel }, basicExampleCmd)
+                    ( { model | basicExample = basicExampleModel }, basicExampleCmd )
 
                 TitleComponent ->
                     let
-                        (titleExampleModel, titleExampleCmd) =
+                        ( titleExampleModel, titleExampleCmd ) =
                             Container.update demoboxMsg model.titleExample
                     in
-                    ({ model | titleExample = titleExampleModel }, titleExampleCmd)
+                    ( { model | titleExample = titleExampleModel }, titleExampleCmd )
 
                 TextComponent ->
                     let
-                        (textExampleModel, textExampleCmd) =
+                        ( textExampleModel, textExampleCmd ) =
                             Container.update demoboxMsg model.textExample
                     in
-                    ({ model | textExample = textExampleModel }, textExampleCmd)
-
+                    ( { model | textExample = textExampleModel }, textExampleCmd )
 
 
 basicExampleStr : String
-basicExampleStr = """module Routes.TypographyComponent.BasicExample exposing (example)
+basicExampleStr =
+    """module Routes.TypographyComponent.BasicExample exposing (example)
 
 import Ant.Typography as Typography exposing (title, Level(..))
 import Ant.Typography.Text as Text exposing (text, Text)
@@ -111,13 +113,14 @@ example =
         ]
 """
 
+
 basicExample : Model -> Styled.Html Msg
 basicExample model =
     let
         styledBasicExampleContents =
             fromUnstyled BasicExample.example
 
-        metaInfo = 
+        metaInfo =
             { title = "Basic"
             , content = "A document sample"
             , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
@@ -126,16 +129,15 @@ basicExample model =
 
         styledDemoContents =
             div [ css [ displayFlex ] ] [ styledBasicExampleContents ]
-
     in
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.basicExample
         |> Styled.map (DemoBoxMsg Basic)
 
 
-
 titleComponentStr : String
-titleComponentStr = """module Routes.TypographyComponent.TitleComponent exposing (example)
+titleComponentStr =
+    """module Routes.TypographyComponent.TitleComponent exposing (example)
 
 import Ant.Typography as Typography exposing (title, Level(..))
 import Html exposing (Html, div)
@@ -157,14 +159,13 @@ example =
 """
 
 
-
 titleComponentExample : Model -> Styled.Html Msg
 titleComponentExample model =
     let
         styledTitleExampleContents =
             fromUnstyled TitleComponentExample.example
 
-        metaInfo = 
+        metaInfo =
             { title = "Title Component"
             , content = "Display the various levels for titles"
             , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
@@ -173,7 +174,6 @@ titleComponentExample model =
 
         styledDemoContents =
             div [ css [ displayFlex ] ] [ styledTitleExampleContents ]
-
     in
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.titleExample
@@ -181,7 +181,8 @@ titleComponentExample model =
 
 
 texComponentStr : String
-texComponentStr = """module Routes.TypographyComponent.TextExample exposing (example)
+texComponentStr =
+    """module Routes.TypographyComponent.TextExample exposing (example)
 
 import Ant.Typography.Text as Text exposing (text, TextType(..))
 import Ant.Space as Space exposing (space)
@@ -206,13 +207,14 @@ example =
 
 """
 
+
 textComponentExample : Model -> Styled.Html Msg
 textComponentExample model =
     let
         styledTextExampleContents =
             fromUnstyled TextExample.example
 
-        metaInfo = 
+        metaInfo =
             { title = "Text and Link Component"
             , content = "Provides multiple types of text and link."
             , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
@@ -225,6 +227,7 @@ textComponentExample model =
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.textExample
         |> Styled.map (DemoBoxMsg TextComponent)
+
 
 view : Model -> Styled.Html Msg
 view model =

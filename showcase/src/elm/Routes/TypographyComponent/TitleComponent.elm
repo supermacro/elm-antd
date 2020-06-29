@@ -1,13 +1,13 @@
 module Routes.TypographyComponent.TitleComponent exposing (example)
 
-import Ant.Typography as Typography exposing (title, Level(..))
+import Ant.Typography as Typography exposing (Level(..), title)
 import Html exposing (Html, div)
 
 
 example : Html msg
 example =
-    div []
-        <| List.map Typography.toHtml
+    div [] <|
+        List.map Typography.toHtml
             [ title "h1. Ant Design"
             , title "h2. Ant Design"
                 |> Typography.level H2

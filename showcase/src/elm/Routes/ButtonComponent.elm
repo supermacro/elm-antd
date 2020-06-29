@@ -1,23 +1,24 @@
-module Routes.ButtonComponent exposing (route, Model, Msg)
+module Routes.ButtonComponent exposing (Model, Msg, route)
 
 import Css exposing (displayFlex)
-import Html.Styled as Styled exposing (div, span, text, fromUnstyled)
+import Html.Styled as Styled exposing (div, fromUnstyled, span, text)
 import Html.Styled.Attributes exposing (css)
 import Routes.ButtonComponent.TypeExample as TypeExample
 import UI.Container as Container
 import UI.Typography as Typography
     exposing
-        ( documentationHeading
+        ( codeText
+        , documentationHeading
         , documentationSubheading
         , documentationText
         , documentationUnorderedList
-        , codeText
         )
 import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
 typeExampleStr : String
-typeExampleStr = """module Routes.ButtonComponent.TypeExample exposing (example)
+typeExampleStr =
+    """module Routes.ButtonComponent.TypeExample exposing (example)
 
 import Ant.Button as Btn exposing (button, toHtml, ButtonType(..))
 import Ant.Space as Space exposing (SpaceDirection(..))
@@ -66,29 +67,27 @@ type Msg
     | SourceCopiedToClipboard DemoBox
 
 
-update : Msg -> Model -> (Model, Cmd msg)
+update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
         DemoBoxMsg demobox demoboxMsg ->
             case demobox of
                 ButtonType ->
                     let
-                        (typeExampleModel, typeExampleCmd) =
+                        ( typeExampleModel, typeExampleCmd ) =
                             Container.update demoboxMsg model.typeExample
                     in
-                    ({ model | typeExample = typeExampleModel }, typeExampleCmd)
+                    ( { model | typeExample = typeExampleModel }, typeExampleCmd )
 
                 ButtonWithIcon ->
                     let
-                        (iconExampleModel, iconExampleCmd) =
+                        ( iconExampleModel, iconExampleCmd ) =
                             Container.update demoboxMsg model.iconExample
                     in
-                    ({ model | iconExample = iconExampleModel }, iconExampleCmd)
+                    ( { model | iconExample = iconExampleModel }, iconExampleCmd )
 
-        
         SourceCopiedToClipboard demobox ->
-            (model, Cmd.none)
-
+            ( model, Cmd.none )
 
 
 route : DocumentationRoute Model Msg
@@ -110,7 +109,7 @@ typeExample model =
         styledTypeExampleContents =
             fromUnstyled TypeExample.example
 
-        metaInfo = 
+        metaInfo =
             { title = "Type"
             , content = "There are \"primary\", \"default\", \"dashed\" and \"link\" buttons in Elm Antd."
             , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
@@ -119,12 +118,10 @@ typeExample model =
 
         styledDemoContents =
             div [ css [ displayFlex ] ] [ styledTypeExampleContents ]
-
     in
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.typeExample
         |> Styled.map (DemoBoxMsg ButtonType)
-
 
 
 view : Model -> Styled.Html Msg
@@ -161,5 +158,5 @@ view model =
             ]
         , documentationSubheading Typography.WithoutAnchorLink "Examples"
         , div []
-            [ div [] [ typeExample model ], div [] [ ] ]
+            [ div [] [ typeExample model ], div [] [] ]
         ]

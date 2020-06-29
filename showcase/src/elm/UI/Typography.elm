@@ -1,12 +1,12 @@
 module UI.Typography exposing
     ( SubHeadingOptions(..)
+    , codeText
+    , commonTextStyles
     , documentationHeading
     , documentationSubheading
     , documentationText
     , documentationUnorderedList
     , logoText
-    , codeText
-    , commonTextStyles
     )
 
 import Ant.Internals.Palette as Palette exposing (primaryColor)
@@ -79,7 +79,10 @@ documentationHeading value =
         [ Styled.text value ]
 
 
-type SubHeadingOptions = WithAnchorLink | WithoutAnchorLink
+type SubHeadingOptions
+    = WithAnchorLink
+    | WithoutAnchorLink
+
 
 documentationSubheading : SubHeadingOptions -> String -> Styled.Html msg
 documentationSubheading opts value =
@@ -120,10 +123,11 @@ documentationSubheading opts value =
 
         optionalAnchorLink =
             case opts of
-                WithAnchorLink -> 
+                WithAnchorLink ->
                     [ styledAnchorLink, global hoverAnimationCss ]
 
-                _ -> []
+                _ ->
+                    []
 
         styles =
             css
@@ -171,12 +175,12 @@ documentationUnorderedList =
             (\textItem ->
                 Styled.li
                     [ css
-                        (commonTextStyles ++
-                            [ lineHeight (px 28)
-                            , marginTop (px 2.8)
-                            , marginBottom (px 2.8)
-                            , marginLeft (px 20)
-                            ]
+                        (commonTextStyles
+                            ++ [ lineHeight (px 28)
+                               , marginTop (px 2.8)
+                               , marginBottom (px 2.8)
+                               , marginLeft (px 20)
+                               ]
                         )
                     ]
                     [ textItem ]

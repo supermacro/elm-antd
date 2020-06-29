@@ -1,19 +1,17 @@
-module Ant.Typography exposing
-    ( title
-    , level
-    , Level(..)
-    , toHtml
-    )
+module Ant.Typography exposing (title, Level(..), level, toHtml)
 
 {-| Typography components for Elm Antd
 
 @docs title, Level, level, toHtml
+
 -}
+
+import Ant.Internals.Typography exposing (commonFontStyles, headingColorRgba)
 import Css exposing (..)
-import Ant.Internals.Typography exposing (headingColorRgba, commonFontStyles)
+import Html exposing (Html)
 import Html.Styled as Styled exposing (toUnstyled)
 import Html.Styled.Attributes exposing (css)
-import Html exposing (Html)
+
 
 headingColor : Style
 headingColor =
@@ -24,10 +22,14 @@ headingColor =
     color (rgba r g b a)
 
 
-
 {-| Level of your headings
 -}
-type Level = H1 | H2 | H3 | H4
+type Level
+    = H1
+    | H2
+    | H3
+    | H4
+
 
 type alias TitleOptions =
     { level : Level
@@ -41,16 +43,19 @@ type Title
 {-| Create a `Title` / header component
 
 By default, the `Title` produced is a `H1`
+
 -}
 title : String -> Title
 title titleText =
     Title { level = H1 } titleText
 
+
 {-| Change the heading level of your `Title` component
 
     title "Elm is cool"
-    |> level H3
-    |> toHtml
+        |> level H3
+        |> toHtml
+
 -}
 level : Level -> Title -> Title
 level level_ (Title _ titleText) =
@@ -64,6 +69,7 @@ h1Css =
     , lineHeight (px 46)
     ]
 
+
 h2Css : List Style
 h2Css =
     [ fontSize (px 30)
@@ -72,6 +78,7 @@ h2Css =
     , lineHeight (px 40)
     ]
 
+
 h3Css : List Style
 h3Css =
     [ fontSize (px 24)
@@ -79,6 +86,7 @@ h3Css =
     , marginBottom (em 0.5)
     , lineHeight (px 32)
     ]
+
 
 h4Css : List Style
 h4Css =
@@ -94,18 +102,29 @@ h4Css =
 toHtml : Title -> Html msg
 toHtml (Title options value) =
     let
-        (heading, headingStyles) = case options.level of
-            H1 -> (Styled.h1, h1Css)
-            H2 -> (Styled.h2, h2Css)
-            H3 -> (Styled.h3, h3Css)
-            H4 -> (Styled.h4, h4Css)
+        ( heading, headingStyles ) =
+            case options.level of
+                H1 ->
+                    ( Styled.h1, h1Css )
+
+                H2 ->
+                    ( Styled.h2, h2Css )
+
+                H3 ->
+                    ( Styled.h3, h3Css )
+
+                H4 ->
+                    ( Styled.h4, h4Css )
     in
     toUnstyled
         (heading
             [ css
                 ([ headingColor
-                , fontWeight (int 600)
-                ] ++ commonFontStyles ++ headingStyles)
+                 , fontWeight (int 600)
+                 ]
+                    ++ commonFontStyles
+                    ++ headingStyles
+                )
             ]
-            [ Styled.text value ])
-        
+            [ Styled.text value ]
+        )

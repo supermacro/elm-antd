@@ -9,6 +9,7 @@ import Html.Styled as Styled
 
 port copySourceToClipboard : String -> Cmd msg
 
+
 type ComponentCategory
     = General
     | Layout
@@ -19,7 +20,9 @@ type ComponentCategory
     | Other
 
 
-type alias RouteTitle = String
+type alias RouteTitle =
+    String
+
 
 type alias DocumentationRoute model msg =
     { title : RouteTitle

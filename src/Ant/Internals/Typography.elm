@@ -1,13 +1,14 @@
 module Ant.Internals.Typography exposing
-    ( fontList
-    , textSelectionStyles
-    , commonFontStyles
+    ( commonFontStyles
+    , fontList
     , headingColorRgba
     , textColorRgba
+    , textSelectionStyles
     )
 
-import Css exposing (..)
 import Ant.Internals.Palette exposing (primaryColor)
+import Css exposing (..)
+
 
 fontList : List String
 fontList =
@@ -25,6 +26,7 @@ fontList =
     , qt "Noto Color Emoji"
     ]
 
+
 textSelectionStyles : Style
 textSelectionStyles =
     selection
@@ -39,6 +41,7 @@ commonFontStyles =
     , textSelectionStyles
     ]
 
+
 headingColorRgba : { r : Int, g : Int, b : Int, a : Float }
 headingColorRgba =
     { r = 0
@@ -46,6 +49,7 @@ headingColorRgba =
     , b = 0
     , a = 0.85
     }
+
 
 textColorRgba : { r : Int, g : Int, b : Int, a : Float }
 textColorRgba =

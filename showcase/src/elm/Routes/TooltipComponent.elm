@@ -1,36 +1,38 @@
-module Routes.TooltipComponent exposing (route, Model, Msg)
+module Routes.TooltipComponent exposing (Model, Msg, route)
 
 import Css exposing (displayFlex)
-import Html.Styled as Styled exposing (div, text, fromUnstyled)
+import Html.Styled as Styled exposing (div, fromUnstyled, text)
 import Html.Styled.Attributes exposing (css)
-
 import Routes.TooltipComponent.BasicExample as BasicExample
 import UI.Container as Container
 import UI.Typography as Typography
     exposing
         ( documentationHeading
-        , documentationText
         , documentationSubheading
+        , documentationText
         , documentationUnorderedList
         )
-
 import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
 title : String
-title = "Tooltip"
+title =
+    "Tooltip"
+
 
 type alias Model =
     { basicExample : Container.Model
     , placementExample : Container.Model
     }
 
+
 type DemoBox
     = Basic
     | Placement
 
 
-type Msg = DemoBoxMsg DemoBox Container.Msg
+type Msg
+    = DemoBoxMsg DemoBox Container.Msg
 
 
 route : DocumentationRoute Model Msg
@@ -46,25 +48,27 @@ route =
     }
 
 
-update : Msg -> Model -> (Model, Cmd Msg)
+update : Msg -> Model -> ( Model, Cmd Msg )
 update (DemoBoxMsg demobox demoboxMsg) model =
     case demobox of
         Basic ->
             let
-                (basicModel, basicCmd)=
+                ( basicModel, basicCmd ) =
                     Container.update demoboxMsg model.basicExample
             in
-                ({ model | basicExample = basicModel }, basicCmd)
+            ( { model | basicExample = basicModel }, basicCmd )
+
         Placement ->
             let
-                (placementModel, placementCmd) =
+                ( placementModel, placementCmd ) =
                     Container.update demoboxMsg model.placementExample
             in
-                ({ model | placementExample = placementModel }, placementCmd)
+            ( { model | placementExample = placementModel }, placementCmd )
 
 
 basicExampleStr : String
-basicExampleStr = """module Routes.TooltipComponent.BasicExample exposing (example)
+basicExampleStr =
+    """module Routes.TooltipComponent.BasicExample exposing (example)
 
 import Ant.Tooltip as Tooltip exposing (tooltip)
 import Ant.Typography.Text as Text
@@ -79,13 +83,14 @@ example =
 
 """
 
+
 basicExample : Model -> Styled.Html Msg
 basicExample model =
     let
         styledTypeExampleContents =
             fromUnstyled BasicExample.example
 
-        metaInfo = 
+        metaInfo =
             { title = "Basic"
             , content = "The simplest usage."
             , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
@@ -94,7 +99,6 @@ basicExample model =
 
         styledDemoContents =
             div [ css [ displayFlex ] ] [ styledTypeExampleContents ]
-
     in
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.basicExample
@@ -113,5 +117,5 @@ view model =
             ]
         , documentationSubheading Typography.WithoutAnchorLink "Examples"
         , div []
-            [ div [] [ basicExample model ], div [] [ ] ]
+            [ div [] [ basicExample model ], div [] [] ]
         ]

@@ -1,22 +1,32 @@
 module Ant.Internals.Palette exposing
-    ( primaryColor
+    ( dangerColor
+    , primaryColor
     , primaryColorFaded
     , primaryColorStrong
     , warningColor
-    , dangerColor
     )
 
+
 primaryColor : String
-primaryColor = "#1890ff"
+primaryColor =
+    "#1890ff"
+
 
 primaryColorFaded : String
-primaryColorFaded = "#40a9ff"
+primaryColorFaded =
+    "#40a9ff"
+
 
 primaryColorStrong : String
-primaryColorStrong = "#096dd9"
+primaryColorStrong =
+    "#096dd9"
+
 
 warningColor : String
-warningColor = "#faad14"
+warningColor =
+    "#faad14"
+
 
 dangerColor : String
-dangerColor = "#ff4d4f"
+dangerColor =
+    "#ff4d4f"

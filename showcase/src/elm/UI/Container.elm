@@ -1,13 +1,13 @@
 module UI.Container exposing
-    ( demoBox
-    , paddingTop
-    , paddingRight
+    ( Model
+    , Msg
+    , demoBox
     , paddingBottom
     , paddingLeft
+    , paddingRight
+    , paddingTop
     , update
     , view
-    , Msg
-    , Model
     )
 
 import Ant.Icons as Icons
@@ -15,11 +15,10 @@ import Ant.Tooltip as Tooltip exposing (tooltip)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
 import Html as Unstyled exposing (Html)
-import Html.Styled as Styled exposing (fromUnstyled, toUnstyled, div, span, text)
+import Html.Styled as Styled exposing (div, fromUnstyled, span, text, toUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
-import SyntaxHighlight exposing (useTheme, gitHub, elm, toBlockHtml)
-
+import SyntaxHighlight exposing (elm, gitHub, toBlockHtml, useTheme)
 import UI.Typography exposing (commonTextStyles)
 import Utils
 
@@ -58,32 +57,18 @@ defaultContainerOptions metaSection =
     }
 
 
-
-
-
-
-update : Msg -> Model -> (Model, Cmd msg)
+update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
-        SourceCodeVisibilityToggled -> 
-            ( { model | sourceCodeVisible = not model.sourceCodeVisible
-            }
+        SourceCodeVisibilityToggled ->
+            ( { model
+                | sourceCodeVisible = not model.sourceCodeVisible
+              }
             , Cmd.none
             )
 
         CopySourceToClipboardRequested ->
             ( model, Utils.copySourceToClipboard model.sourceCode )
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -112,6 +97,7 @@ paddingRight val (Container opts children) =
     in
     Container newOpts children
 
+
 paddingBottom : Float -> Container -> Container
 paddingBottom val (Container opts children) =
     let
@@ -137,6 +123,7 @@ paddingLeft val (Container opts children) =
 --     , showCode : Cmd msg
 --     }
 
+
 type alias ContainerMetaSection =
     { title : String
     , content : String
@@ -157,6 +144,7 @@ demoBox meta content =
 borderColor : Color
 borderColor =
     hex "#f0f0f0"
+
 
 viewSourceCode : String -> Styled.Html Msg
 viewSourceCode sourceCode =
@@ -185,20 +173,20 @@ opacityTransition =
 
 
 iconContainer :
-    (List (String, String) -> Html msg)
+    (List ( String, String ) -> Html msg)
     -> String
-    -> msg 
+    -> msg
     -> List ( String, String )
     -> Styled.Html msg
 iconContainer icon tooltipText msg extraStyles =
     let
         commonIconStyles =
-            [ ("margin-right", "10px")
-            , ("margin-left", "10px")
-            , ("cursor", "pointer")
+            [ ( "margin-right", "10px" )
+            , ( "margin-left", "10px" )
+            , ( "cursor", "pointer" )
             ]
 
-        bareIconContainer = 
+        bareIconContainer =
             span
                 [ css
                     [ opacity inherit
@@ -213,9 +201,8 @@ iconContainer icon tooltipText msg extraStyles =
                 [ fromUnstyled <| icon (extraStyles ++ commonIconStyles) ]
     in
     tooltip tooltipText (toUnstyled bareIconContainer)
-    |> Tooltip.toHtml
-    |> fromUnstyled
-
+        |> Tooltip.toHtml
+        |> fromUnstyled
 
 
 view : Model -> Container -> Styled.Html Msg
@@ -223,12 +210,13 @@ view model (Container opts children) =
     let
         metaSectionContent =
             let
-                metaSectionStyles = commonTextStyles ++
-                    [ position relative
-                    , borderBottom3 (px 1) solid borderColor
-                    , borderRight3 (px 1) solid borderColor
-                    , borderLeft3 (px 1) solid borderColor
-                    ]
+                metaSectionStyles =
+                    commonTextStyles
+                        ++ [ position relative
+                           , borderBottom3 (px 1) solid borderColor
+                           , borderRight3 (px 1) solid borderColor
+                           , borderLeft3 (px 1) solid borderColor
+                           ]
 
                 callToActionIcons =
                     div
@@ -248,24 +236,23 @@ view model (Container opts children) =
                             Icons.ellieLogo
                             "Open in Ellie"
                             SourceCodeVisibilityToggled
-                            [ ("width", "12px") ]
-
+                            [ ( "width", "12px" ) ]
                         , iconContainer
                             Icons.copyToClipboard
                             "Copy code"
                             CopySourceToClipboardRequested
-                            [ ("width", "16px") ]
-
+                            [ ( "width", "16px" ) ]
                         , iconContainer
                             Icons.codeOpenBrackets
                             "Show code"
                             SourceCodeVisibilityToggled
-                            [ ("width", "17px") ]
+                            [ ( "width", "17px" ) ]
                         ]
 
                 sourceCodeView =
                     if model.sourceCodeVisible then
                         viewSourceCode opts.meta.sourceCode
+
                     else
                         div [] []
             in
@@ -293,7 +280,7 @@ view model (Container opts children) =
                 , sourceCodeView
                 ]
             ]
-        
+
         mainContainerSection =
             div
                 [ css
@@ -305,7 +292,6 @@ view model (Container opts children) =
                     ]
                 ]
                 [ children ]
-
     in
     div [ css [ marginBottom (em 1) ] ]
         (mainContainerSection :: metaSectionContent)

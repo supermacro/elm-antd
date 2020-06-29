@@ -1,26 +1,13 @@
-module Ant.Typography.Text exposing
-    ( TextType(..)
-    , Text
-    , text
-    , code
-    , keyboard
-    , textType
-    , strong
-    , toHtml
-    , listToHtml
-    , disabled
-    , underlined
-    , lineThrough
-    , highlighted
-    )
+module Ant.Typography.Text exposing (TextType(..), Text, text, code, keyboard, textType, strong, disabled, underlined, lineThrough, highlighted, toHtml, listToHtml)
 
 {-| Create decorated text values
 
 @docs TextType, Text, text, code, keyboard, textType, strong, disabled, underlined, lineThrough, highlighted, toHtml, listToHtml
 
 -}
-import Ant.Internals.Palette exposing (warningColor, dangerColor)
-import Ant.Internals.Typography exposing (fontList, textSelectionStyles, textColorRgba)
+
+import Ant.Internals.Palette exposing (dangerColor, warningColor)
+import Ant.Internals.Typography exposing (fontList, textColorRgba, textSelectionStyles)
 import Css exposing (..)
 import Html exposing (Html)
 import Html.Styled as Styled exposing (text, toUnstyled)
@@ -36,7 +23,10 @@ type TextType
     | Danger
 
 
-type BorderStyle = Code | Keyboard | None
+type BorderStyle
+    = Code
+    | Keyboard
+    | None
 
 
 type alias TextOptions =
@@ -55,6 +45,7 @@ type alias TextOptions =
 type Text
     = Text TextOptions String
 
+
 defaultTextOptions : TextOptions
 defaultTextOptions =
     { disabled = False
@@ -71,11 +62,12 @@ defaultTextOptions =
 
 By default the text looks just like any regular text. To decorate it, you need to apply one or more of the below options.
 
-   text "hello, world!"
-   |> textType Warning
-   |> underlined True
-   |> strong
-   |> toHtml
+text "hello, world!"
+|> textType Warning
+|> underlined True
+|> strong
+|> toHtml
+
 -}
 text : String -> Text
 text value =
@@ -83,9 +75,9 @@ text value =
 
 
 {-| Change the text's type
-    text "Elm"
-    |> textType Secondary
-    |> toHtml
+text "Elm"
+|> textType Secondary
+|> toHtml
 -}
 textType : TextType -> Text -> Text
 textType textType_ (Text textOptions value) =
@@ -96,12 +88,12 @@ textType textType_ (Text textOptions value) =
     Text newTextOptions value
 
 
-
 {-| Turn your Text value into a styled in-line code block
 
     text "<h1>I LOVE CATS</h1>"
-    |> code
-    |> toHtml
+        |> code
+        |> toHtml
+
 -}
 code : Text -> Text
 code (Text textOptions value) =
@@ -115,8 +107,9 @@ code (Text textOptions value) =
 {-| Turn your Text value into a styled button-looking block (in-line)
 
     text "CMD"
-    |> keyboard
-    |> toHtml
+        |> keyboard
+        |> toHtml
+
 -}
 keyboard : Text -> Text
 keyboard (Text textOptions value) =
@@ -130,8 +123,9 @@ keyboard (Text textOptions value) =
 {-| Add an underline to your text
 
     text "this is important"
-    |> underlined True
-    |> toHtml
+        |> underlined True
+        |> toHtml
+
 -}
 underlined : Bool -> Text -> Text
 underlined underlined_ (Text textOptions value) =
@@ -140,14 +134,15 @@ underlined underlined_ (Text textOptions value) =
             { textOptions | underlined = underlined_ }
     in
     Text newTextOptions value
-    
+
 
 {-| Set a striked line through your Text element
 
     text "forget about this"
-    |> lineThrough True
-    |> toHtml
--}    
+        |> lineThrough True
+        |> toHtml
+
+-}
 lineThrough : Bool -> Text -> Text
 lineThrough lineThrough_ (Text textOptions value) =
     let
@@ -160,11 +155,12 @@ lineThrough lineThrough_ (Text textOptions value) =
 {-| Set your Text element as bold
 
     text "look at me"
-    |> strong
-    |> toHtml
+        |> strong
+        |> toHtml
+
 -}
 strong : Text -> Text
-strong (Text textOptions value) = 
+strong (Text textOptions value) =
     let
         strongTextOptions =
             { textOptions | strong = True }
@@ -175,8 +171,9 @@ strong (Text textOptions value) =
 {-| Set your Text element as disabled (the cursor icon changes)
 
     text "can't touch this'"
-    |> disabled True
-    |> toHtml
+        |> disabled True
+        |> toHtml
+
 -}
 disabled : Bool -> Text -> Text
 disabled disabled_ (Text textOptions value) =
@@ -190,8 +187,9 @@ disabled disabled_ (Text textOptions value) =
 {-| Style the Text as highlighted
 
     text "super important"
-    |> highlighted True
-    |> toHtml
+        |> highlighted True
+        |> toHtml
+
 -}
 highlighted : Bool -> Text -> Text
 highlighted highlighted_ (Text textOptions value) =
@@ -206,8 +204,8 @@ highlighted highlighted_ (Text textOptions value) =
 -}
 listToHtml : List Text -> Html msg
 listToHtml =
-    Html.span [] <<
-        List.map toHtml
+    Html.span []
+        << List.map toHtml
 
 
 {-| Render your Text node into plain old `Html msg`
@@ -228,33 +226,37 @@ toHtml (Text opts value) =
         fontWeight =
             if opts.strong then
                 Css.fontWeight (Css.int 600)
+
             else
                 Css.fontWeight Css.normal
 
         textColor =
-            case (opts.type_, opts.disabled) of
-                (_, True) ->
+            case ( opts.type_, opts.disabled ) of
+                ( _, True ) ->
                     let
-                        { r, g, b } = textColorRgba
+                        { r, g, b } =
+                            textColorRgba
                     in
-                        color (rgba r g b 0.25)
-                
-                (Primary, _) ->
+                    color (rgba r g b 0.25)
+
+                ( Primary, _ ) ->
                     let
-                        { r, g, b, a } = textColorRgba
+                        { r, g, b, a } =
+                            textColorRgba
                     in
                     color (rgba r g b a)
-                
-                (Secondary, _) ->
-                    let
-                        { r, g, b } = textColorRgba
-                    in 
-                        color (rgba r g b 0.45)
 
-                (Warning, _) ->
+                ( Secondary, _ ) ->
+                    let
+                        { r, g, b } =
+                            textColorRgba
+                    in
+                    color (rgba r g b 0.45)
+
+                ( Warning, _ ) ->
                     color (hex warningColor)
 
-                (Danger, _) -> 
+                ( Danger, _ ) ->
                     color (hex dangerColor)
 
         backgroundStyles =
@@ -263,6 +265,7 @@ toHtml (Text opts value) =
                     [ color (hex "#000")
                     , backgroundColor (hex "#ffe58f")
                     ]
+
             else
                 Css.batch []
 
@@ -272,17 +275,20 @@ toHtml (Text opts value) =
                     [ property "user-select" "none"
                     , cursor notAllowed
                     ]
+
             else
                 cursor inherit
 
         underlineStyles =
             if opts.underlined then
                 textDecorationLine underline
+
             else if opts.lineThrough then
                 textDecorationLine Css.lineThrough
+
             else
                 textDecorationLine inherit
-        
+
         borderStyles =
             case opts.borderStyle of
                 Code ->
@@ -292,12 +298,12 @@ toHtml (Text opts value) =
                         , padding3 (px 2.38) (px 4.76) (px 1.19)
                         , marginLeft (px 2.3)
                         , marginRight (px 2.3)
-                        , border3 (px 1) solid ((rgba 0 0 0 0.06))
+                        , border3 (px 1) solid (rgba 0 0 0 0.06)
                         , borderRadius (px 3)
                         , Css.fontSize (px 11.9)
                         , Css.lineHeight (px 18.7008)
                         ]
-                
+
                 Keyboard ->
                     Css.batch
                         [ Css.fontFamilies codeFontList
@@ -305,7 +311,7 @@ toHtml (Text opts value) =
                         , padding3 (px 2.38) (px 4.76) (px 1.19)
                         , marginLeft (px 2.3)
                         , marginRight (px 2.3)
-                        , border3 (px 1) solid ((rgba 0 0 0 0.06))
+                        , border3 (px 1) solid (rgba 0 0 0 0.06)
                         , borderRadius (px 3)
                         , Css.fontSize (px 12.6)
                         , Css.lineHeight (px 18.7008)
@@ -317,8 +323,6 @@ toHtml (Text opts value) =
                         , Css.lineHeight (px 18)
                         , Css.fontSize (px 14)
                         ]
-                
-
     in
     toUnstyled
         (Styled.span

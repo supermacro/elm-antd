@@ -10,31 +10,32 @@ import Ant.Layout as Layout exposing (LayoutTree)
 import Ant.Menu as Menu exposing (Menu)
 import Browser
 import Browser.Navigation as Nav
-import Css exposing
-    ( Style
-    , alignItems
-    , center
-    , displayFlex
-    , height
-    , marginRight
-    , paddingLeft
-    , paddingRight
-    , px
-    , width
-    )
+import Css
+    exposing
+        ( Style
+        , alignItems
+        , center
+        , displayFlex
+        , height
+        , marginRight
+        , paddingLeft
+        , paddingRight
+        , px
+        , width
+        )
 import Dict exposing (Dict)
-import Html exposing (Html, a, div, text, header, nav)
+import Html exposing (Html, a, div, header, nav, text)
 import Html.Styled as Styled exposing (toUnstyled)
-import Html.Styled.Attributes exposing (css, href, src, alt)
+import Html.Styled.Attributes exposing (alt, css, href, src)
+import Routes.ButtonComponent as ButtonPage
+import Routes.TooltipComponent as TooltipPage
+import Routes.TypographyComponent as TypographyPage
+import UI.Footer exposing (footer)
+import UI.Typography exposing (logoText)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
-
-import Routes.ButtonComponent as ButtonPage
-import Routes.TypographyComponent as TypographyPage
-import Routes.TooltipComponent as TooltipPage
-import UI.Typography exposing (logoText)
-import UI.Footer exposing (footer)
 import Utils exposing (ComponentCategory(..))
+
 
 type alias Route =
     String
@@ -48,7 +49,9 @@ type alias Model =
     }
 
 
-type alias Href = String
+type alias Href =
+    String
+
 
 type Msg
     = UrlChanged Url
@@ -64,10 +67,10 @@ componentList =
         buttonPageView model =
             ButtonPage.route.view model.buttonPageModel
                 |> Styled.map ButtonPageMessage
-        
-        typographyPageView model = 
+
+        typographyPageView model =
             TypographyPage.route.view model.typographyPageModel
-                |> Styled.map TypographyPageMessage 
+                |> Styled.map TypographyPageMessage
 
         tooltipPageView model =
             TooltipPage.route.view model.tooltipPageModel
@@ -150,23 +153,22 @@ update navKey msg model =
 
         ButtonPageMessage buttonPageMsg ->
             let
-                (buttonPageModel, buttonPageCmd) =
+                ( buttonPageModel, buttonPageCmd ) =
                     ButtonPage.route.update buttonPageMsg model.buttonPageModel
-
             in
-            ( { model |
-                buttonPageModel = buttonPageModel
+            ( { model
+                | buttonPageModel = buttonPageModel
               }
             , Cmd.map ButtonPageMessage buttonPageCmd
             )
 
         TooltipPageMessage tooltipPageMessage ->
             let
-                (tooltipPageModel, tooltipPageCmd ) =
+                ( tooltipPageModel, tooltipPageCmd ) =
                     TooltipPage.route.update tooltipPageMessage model.tooltipPageModel
             in
-            ( { model |
-                tooltipPageModel =  tooltipPageModel
+            ( { model
+                | tooltipPageModel = tooltipPageModel
               }
             , Cmd.map TooltipPageMessage tooltipPageCmd
             )
@@ -176,11 +178,12 @@ update navKey msg model =
                 ( typographyPageModel, typographyPageCmd ) =
                     TypographyPage.route.update typographyPageMessage model.typographyPageModel
             in
-            ( { model | typographyPageModel = typographyPageModel
+            ( { model
+                | typographyPageModel = typographyPageModel
               }
             , Cmd.map TypographyPageMessage typographyPageCmd
             )
-            
+
 
 navBar : Styled.Html msg
 navBar =
@@ -190,7 +193,7 @@ navBar =
                 [ displayFlex
                 , height (px 64)
                 , Css.boxShadow5 (px 0) (px 2) (px 8) (px 0) (Css.rgb 240 241 242)
-                ]     
+                ]
 
         verticalCenteringStyles : List Style
         verticalCenteringStyles =
@@ -199,17 +202,19 @@ navBar =
     Styled.header [ headerStyles ]
         [ Styled.div
             [ css
-                (verticalCenteringStyles ++
-                    [ width (px 266), paddingLeft (px 32)]
+                (verticalCenteringStyles
+                    ++ [ width (px 266), paddingLeft (px 32) ]
                 )
             ]
             [ Styled.img
                 [ alt "logo"
                 , src "https://github.com/gDelgado14/elm-antd/raw/master/logo.svg"
                 , css [ height (px 50), marginRight (px 10) ]
-                ] []
+                ]
+                []
             , logoText
             ]
+
         -- Search Bar Placeholder for Algolia Search Bar
         , Styled.div [ css verticalCenteringStyles ]
             [ Styled.text "search coming soon ..."
@@ -221,7 +226,6 @@ navBar =
             , Styled.a [ href "https://github.com/gDelgado14/elm-antd" ] [ Styled.text "gh" ]
             ]
         ]
-
 
 
 componentMenu : Route -> Html Msg
@@ -255,7 +259,7 @@ componentMenu activeRoute =
             let
                 itemGroup =
                     Menu.initItemGroup categoryName <|
-                        List.map 
+                        List.map
                             (\componentName ->
                                 let
                                     menuItem =
@@ -265,6 +269,7 @@ componentMenu activeRoute =
                                 in
                                 if activeRoute == componentName then
                                     Menu.selected menuItem
+
                                 else
                                     menuItem
                             )
@@ -278,26 +283,23 @@ componentMenu activeRoute =
                 addItemGroup
                 Menu.initMenu
                 categoryDict
-
     in
     Menu.toHtml menu
-
 
 
 getPageTitleAndContentView : Route -> ( Route, Model -> Styled.Html Msg )
 getPageTitleAndContentView activeRoute =
     let
-        notFoundPage = 
+        notFoundPage =
             ( "404", \_ -> Styled.div [] [ Styled.text "404 not found" ] )
     in
     List.filter
-        (\(pageTitle, _, _) -> pageTitle == activeRoute)
+        (\( pageTitle, _, _ ) -> pageTitle == activeRoute)
         componentList
-    |> List.map
-        (\(pageTitle, _, content) -> (pageTitle, content))
-    |> List.head
-    |> Maybe.withDefault notFoundPage
-
+        |> List.map
+            (\( pageTitle, _, content ) -> ( pageTitle, content ))
+        |> List.head
+        |> Maybe.withDefault notFoundPage
 
 
 view : (Msg -> msg) -> Model -> Browser.Document msg
@@ -317,8 +319,8 @@ view toMsg model =
 
         sidebar =
             Layout.sidebar (componentMenu model.activeRoute)
-            |> Layout.sidebarWidth 300
-            |> Layout.sidebarToTree
+                |> Layout.sidebarWidth 300
+                |> Layout.sidebarToTree
 
         layout : LayoutTree Msg
         layout =
@@ -328,9 +330,9 @@ view toMsg model =
                     sidebar
                     (Layout.layout2
                         (Layout.content <| toUnstyled componentPageShell)
-                        (Layout.footer <| toUnstyled footer))
+                        (Layout.footer <| toUnstyled footer)
+                    )
                 )
-
     in
     { title = label ++ " - Elm Ant Design"
     , body = [ Html.map toMsg <| Layout.toHtml layout ]

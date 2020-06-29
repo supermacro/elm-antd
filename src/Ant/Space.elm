@@ -1,31 +1,37 @@
 module Ant.Space exposing
     ( space
-    , direction
-    , SpaceDirection(..)
+    , direction, SpaceDirection(..)
     , toHtml
     , SpaceSize(..)
     )
 
 {-| Utilities for setting spacing between components
 
+
 # Creating a Space value
+
 @docs space
 
 Note that by default, a Space value is set to be vertically layed out with a "small" space between elements
 
+
 # Customizing the layout between components
+
 @docs direction, SpaceDirection
+
 
 # Rendering your Space component
 
 @docs toHtml
 
 -}
-import Css exposing (displayFlex, marginRight, marginBottom, px, Px, flexDirection, column, row)
+
+import Css exposing (Px, column, displayFlex, flexDirection, marginBottom, marginRight, px, row)
 import Css.Global exposing (global, selector)
 import Html exposing (Html)
-import Html.Styled exposing (div, toUnstyled, fromUnstyled)
-import Html.Styled.Attributes exposing (css, class)
+import Html.Styled exposing (div, fromUnstyled, toUnstyled)
+import Html.Styled.Attributes exposing (class, css)
+
 
 {-| Direction of the layout (think flexbox direction)
 -}
@@ -61,16 +67,18 @@ type Space msg
 {-| Create a Space value with default values
 
     space [ myEl, myOtherEl, mySuperCoolEl ]
+
 -}
 space : List (Html msg) -> Space msg
 space =
     Space defaultSpaceConfig
 
 
-{-| Set the direction of your Space value\
+{-| Set the direction of your Space value\\
 
     space myElementList
         |> direction Horizontal
+
 -}
 direction : SpaceDirection -> Space msg -> Space msg
 direction dir (Space config children) =
@@ -84,10 +92,17 @@ direction dir (Space config children) =
 spaceSizeToPixels : SpaceSize -> Px
 spaceSizeToPixels size =
     case size of
-        Small -> px 8
-        Medium -> px 16
-        Large -> px 24
-        Custom val -> px val
+        Small ->
+            px 8
+
+        Medium ->
+            px 16
+
+        Large ->
+            px 24
+
+        Custom val ->
+            px val
 
 
 {-| Convert your Space into a `Html msg`
@@ -95,11 +110,16 @@ spaceSizeToPixels size =
 toHtml : Space msg -> Html msg
 toHtml (Space config children) =
     let
-        spaceClass = "elm-antd__space_container"
+        spaceClass =
+            "elm-antd__space_container"
 
-        marginRule = case config.direction of
-            Horizontal -> marginRight
-            Vertical -> marginBottom 
+        marginRule =
+            case config.direction of
+                Horizontal ->
+                    marginRight
+
+                Vertical ->
+                    marginBottom
 
         spacingStyle =
             global
@@ -110,9 +130,13 @@ toHtml (Space config children) =
         styledChildren =
             List.map fromUnstyled children
 
-        direction_ = case config.direction of
-            Horizontal -> row
-            Vertical -> column
+        direction_ =
+            case config.direction of
+                Horizontal ->
+                    row
+
+                Vertical ->
+                    column
 
         styledSpace =
             div
@@ -120,6 +144,5 @@ toHtml (Space config children) =
                 , css [ displayFlex, flexDirection direction_ ]
                 ]
                 (spacingStyle :: styledChildren)
-    
     in
     toUnstyled styledSpace

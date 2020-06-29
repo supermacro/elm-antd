@@ -1,14 +1,15 @@
 module Routes.TypographyComponent.BasicExample exposing (example)
 
-import Ant.Typography as Typography exposing (title, Level(..))
-import Ant.Typography.Text as Text exposing (text, Text)
+import Ant.Typography as Typography exposing (Level(..), title)
 import Ant.Typography.Paragraph exposing (paragraph)
+import Ant.Typography.Text as Text exposing (Text, text)
 import Html exposing (Html, div)
 
 
 codeText : String -> Text
 codeText =
     Text.code << text
+
 
 example : Html msg
 example =

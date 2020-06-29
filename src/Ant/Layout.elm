@@ -1,20 +1,14 @@
 module Ant.Layout exposing
-    ( layout
-    , layout2
-    , sidebar
-    , Sidebar
-    , sidebarWidth
-    , sidebarToTree
-    , header
-    , content
-    , footer
+    ( LayoutTree
+    , header, content, footer, layout, layout2
+    , Sidebar, sidebar, sidebarWidth, sidebarToTree
     , toHtml
-    , LayoutTree
     )
 
 {-| Primitives for creating typical page layouts
 
-From: https://ant.design/components/layout/
+From: <https://ant.design/components/layout/>
+
 
 # Introduction
 
@@ -26,6 +20,7 @@ This module defines a recursive LayoutTree data structure, which allows for layo
 
 @docs LayoutTree
 
+
 ## Primitives
 
 The following primitives take some content (as `Html msg`) and returns to you a `LayoutTree` that you can continue appending to
@@ -34,8 +29,8 @@ Example:
 
     sidebar =
         Layout.sidebar (componentMenu model.activeRoute)
-        |> Layout.sidebarWidth 300
-        |> Layout.sidebarToTree
+            |> Layout.sidebarWidth 300
+            |> Layout.sidebarToTree
 
     layout : LayoutTree Msg
     layout =
@@ -45,11 +40,12 @@ Example:
                 sidebar
                 (Layout.layout2
                     (Layout.content <| toUnstyled componentPageShell)
-                    (Layout.footer <| toUnstyled footer))
+                    (Layout.footer <| toUnstyled footer)
+                )
             )
 
-
 @docs header, content, footer, layout, layout2
+
 
 ## Customizeable Primitives
 
@@ -64,41 +60,53 @@ The following primitives do not return a `LayoutTree` immediately. Rather, they 
 
 -}
 
-
-import Css exposing (width, px)
-import Html exposing (Html, Attribute, div, aside)
-import Html.Styled as Styled exposing (toUnstyled, fromUnstyled)
+import Css exposing (px, width)
+import Html exposing (Attribute, Html, aside, div)
 import Html.Attributes exposing (style)
+import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (css)
 
 
-type Header msg = Header (Html msg)
-type Content msg = Content (Html msg)
-type Footer msg = Footer (Html msg)
+type Header msg
+    = Header (Html msg)
+
+
+type Content msg
+    = Content (Html msg)
+
+
+type Footer msg
+    = Footer (Html msg)
+
 
 {-| Create a header node in your LayoutTree
 
 This node will be rendered horizontally at the top of your layout tree
+
 -}
 header : Html msg -> LayoutTree msg
-header = HeaderNode << Header
+header =
+    HeaderNode << Header
 
 
 {-| Create a content node in your LayoutTree
 
 This node will be rendered beneath a header (if a header is provided), but above the footer (if a footer is provided)
+
 -}
 content : Html msg -> LayoutTree msg
-content = ContentNode << Content
+content =
+    ContentNode << Content
 
 
 {-| Create a footer node in your LayoutTree
 
 This node will be rendered beneath all other nodes in your LayoutTree, just as you would expect from a footer.
+
 -}
 footer : Html msg -> LayoutTree msg
-footer = FooterNode << Footer
-
+footer =
+    FooterNode << Footer
 
 
 
@@ -106,9 +114,11 @@ footer = FooterNode << Footer
 -------------------------------------------
 ------ Sidebar
 
+
 type alias CollapseOptions =
     { collapsed : Bool
     }
+
 
 type alias SidebarOptions =
     { collapseOptions : Maybe CollapseOptions
@@ -125,7 +135,8 @@ defaultSidebarOptions =
 
 {-| A sidebar
 -}
-type Sidebar msg = Sidebar SidebarOptions (Html msg)
+type Sidebar msg
+    = Sidebar SidebarOptions (Html msg)
 
 
 {-| Create a customizeable sidebar
@@ -135,9 +146,11 @@ In order to append the sidebar to your LayoutTree, you must call `sidebarToTree`
     sideBar innerNodes
         |> sidebarWidth 40
         |> sidebarToTree
+
 -}
 sidebar : Html msg -> Sidebar msg
-sidebar = Sidebar defaultSidebarOptions
+sidebar =
+    Sidebar defaultSidebarOptions
 
 
 {-| Customize the width (in pixels) of the sidebar
@@ -145,20 +158,24 @@ sidebar = Sidebar defaultSidebarOptions
 sidebarWidth : Float -> Sidebar msg -> Sidebar msg
 sidebarWidth width (Sidebar opts sidebarContent) =
     let
-        newOpts = { opts | width = width }
+        newOpts =
+            { opts | width = width }
     in
-        Sidebar newOpts sidebarContent
+    Sidebar newOpts sidebarContent
 
 
 {-| Convert a `Sidebar` into a `LayoutTree` node so that you may append it to a `LayoutTree`
 -}
 sidebarToTree : Sidebar msg -> LayoutTree msg
-sidebarToTree = SideBarNode
+sidebarToTree =
+    SideBarNode
+
 
 
 -------------------------------------------
 -------------------------------------------
 ------ General Layout Types and fns
+
 
 {-| The various kinds of nodes represented by a LayoutTree
 -}
@@ -168,7 +185,7 @@ type LayoutTree msg
     | ContentNode (Content msg)
     | FooterNode (Footer msg)
     | LayoutTree2 (LayoutTree msg) (LayoutTree msg)
-    | LayoutTree3 (LayoutTree msg) (LayoutTree msg) (LayoutTree msg) 
+    | LayoutTree3 (LayoutTree msg) (LayoutTree msg) (LayoutTree msg)
 
 
 {-| Generate a three-column layout from three LayoutTree's (see example above)
@@ -188,14 +205,13 @@ layout2 firstSibling secondSibling =
 sideBarToHtml : Sidebar msg -> Html msg
 sideBarToHtml (Sidebar opts sidebarContent) =
     let
-        styledAside = 
+        styledAside =
             Styled.aside
                 [ css [ width (px opts.width) ]
                 ]
                 [ fromUnstyled sidebarContent ]
     in
     toUnstyled styledAside
-
 
 
 headerToHtml : Header msg -> Html msg
@@ -216,11 +232,20 @@ footerToHtml (Footer footerContent) =
 getDisplayStyle : LayoutTree msg -> Attribute msg
 getDisplayStyle tree =
     case tree of
-        LayoutTree2 (SideBarNode _) _ -> style "display" "flex"
-        LayoutTree2 _ (SideBarNode _) -> style "display" "flex"
-        LayoutTree3 (SideBarNode _) _ _ -> style "display" "flex"
-        LayoutTree3 _ (SideBarNode _) _ -> style "display" "flex"
-        _ -> style "display" "block"
+        LayoutTree2 (SideBarNode _) _ ->
+            style "display" "flex"
+
+        LayoutTree2 _ (SideBarNode _) ->
+            style "display" "flex"
+
+        LayoutTree3 (SideBarNode _) _ _ ->
+            style "display" "flex"
+
+        LayoutTree3 _ (SideBarNode _) _ ->
+            style "display" "flex"
+
+        _ ->
+            style "display" "block"
 
 
 {-| Convert your layout tree into good old `Html msg`
@@ -235,13 +260,17 @@ toHtml tree =
             ]
     in
     case tree of
-        HeaderNode headerNode -> headerToHtml headerNode
-        
-        SideBarNode sidebarNode -> sideBarToHtml sidebarNode
-        
-        ContentNode contentNode -> contentToHtml contentNode
-        
-        FooterNode footerNode -> footerToHtml footerNode
+        HeaderNode headerNode ->
+            headerToHtml headerNode
+
+        SideBarNode sidebarNode ->
+            sideBarToHtml sidebarNode
+
+        ContentNode contentNode ->
+            contentToHtml contentNode
+
+        FooterNode footerNode ->
+            footerToHtml footerNode
 
         LayoutTree2 left right ->
             div

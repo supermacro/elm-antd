@@ -1,22 +1,20 @@
 module Ant.Button exposing
-    ( button
-    , Button
-    , onClick
+    ( Button
+    , button, onClick, ButtonType(..), withType, ButtonSize(..)
     , toHtml
-    , withType
-    , ButtonType(..)
-    , ButtonSize(..)
     )
 
 {-| Button component
 
 @docs Button
 
+
 # Customizing the Button
 
 @docs button, onClick, ButtonType, withType, ButtonSize
 
 @docs toHtml
+
 -}
 
 import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
@@ -27,7 +25,6 @@ import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events as Events
-
 
 
 {-| The type of the button
@@ -55,7 +52,6 @@ type alias Options msg =
     , loading : Bool
     , href : Maybe String
     , onClick : Maybe msg
-    
 
     -- icon : Icon
     -- size : Size (Small, Medium, Large)
@@ -81,51 +77,56 @@ type Button msg
     = Button (Options msg) String
 
 
-{-| Create a Button component. 
+{-| Create a Button component.
 
     button "Click Me!"
-    |> toHtml
+        |> toHtml
+
 -}
 button : String -> Button msg
 button label =
     Button defaultOptions label
 
 
-
 {-| Change the default type of the Button
 
     button "submit"
-    |> withType Dashed
-    |> toHtml
+        |> withType Dashed
+        |> toHtml
+
 -}
 withType : ButtonType -> Button msg -> Button msg
 withType buttonType (Button options label) =
     let
-        newOptions = { options | type_ = buttonType }
+        newOptions =
+            { options | type_ = buttonType }
     in
-        Button newOptions label
+    Button newOptions label
 
 
 {-| Make your button emit messages. By default, clicking a button does nothing.
 
     button "submit"
-    |> onClick FinalCheckoutFormSubmitted
-    |> toHtml
+        |> onClick FinalCheckoutFormSubmitted
+        |> toHtml
+
 -}
 onClick : msg -> Button msg -> Button msg
 onClick msg (Button opts label) =
-  let
-    newOpts = { opts | onClick = Just msg }
-  in
+    let
+        newOpts =
+            { opts | onClick = Just msg }
+    in
     Button newOpts label
 
 
 textColor : Color
 textColor =
     let
-        { r, g, b, a } = textColorRgba
+        { r, g, b, a } =
+            textColorRgba
     in
-        rgba r g b a
+    rgba r g b a
 
 
 {-| Turn your Button into Html msg
@@ -133,7 +134,8 @@ textColor =
 toHtml : Button msg -> Html msg
 toHtml (Button options label) =
     let
-        transitionDuration = 350
+        transitionDuration =
+            350
 
         baseAttributes =
             [ borderRadius (px 2)
@@ -165,7 +167,7 @@ toHtml (Button options label) =
                 , color (hex primaryColor)
                 ]
             , transition
-                [ Css.Transitions.borderColor transitionDuration 
+                [ Css.Transitions.borderColor transitionDuration
                 , Css.Transitions.color transitionDuration
                 ]
             ]
@@ -194,9 +196,14 @@ toHtml (Button options label) =
 
         buttonTypeAttributes =
             case options.type_ of
-                Default -> defaultButtonAttributes
-                Primary -> primaryButtonAttributes
-                _ -> []
+                Default ->
+                    defaultButtonAttributes
+
+                Primary ->
+                    primaryButtonAttributes
+
+                _ ->
+                    []
 
         combinedButtonStyles =
             baseAttributes ++ buttonTypeAttributes
@@ -208,7 +215,6 @@ toHtml (Button options label) =
 
                 Nothing ->
                     [ css combinedButtonStyles ]
-
     in
     toUnstyled
         (H.button

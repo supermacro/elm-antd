@@ -1,56 +1,40 @@
-module Ant.Menu exposing
-    ( initMenuItem
-    , selected
-    , initMenu
-    , initSubMenu
-    , initItemGroup
-    , pushItem
-    , pushSubMenu
-    , pushItemGroup
-    , pushItemToSubMenu
-    , pushItemGroupToSubMenu
-    , pushSubMenuToSubMenu
-    , pushItemToItemGroup
-    , toHtml 
-    , Menu
-    , SubMenu
-    , ItemGroup
-    , MenuMode(..)
-    )
-
+module Ant.Menu exposing (initMenuItem, selected, initMenu, initSubMenu, initItemGroup, pushItem, pushSubMenu, pushItemGroup, pushItemToSubMenu, pushItemGroupToSubMenu, pushSubMenuToSubMenu, pushItemToItemGroup, toHtml, Menu, SubMenu, ItemGroup, MenuMode(..))
 
 {-| Primitives for creating Menus.
 
 This module comes with three big menu primitives:
 
-- Menu: The main container of your menu
-- SubMenu: A menu within your menu. SubMenu's are collapsable.
-- ItemGroup: A grouping of items with a label.
+  - Menu: The main container of your menu
+  - SubMenu: A menu within your menu. SubMenu's are collapsable.
+  - ItemGroup: A grouping of items with a label.
 
 The overarching idea in this module is that you start with the inner items of your menu, constructing it piece by piece, until you have
 all of the elements of the Menu. Once that is done, then you can create your Menu and turn it into `Html msg`.
 
 A good example can be found in this project's [showcase](https://github.com/supermacro/elm-antd/blob/master/showcase/src/elm/Router.elm#L277).
 
-@docs initMenuItem, selected, initMenu, initSubMenu, initItemGroup, pushItem, pushSubMenu, pushItemGroup, pushItemToSubMenu, pushItemGroupToSubMenu, pushSubMenuToSubMenu, pushItemToItemGroup, toHtml , Menu, SubMenu, ItemGroup, MenuMode
+@docs initMenuItem, selected, initMenu, initSubMenu, initItemGroup, pushItem, pushSubMenu, pushItemGroup, pushItemToSubMenu, pushItemGroupToSubMenu, pushSubMenuToSubMenu, pushItemToItemGroup, toHtml, Menu, SubMenu, ItemGroup, MenuMode
+
 -}
 
-import Ant.Internals.Typography exposing (fontList, textColorRgba)
 import Ant.Internals.Palette exposing (primaryColor)
-import Ant.Typography.Text as Text 
+import Ant.Internals.Typography exposing (fontList, textColorRgba)
+import Ant.Typography.Text as Text
 import Css exposing (..)
 import Css.Transitions exposing (transition)
-import Html exposing (Html, div, text, ul, li)
+import Html exposing (Html, div, li, text, ul)
 import Html.Attributes exposing (style)
-import Html.Styled as Styled exposing (toUnstyled, fromUnstyled)
+import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
+
 
 type alias MenuItemState =
     { selected : Bool
     , disabled : Bool
     , title : Maybe String
     }
+
 
 defaultMenuItemState : MenuItemState
 defaultMenuItemState =
@@ -60,13 +44,15 @@ defaultMenuItemState =
     }
 
 
-type MenuItem msg = MenuItem msg MenuItemState (Html msg) 
+type MenuItem msg
+    = MenuItem msg MenuItemState (Html msg)
 
 
 {-| Given a `msg` and some contents, create a menu item
 -}
 initMenuItem : msg -> Html msg -> MenuItem msg
-initMenuItem msg = MenuItem msg defaultMenuItemState
+initMenuItem msg =
+    MenuItem msg defaultMenuItemState
 
 
 {-| Mark the menu item as selected
@@ -74,14 +60,19 @@ initMenuItem msg = MenuItem msg defaultMenuItemState
 selected : MenuItem msg -> MenuItem msg
 selected (MenuItem msg currentState contents) =
     let
-        newState = { currentState | selected = True }
+        newState =
+            { currentState | selected = True }
     in
-        MenuItem msg newState contents
+    MenuItem msg newState contents
 
 
 {-| This type defines how the menu will be positioned
 -}
-type MenuMode = Vertical | Horizontal | Inline
+type MenuMode
+    = Vertical
+    | Horizontal
+    | Inline
+
 
 type alias MenuConfig =
     { mode : MenuMode
@@ -104,9 +95,8 @@ type MenuContent msg
 
 {-| Represents a Menu, its configuration and the Menu's content
 -}
-type Menu msg = Menu MenuConfig (List (MenuContent msg))
-
-
+type Menu msg
+    = Menu MenuConfig (List (MenuContent msg))
 
 
 
@@ -114,10 +104,13 @@ type Menu msg = Menu MenuConfig (List (MenuContent msg))
 -------------------------------------------
 ------ Menu Logic
 
+
 {-| Initialize a menu with no content. This is useful when constructing your menu using folds.
 -}
 initMenu : Menu msg
-initMenu = Menu defaultMenuConfig []
+initMenu =
+    Menu defaultMenuConfig []
+
 
 {-| push a menu item to the end of the menu
 -}
@@ -131,7 +124,8 @@ pushItem newMenuItem (Menu config currentMenuList) =
 pushSubMenu : SubMenu msg -> Menu msg -> Menu msg
 pushSubMenu subMenu (Menu config currentMenuList) =
     Menu config (currentMenuList ++ [ Sub subMenu ])
-  
+
+
 {-| push a item group to the end of the menu
 -}
 pushItemGroup : ItemGroup msg -> Menu msg -> Menu msg
@@ -140,16 +134,17 @@ pushItemGroup itemGroup (Menu config currentMenuList) =
 
 
 
-
 -------------------------------------------
 -------------------------------------------
 ------ SubMenu Logic
+
 
 type alias SubMenuState =
     { opened : Bool
     , disabled : Bool
     , title : Maybe String
     }
+
 
 defaultSubMenuState : SubMenuState
 defaultSubMenuState =
@@ -164,14 +159,18 @@ type SubMenuContent msg
     | SubMenuGroup (ItemGroup msg)
     | NestedSubMenu (SubMenu msg)
 
+
 {-| Represents a sub-menu, and the submenu's associated configuration / state, as well as the menu's contents
 -}
-type SubMenu msg = SubMenu SubMenuState (List (SubMenuContent msg))
+type SubMenu msg
+    = SubMenu SubMenuState (List (SubMenuContent msg))
+
 
 {-| Create an empty nested menu
 -}
 initSubMenu : SubMenu msg
-initSubMenu = SubMenu defaultSubMenuState []
+initSubMenu =
+    SubMenu defaultSubMenuState []
 
 
 {-| Push a MenuItem to the end of the SubMenu
@@ -196,15 +195,14 @@ pushItemGroupToSubMenu itemGroup (SubMenu state currentMenuList) =
 
 
 
-
-
-
-
 -------------------------------------------
 -------------------------------------------
 ------ ItemGroup Logic
 
-type alias ItemGroupTitle = String
+
+type alias ItemGroupTitle =
+    String
+
 
 {-| Represents a grouping of MenuItems
 -}
@@ -224,14 +222,6 @@ initItemGroup =
 pushItemToItemGroup : MenuItem msg -> ItemGroup msg -> ItemGroup msg
 pushItemToItemGroup newItem (ItemGroup title currentItemGroupList) =
     ItemGroup title (currentItemGroupList ++ [ newItem ])
-
-
-
-
-
-
-
-
 
 
 
@@ -259,6 +249,7 @@ viewMenuItem (MenuItem msg state itemContents) =
                     , backgroundColor (hex "#e6f7ff")
                     , borderRight3 (px 3) solid (hex primaryColor)
                     ]
+
             else
                 batch
                     [ menuItemColor
@@ -278,10 +269,10 @@ viewMenuItem (MenuItem msg state itemContents) =
             , marginBottom (px 8)
             , lineHeight (px 40)
             , transition [ Css.Transitions.color 250 ]
-            , cursor pointer 
+            , cursor pointer
             ]
         ]
-        [  fromUnstyled itemContents ]
+        [ fromUnstyled itemContents ]
 
 
 viewItemGroup : ItemGroup msg -> Styled.Html msg
@@ -290,8 +281,9 @@ viewItemGroup (ItemGroup title menuItems) =
         itemGroupLabel =
             fromUnstyled
                 (Text.text title
-                |> Text.textType Text.Secondary
-                |> Text.toHtml)
+                    |> Text.textType Text.Secondary
+                    |> Text.toHtml
+                )
     in
     Styled.div []
         [ Styled.div
@@ -312,10 +304,9 @@ viewSubMenuContent subMenuContent =
 
         SubMenuGroup itemGroup ->
             viewItemGroup itemGroup
-        
-        NestedSubMenu subMenu -> 
-            viewSubMenu subMenu
 
+        NestedSubMenu subMenu ->
+            viewSubMenu subMenu
 
 
 viewSubMenu : SubMenu msg -> Styled.Html msg
@@ -326,10 +317,9 @@ viewSubMenu (SubMenu _ subMenuContentList) =
         ]
 
 
-
 viewMenuContent : MenuContent msg -> Styled.Html msg
 viewMenuContent menuContent =
-    case menuContent of 
+    case menuContent of
         Item menuItem ->
             viewMenuItem menuItem
 
@@ -338,7 +328,6 @@ viewMenuContent menuContent =
 
         Group itemGroup ->
             viewItemGroup itemGroup
-    
 
 
 {-| Turn your Menu into a `Html msg`
