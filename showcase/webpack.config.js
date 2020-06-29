@@ -68,6 +68,7 @@ const commonConfig = {
       ...copyArgs([
         'NODE_ENV',
         'API',
+        'APP_MODE',
       ]),
     })
   ],

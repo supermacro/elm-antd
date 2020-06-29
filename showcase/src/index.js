@@ -1,10 +1,18 @@
 'use strict';
 
-const Elm = require('./elm/Showcase.elm').Elm;
+const VISUAL_TESTING_MODE = process.env.APP_MODE === 'visual_testing'
 
+if (VISUAL_TESTING_MODE) {
+  const { Elm } = require('./elm/VisualTests.elm');
 
-const app = Elm.Showcase.init();
+  Elm.VisualTests.init()
+} else {
+  const Elm = require('./elm/Showcase.elm').Elm;
 
-app.ports.copySourceToClipboard.subscribe((src) => {
-  navigator.clipboard.writeText(src)
-})
+  const app = Elm.Showcase.init();
+
+  app.ports.copySourceToClipboard.subscribe((src) => {
+    navigator.clipboard.writeText(src)
+  })
+}
+

@@ -6,15 +6,22 @@
   "scripts": {
     "start": "webpack-dev-server --port 3000",
     "build": "NODE_ENV=production webpack",
+    "clean": "rm -rf ./dist/",
+    "visual-tests:build": "npm run clean && APP_MODE=visual_testing NODE_ENV=production webpack",
+    "visual-tests:start-server": "npm run visual-tests:build && serve -l 3000 dist",
+    "visual-tests:run-tests": "percy exec -- cypress run",
     "test": "elm-test"
   },
   "keywords": [],
   "author": "Giorgio Delgado",
   "license": "MIT",
   "devDependencies": {
+    "@percy/cypress": "^2.3.1",
+    "cypress": "^4.9.0",
     "elm-test": "^0.19.1-revision2",
     "elm-webpack-loader": "^6.0.1",
     "html-webpack-plugin": "^4.2.0",
+    "serve": "^11.3.2",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
