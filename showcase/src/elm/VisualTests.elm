@@ -73,10 +73,13 @@ intoComponent (RawComponent maybeStr) =
                     Button { type_ = Default, disabled = False }
 
                 "PrimaryButton" ->
-                    Button { type_ = Primary, disabled = True }
+                    Button { type_ = Primary, disabled = False }
 
                 "SimpleHeading" ->
                     Typography { level = H1 }
+
+                "DashedButton" ->
+                    Button { type_ = Dashed, disabled = False }
 
                 _ ->
                     Button { type_ = Default, disabled = False }

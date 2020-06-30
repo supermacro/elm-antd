@@ -16,26 +16,26 @@ import Css
         , alignItems
         , center
         , displayFlex
+        , em
         , height
+        , justifyContent
         , marginRight
         , paddingLeft
         , paddingRight
         , px
-        , em
-        , width
-        , justifyContent
         , spaceBetween
+        , width
         )
 import Dict exposing (Dict)
 import Html exposing (Html, a, div, header, nav, text)
-import Html.Styled as Styled exposing (toUnstyled, fromUnstyled)
+import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (alt, css, href, src)
 import Routes.ButtonComponent as ButtonPage
 import Routes.TooltipComponent as TooltipPage
 import Routes.TypographyComponent as TypographyPage
 import UI.Footer exposing (footer)
-import UI.Typography exposing (logoText)
 import UI.Icons
+import UI.Typography exposing (logoText)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 import Utils exposing (ComponentCategory(..))
@@ -223,8 +223,8 @@ navBar =
 
         -- Search Bar Placeholder for Algolia Search Bar
         --, Styled.div [ css verticalCenteringStyles ]
-            -- [ Styled.text "search coming soon ..."
-            -- ]
+        -- [ Styled.text "search coming soon ..."
+        -- ]
         , Styled.nav [ css verticalCenteringStyles ]
             [ Styled.a [ href "https://ant.design/docs/spec/introduce" ] [ Styled.text "Design" ]
             , Styled.a [ href "https://github.com/supermacro/elm-antd/blob/master/README.md" ] [ Styled.text "Docs" ]

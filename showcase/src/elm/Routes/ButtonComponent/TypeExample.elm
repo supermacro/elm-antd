@@ -14,16 +14,22 @@ example : Html msg
 example =
     let
         primaryButton =
-            button "Primary"
+            button "Primary Button"
                 |> Btn.withType Primary
                 |> toHtml
 
-        defaultButotn =
-            button "Default"
+        defaultButton =
+            button "Default Button"
                 |> Btn.withType Default
+                |> toHtml
+
+        dashedButton =
+            button "Dashed Button"
+                |> Btn.withType Dashed
                 |> toHtml
     in
     horizontalSpace
         [ primaryButton
-        , defaultButotn
+        , defaultButton
+        , dashedButton
         ]

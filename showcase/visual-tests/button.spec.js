@@ -31,5 +31,14 @@ describe('Button', () => {
       cy.percySnapshot(primaryButton)
     })
   })
+
+
+  const dashedButton = 'DashedButton'
+  describe(dashedButton, () => {
+    it('Renders correctly', () => {
+      visit(dashedButton, cy)
+      cy.percySnapshot(dashedButton)
+    })
+  })
 })
 

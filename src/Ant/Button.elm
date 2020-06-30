@@ -194,6 +194,9 @@ toHtml (Button options label) =
                 ]
             ]
 
+        dashedButtonAttributes =
+            borderStyle dashed :: defaultButtonAttributes
+
         buttonTypeAttributes =
             case options.type_ of
                 Default ->
@@ -201,6 +204,9 @@ toHtml (Button options label) =
 
                 Primary ->
                     primaryButtonAttributes
+
+                Dashed ->
+                    dashedButtonAttributes
 
                 _ ->
                     []
