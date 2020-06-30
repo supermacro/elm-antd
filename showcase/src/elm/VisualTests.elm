@@ -9,7 +9,7 @@ This app is controlled via the URL:
 -}
 
 import Ant.Button as Btn exposing (ButtonType(..), button)
-import Ant.Typography as Heading exposing (title)
+import Ant.Typography as Heading exposing (title, Level(..))
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (Html, div, text)
@@ -75,6 +75,9 @@ intoComponent (RawComponent maybeStr) =
                 "PrimaryButton" ->
                     Button { type_ = Primary, disabled = True }
 
+                "SimpleHeading" ->
+                    Typography { level = H1 }
+
                 _ ->
                     Button { type_ = Default, disabled = False }
 
@@ -130,6 +133,7 @@ buildComponent (Model component) =
 
         Typography typographyConfig ->
             title "elm"
+                |> Heading.level typographyConfig.level
                 |> Heading.toHtml
 
 
