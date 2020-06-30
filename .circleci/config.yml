@@ -25,7 +25,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/
+            - project/showcase/node_modules
             - .cache/Cypress 
 
   check_formatting:
@@ -47,7 +47,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: "Build package and showcase"
           command: |
