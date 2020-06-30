@@ -7,6 +7,10 @@ jobs:
       - image: giorgio14/elm-antd-ci:latest
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package-lock.json" }}
+            - dependency-cache-
       - run:
           name: "Install Showcase Dependencies"
           command: |
@@ -14,11 +18,15 @@ jobs:
             echo "npm version: $(npm -v)"
             cd ./showcase
             npm install
-
-      - persist_to_workspace:
-          root: .
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
-            - ./showcase/node_modules
+            - ~/.cache
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/
+            - .cache/Cypress 
 
   check_formatting:
     docker:
@@ -53,7 +61,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: .
+          at: ~/ 
       - run:
           name: "Run visual regression tests"
           command: |
