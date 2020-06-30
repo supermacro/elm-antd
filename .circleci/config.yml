@@ -23,8 +23,6 @@ jobs:
       - image: giorgio14/elm-antd-ci:latest
     steps:
       - checkout
-      - attach_workspace:
-          at: .
       - run:
           name: "Check formatting"
           command: |
@@ -33,6 +31,20 @@ jobs:
             echo "> Checking formatting of showcase"
             elm-format --validate showcase/src/elm
 
+  verify_build:
+    docker:
+      - image: giorgio14/elm-antd-ci:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Build package and showcase"
+          command: |
+            elm make
+            cd showcase
+            npm run build
+
 
 workflows:
   version: 2
@@ -40,4 +52,7 @@ workflows:
     jobs:
       - install_deps
       - check_formatting
+      - verify_build:
+          requires:
+            - install_deps
 
