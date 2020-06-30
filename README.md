@@ -3,6 +3,9 @@
 # Elm Ant Design
 
 [![ELM_ANTD](https://circleci.com/gh/supermacro/elm-antd.svg?style=svg)](https://circleci.com/gh/supermacro/elm-antd)
+ 
+[![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Elm-Antd-Open-Source-Project/elm-antd)
+
 
 Bringing the amazing [Ant Design](https://ant.design) kit to Elm!
 
