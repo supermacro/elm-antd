@@ -1,0 +1,43 @@
+version: 2.1
+jobs:
+  install_deps:
+    docker:
+      - image: giorgio14/elm-antd-ci:latest
+    steps:
+      - checkout
+      - run:
+          name: "Install Showcase Dependencies"
+          command: |
+            echo "Node version: $(node -v)"
+            echo "npm version: $(npm -v)"
+            cd ./showcase
+            npm install
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./showcase/node_modules
+
+  check_formatting:
+    docker:
+      - image: giorgio14/elm-antd-ci:latest
+    steps:
+      - checkout
+      - attach_workspace:
+        at: .
+      - run:
+          name: "Check formatting"
+          command: |
+            echo "> Checking formatting of package"
+            elm-format --validate src
+            echo "> Checking formatting of showcase"
+            elm-format --validate showcase/src/elm
+
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - install_deps
+      - check_formatting
+
