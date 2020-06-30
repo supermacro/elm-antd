@@ -45,7 +45,22 @@ jobs:
             cd showcase
             npm run build
 
-
+  visual_tests:
+    docker:
+      - image: giorgio14/elm-antd-ci:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Run visual regression tests"
+          command: |
+            cd showcase
+            npm run visual-tests:start-server &>/dev/null &
+            # wait for visual testing app to compile
+            sleep 5
+            npm run visual-tests:run-tests
+            
 workflows:
   version: 2
   main:
@@ -55,4 +70,6 @@ workflows:
       - verify_build:
           requires:
             - install_deps
-
+      - visual_tests:
+          requires:
+            - install_deps
