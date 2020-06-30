@@ -9,7 +9,7 @@ This app is controlled via the URL:
 -}
 
 import Ant.Button as Btn exposing (ButtonType(..), button)
-import Ant.Typography as Heading exposing (title, Level(..))
+import Ant.Typography as Heading exposing (Level(..), title)
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (Html, div, text)
