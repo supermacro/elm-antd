@@ -2,6 +2,8 @@
 
 # Elm Ant Design
 
+[![ELM_ANTD](https://circleci.com/gh/supermacro/elm-antd.svg?style=svg)](https://circleci.com/gh/supermacro/elm-antd)
+
 Bringing the amazing [Ant Design](https://ant.design) kit to Elm!
 
 Component gallery can be viewed here:
