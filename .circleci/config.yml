@@ -9,7 +9,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dependency-cache-{{ checksum "package-lock.json" }}
+            - dependency-cache-{{ checksum "./showcase/package-lock.json" }}
             - dependency-cache-
       - run:
           name: "Install Showcase Dependencies"
@@ -19,7 +19,7 @@ jobs:
             cd ./showcase
             npm install
       - save_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: dependency-cache-{{ checksum "./showcase/package-lock.json" }}
           paths:
             - ~/.cache
       - persist_to_workspace:
