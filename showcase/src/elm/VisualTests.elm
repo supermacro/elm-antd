@@ -70,6 +70,10 @@ registeredComponents =
     [ ( "SimpleButton", Button { type_ = Default, disabled = False } )
     , ( "PrimaryButton", Button { type_ = Primary, disabled = False } )
     , ( "DashedButton", Button { type_ = Dashed, disabled = False } )
+    , ( "TextButton", Button { type_ = Text, disabled = False } )
+    , ( "LinkButton", Button { type_ = Link, disabled = False } )
+
+    -- Headings
     , ( "SimpleHeading", Typography { level = H1 } )
     ]
 
