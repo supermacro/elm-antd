@@ -197,7 +197,7 @@ toHtml (Button options label) =
             ]
 
         dashedButtonAttributes =
-            borderStyle dashed :: defaultButtonAttributes
+            defaultButtonAttributes ++ [ borderStyle dashed ]
 
         textButtonAttributes =
             [ color textColor
