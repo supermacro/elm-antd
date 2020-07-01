@@ -33,6 +33,7 @@ type ButtonType
     = Primary
     | Default
     | Dashed
+    | Text
     | Link
 
 
@@ -141,7 +142,6 @@ toHtml (Button options label) =
             [ borderRadius (px 2)
             , padding2 (px 4) (px 15)
             , borderWidth (px 1)
-            , borderStyle solid
             , fontSize (px 14)
             , height (px 34)
             , outline none
@@ -152,6 +152,7 @@ toHtml (Button options label) =
 
         defaultButtonAttributes =
             [ color textColor
+            , borderStyle solid
             , backgroundColor (hex "#fff")
             , borderColor <| rgb 217 217 217
             , focus
@@ -174,6 +175,7 @@ toHtml (Button options label) =
 
         primaryButtonAttributes =
             [ color (hex "#fff")
+            , borderStyle solid
             , backgroundColor (hex primaryColor)
             , borderColor (hex primaryColor)
             , focus
@@ -197,6 +199,16 @@ toHtml (Button options label) =
         dashedButtonAttributes =
             borderStyle dashed :: defaultButtonAttributes
 
+        textButtonAttributes =
+            [ color textColor
+            , border zero
+            , backgroundColor (hex "#fff")
+            , hover
+                [ backgroundColor (rgba 0 0 0 0.018) ]
+            , transition
+                [ Css.Transitions.backgroundColor transitionDuration ]
+            ]
+
         buttonTypeAttributes =
             case options.type_ of
                 Default ->
@@ -207,6 +219,9 @@ toHtml (Button options label) =
 
                 Dashed ->
                     dashedButtonAttributes
+
+                Text ->
+                    textButtonAttributes
 
                 _ ->
                     []

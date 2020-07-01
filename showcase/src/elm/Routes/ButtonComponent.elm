@@ -47,13 +47,18 @@ example =
             button "Dashed Button"
                 |> Btn.withType Dashed
                 |> toHtml
+
+        textButton =
+            button "Text Button"
+                |> Btn.withType Text
+                |> toHtml
     in
     horizontalSpace
         [ primaryButton
-        , defaultButton 
+        , defaultButton
         , dashedButton
-        ]
-"""
+        , textButton
+        ]"""
 
 
 type alias Model =
@@ -116,7 +121,7 @@ typeExample model =
 
         metaInfo =
             { title = "Type"
-            , content = "There are \"primary\", \"default\", \"dashed\" and \"link\" buttons in Elm Antd."
+            , content = "There are \"primary\", \"default\", \"dashed\", \"text\" and \"link\" buttons in Elm Antd."
             , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
             , sourceCode = typeExampleStr
             }

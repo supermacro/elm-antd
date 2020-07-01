@@ -27,9 +27,15 @@ example =
             button "Dashed Button"
                 |> Btn.withType Dashed
                 |> toHtml
+
+        textButton =
+            button "Text Button"
+                |> Btn.withType Text
+                |> toHtml
     in
     horizontalSpace
         [ primaryButton
         , defaultButton
         , dashedButton
+        , textButton
         ]
