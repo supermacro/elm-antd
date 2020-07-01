@@ -4,7 +4,7 @@
   "description": "Showcase of all the Antd Components",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --port 3000",
+    "dev": "webpack-dev-server --port 3000",
     "build": "NODE_ENV=production webpack",
     "clean": "rm -rf ./dist/",
     "visual-tests:build": "npm run clean && APP_MODE=visual_testing NODE_ENV=production webpack",
