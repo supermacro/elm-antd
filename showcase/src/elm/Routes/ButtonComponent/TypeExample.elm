@@ -32,10 +32,16 @@ example =
             button "Text Button"
                 |> Btn.withType Text
                 |> toHtml
+
+        linkButton =
+            button "Link Button"
+                |> Btn.withType Link
+                |> toHtml
     in
     horizontalSpace
         [ primaryButton
         , defaultButton
         , dashedButton
         , textButton
+        , linkButton
         ]

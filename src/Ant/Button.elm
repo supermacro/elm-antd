@@ -209,6 +209,16 @@ toHtml (Button options label) =
                 [ Css.Transitions.backgroundColor transitionDuration ]
             ]
 
+        linkButtonAttributes =
+            [ color (hex primaryColor)
+            , border zero
+            , backgroundColor (hex "#fff")
+            , hover
+                [ color (hex primaryColorFaded) ]
+            , transition
+                [ Css.Transitions.color transitionDuration ]
+            ]
+
         buttonTypeAttributes =
             case options.type_ of
                 Default ->
@@ -223,8 +233,8 @@ toHtml (Button options label) =
                 Text ->
                     textButtonAttributes
 
-                _ ->
-                    []
+                Link ->
+                    linkButtonAttributes
 
         combinedButtonStyles =
             baseAttributes ++ buttonTypeAttributes
