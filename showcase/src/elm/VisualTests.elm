@@ -6,21 +6,25 @@ This app is controlled via the URL:
 
   - <http://localhost:3000?component=SimpleButton>
 
+Given a `component` query param, render the associated component
+
 -}
 
 import Ant.Button as Btn exposing (ButtonType(..), button)
 import Ant.Typography as Heading exposing (Level(..), title)
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, div, text)
+import Html exposing (Html, div)
 import Html.Attributes exposing (style)
 import Url exposing (Url)
-import Url.Parser as P exposing ((<?>), Parser, oneOf, parse)
+import Url.Parser as P exposing ((<?>), Parser, parse)
 import Url.Parser.Query as Query
 
 
-type Model
-    = Model Component
+type alias Model =
+    { component : Component
+    , label : String
+    }
 
 
 type Msg
@@ -59,36 +63,41 @@ type RawComponent
     = RawComponent (Maybe String)
 
 
-componentParser : Parser (RawComponent -> a) a
-componentParser =
-    P.map RawComponent (P.top <?> Query.string "component")
+{-| Represents the set of components that are known and properly configured to be tested
+-}
+registeredComponents : List ( String, Component )
+registeredComponents =
+    [ ( "SimpleButton", Button { type_ = Default, disabled = False } )
+    , ( "PrimaryButton", Button { type_ = Primary, disabled = False } )
+    , ( "DashedButton", Button { type_ = Dashed, disabled = False } )
+    , ( "SimpleHeading", Typography { level = H1 } )
+    ]
+
+
+getRegisteredComponentFromLabel : String -> Maybe ( String, Component )
+getRegisteredComponentFromLabel searchString =
+    List.filter (\( label, _ ) -> label == searchString) registeredComponents
+        |> List.head
 
 
 intoComponent : RawComponent -> Component
 intoComponent (RawComponent maybeStr) =
     case maybeStr of
-        Just str ->
-            case str of
-                "SimpleButton" ->
-                    Button { type_ = Default, disabled = False }
-
-                "PrimaryButton" ->
-                    Button { type_ = Primary, disabled = False }
-
-                "SimpleHeading" ->
-                    Typography { level = H1 }
-
-                "DashedButton" ->
-                    Button { type_ = Dashed, disabled = False }
-
-                _ ->
-                    Button { type_ = Default, disabled = False }
+        Just componentQueryParamValue ->
+            getRegisteredComponentFromLabel componentQueryParamValue
+                |> Maybe.map (\( _, component ) -> component)
+                |> Maybe.withDefault (Button { type_ = Default, disabled = False })
 
         Nothing ->
             Button { type_ = Default, disabled = False }
 
 
-getComponentFromUrl : Url -> Component
+componentParser : Parser (RawComponent -> a) a
+componentParser =
+    P.map RawComponent (P.top <?> Query.string "component")
+
+
+getComponentFromUrl : Url -> Model
 getComponentFromUrl url =
     let
         maybeRawComponent =
@@ -96,18 +105,25 @@ getComponentFromUrl url =
 
         rawComponent =
             Maybe.withDefault (RawComponent <| Just "SimpleButton") maybeRawComponent
+
+        componentLabel =
+            case rawComponent of
+                RawComponent (Just componentQueryParamValue) ->
+                    getRegisteredComponentFromLabel componentQueryParamValue
+                        |> Maybe.map (\( label, _ ) -> label)
+                        |> Maybe.withDefault "<<default>>"
+
+                RawComponent Nothing ->
+                    "<<default>>"
     in
-    intoComponent rawComponent
-
-
-
--- URL -> Model
--- Model -> View
+    { component = intoComponent rawComponent
+    , label = componentLabel
+    }
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url _ =
-    ( Model <| getComponentFromUrl url, Cmd.none )
+    ( getComponentFromUrl url, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -126,8 +142,8 @@ centerContents children =
         [ children ]
 
 
-buildComponent : Model -> Html msg
-buildComponent (Model component) =
+buildComponent : Component -> Html msg
+buildComponent component =
     case component of
         Button buttonConfig ->
             button "elm"
@@ -141,11 +157,11 @@ buildComponent (Model component) =
 
 
 view : Model -> { title : String, body : List (Html msg) }
-view model =
+view { component, label } =
     let
         content =
-            buildComponent model
+            buildComponent component
     in
-    { title = "Visual Tests"
+    { title = "Visual Tests - " ++ label
     , body = [ centerContents content ]
     }

@@ -1,10 +1,12 @@
-import { visit } from './test-utils'
+import { visit, checkCorrectComponentRendered  } from './test-utils'
 
 describe('Button', () => {
   const simpleButton = 'SimpleButton'
   describe(simpleButton, () => {
     it('Renders correctly', () => {
       visit(simpleButton, cy)
+
+      checkCorrectComponentRendered(simpleButton, cy)
 
       cy.percySnapshot(simpleButton)
     })
@@ -18,7 +20,10 @@ describe('Button', () => {
     it.skip('Renders hover button with correct styles', () => {
       const snapshotTag = `${simpleButton}-hover`
 
-      cy.visit(appUrl)
+      visit(simpleButton, cy)
+
+      checkCorrectComponentRendered(simpleButton, cy)
+
       cy.get('button').rightclick()
       cy.percySnapshot(snapshotTag)
     })
@@ -28,6 +33,9 @@ describe('Button', () => {
   describe(primaryButton, () => {
     it('Renders correctly', () => {
       visit(primaryButton, cy)
+
+      checkCorrectComponentRendered(primaryButton, cy)
+
       cy.percySnapshot(primaryButton)
     })
   })
@@ -37,6 +45,9 @@ describe('Button', () => {
   describe(dashedButton, () => {
     it('Renders correctly', () => {
       visit(dashedButton, cy)
+
+      checkCorrectComponentRendered(dashedButton, cy)
+
       cy.percySnapshot(dashedButton)
     })
   })
@@ -45,7 +56,21 @@ describe('Button', () => {
   describe(textButton, () => {
     it('Renders correctly', () => {
       visit(textButton, cy)
+
+      checkCorrectComponentRendered(textButton, cy)
+
       cy.percySnapshot(textButton)
+    })
+  })
+
+  const linkButton = 'LinkButton'
+  describe(linkButton, () => {
+    it('Renders correctly', () => {
+      visit(linkButton, cy)
+
+      checkCorrectComponentRendered(linkButton, cy)
+
+      cy.percySnapshot(linkButton)
     })
   })
 })
