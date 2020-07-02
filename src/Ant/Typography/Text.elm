@@ -264,6 +264,8 @@ toHtml (Text opts value) =
                 Css.batch
                     [ color (hex "#000")
                     , backgroundColor (hex "#ffe58f")
+                    , maxWidth fitContent
+                    , property "max-width" "-moz-fit-content"
                     ]
 
             else
@@ -334,7 +336,6 @@ toHtml (Text opts value) =
                 , textColor
                 , underlineStyles
                 , backgroundStyles
-                , maxWidth fitContent
                 ]
             , A.disabled opts.disabled
             ]
