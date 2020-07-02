@@ -51,7 +51,7 @@ What matters is that you "register" the component to be rendered onto the visual
 
 #### Visual Testing
 
-To boot the visual testing app, run `visual-tests:start-server`
+To boot the visual testing app, run `visual-tests:start-server`. This will boot a Elm application on port 3000, so make sure that you are not running the development server already.
 
 Visual tests work by running a server that returns a single component. At the moment, the server does not live-reload on file change.
 
