@@ -14,8 +14,11 @@ import Ant.Button as Btn exposing (ButtonType(..), button)
 import Ant.Typography as Heading exposing (Level(..), title)
 import Browser
 import Browser.Navigation as Nav
+import Css exposing (height, vh)
+import Css.Global exposing (global, selector)
 import Html exposing (Html, div)
 import Html.Attributes exposing (style)
+import Html.Styled exposing (toUnstyled)
 import Url exposing (Url)
 import Url.Parser as P exposing ((<?>), Parser, parse)
 import Url.Parser.Query as Query
@@ -165,7 +168,13 @@ view { component, label } =
     let
         content =
             buildComponent component
+
+        appStyles =
+            global
+                [ selector "html, body"
+                    [ height (vh 100) ]
+                ]
     in
     { title = "Visual Tests - " ++ label
-    , body = [ centerContents content ]
+    , body = [ toUnstyled appStyles, centerContents content ]
     }
