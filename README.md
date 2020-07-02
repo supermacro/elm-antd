@@ -23,17 +23,19 @@ elm install supermacro/elm-antd
 
 ## Contributing
 
-`todo`
-
 Check out the [issues](https://github.com/supermacro/elm-antd/issues), and search for "good first issue" or "help wanted"!
 
 **Rules of contributing:**
 
 - If implementing any visual changes:
-  - Add applicable visual tests to `./showcase/visual-tests`
+  - Add applicable visual tests to `./showcase/visual-tests` (visual tests are written in JavaScript)
 - If implementing / changing behaviour:
-  - Add applicable unit tests 
+  - Add applicable unit tests (unit tests are written in Elm) 
 
+
+### Running the development server
+
+`npm run dev` will boot a "component showcase" on port 3000 that you can use to sanity check the visuals and behaviour of your components.
 
 ### Running Tests
 
