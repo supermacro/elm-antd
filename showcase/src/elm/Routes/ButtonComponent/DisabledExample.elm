@@ -10,4 +10,3 @@ example =
         |> withType Primary
         |> disabled True
         |> toHtml
-

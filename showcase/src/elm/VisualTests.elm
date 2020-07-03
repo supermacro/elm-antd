@@ -76,6 +76,7 @@ registeredComponents =
     , ( "TextButton", Button { type_ = Text, disabled = False } )
     , ( "LinkButton", Button { type_ = Link, disabled = False } )
     , ( "DisabledPrimaryButton", Button { type_ = Primary, disabled = True } )
+
     -- Headings
     , ( "SimpleHeading", Typography { level = H1 } )
     ]
