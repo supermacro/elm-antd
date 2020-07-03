@@ -4,7 +4,7 @@
 
 [![ELM_ANTD](https://circleci.com/gh/supermacro/elm-antd.svg?style=svg)](https://circleci.com/gh/supermacro/elm-antd) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Elm-Antd-Open-Source-Project/elm-antd)
 
-> **[view the component gallery](https://elm-antd.netlify.app)**
+> **[Component Gallery](https://elm-antd.netlify.app)**
 
 > **[API Documentation](https://package.elm-lang.org/packages/supermacro/elm-antd/latest/)**
 
