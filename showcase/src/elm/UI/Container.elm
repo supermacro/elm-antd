@@ -159,6 +159,7 @@ viewSourceCode sourceCode =
         [ css
             [ padding2 (px 15) (px 25)
             , borderTop3 (px 1) dashed borderColor
+            , overflowX scroll
             ]
         ]
         [ fromUnstyled <| useTheme gitHub
