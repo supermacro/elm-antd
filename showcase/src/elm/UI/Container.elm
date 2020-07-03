@@ -122,7 +122,6 @@ paddingLeft val (Container opts children) =
     Container newOpts children
 
 
-
 type alias ContainerMetaSection =
     { title : String
     , content : String
@@ -172,15 +171,23 @@ opacityTransition =
         [ Css.Transitions.opacity 250 ]
 
 
-type Either a b = Left a | Right b
-type alias EllieAppUrl = String
+type Either a b
+    = Left a
+    | Right b
+
+
+type alias EllieAppUrl =
+    String
+
 
 type alias IconContainerOptions msg =
-    { icon : List ( String, String) -> Html msg
+    { icon : List ( String, String ) -> Html msg
     , tooltipText : String
     , event : Either msg EllieAppUrl
     , extraStyles : List ( String, String )
     }
+
+
 iconContainer : IconContainerOptions msg -> Styled.Html msg
 iconContainer { icon, tooltipText, event, extraStyles } =
     let
@@ -252,21 +259,24 @@ view model (Container opts children) =
                             , opacityTransition
                             ]
                         ]
-                        [ iconContainer <| IconContainerOptions 
-                            Icons.ellieLogo
-                            "Open in Ellie"
-                            (Right opts.meta.ellieDemo)
-                            [ ( "width", "12px" ) ]
-                        , iconContainer <| IconContainerOptions
-                            Icons.copyToClipboard
-                            "Copy code"
-                            (Left CopySourceToClipboardRequested)
-                            [ ( "width", "16px" ) ]
-                        , iconContainer <| IconContainerOptions
-                            Icons.codeOpenBrackets
-                            "Show code"
-                            (Left SourceCodeVisibilityToggled)
-                            [ ( "width", "17px" ) ]
+                        [ iconContainer <|
+                            IconContainerOptions
+                                Icons.ellieLogo
+                                "Open in Ellie"
+                                (Right opts.meta.ellieDemo)
+                                [ ( "width", "12px" ) ]
+                        , iconContainer <|
+                            IconContainerOptions
+                                Icons.copyToClipboard
+                                "Copy code"
+                                (Left CopySourceToClipboardRequested)
+                                [ ( "width", "16px" ) ]
+                        , iconContainer <|
+                            IconContainerOptions
+                                Icons.codeOpenBrackets
+                                "Show code"
+                                (Left SourceCodeVisibilityToggled)
+                                [ ( "width", "17px" ) ]
                         ]
 
                 sourceCodeView =
