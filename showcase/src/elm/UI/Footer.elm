@@ -2,7 +2,7 @@ module UI.Footer exposing (footer)
 
 import Css exposing (..)
 import Html.Styled as Styled exposing (div, text)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as A exposing (css, href)
 import UI.Typography exposing (commonTextStyles)
 
 
@@ -23,4 +23,18 @@ footerStyles =
 footer : Styled.Html msg
 footer =
     Styled.footer [ css footerStyles ]
-        [ div [] [ text "Made with ❤ by supermacro (and you?)" ] ]
+        [ div
+            []
+            [ text "Made with ❤ by supermacro, "
+            , Styled.a
+                [ href "https://github.com/supermacro/elm-antd/issues"
+                , A.target "_blank"
+                , css
+                    [ color (hex "#fff" )
+                    , visited
+                        [ color (hex "#fff" ) ]
+                    ]
+                ]
+                [ text "and you?" ]
+            ]
+        ]
