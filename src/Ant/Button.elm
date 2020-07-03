@@ -1,8 +1,7 @@
 module Ant.Button exposing
     ( Button
-    , button, onClick, ButtonType(..), withType, ButtonSize(..)
+    , button, onClick, ButtonType(..), withType, ButtonSize(..), disabled
     , toHtml
-    , disabled
     )
 
 {-| Button component
@@ -128,6 +127,7 @@ onClick msg (Button opts label) =
         |> onClick Logout
         |> disabled True
         |> toHtml
+
 -}
 disabled : Bool -> Button msg -> Button msg
 disabled disabled_ (Button opts label) =
