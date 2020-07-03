@@ -6,6 +6,6 @@ cd ./showcase
 
 npm run build
 
-echo "/* /" > ./dist/_redirects
+echo "/* /index.html 200" > ./dist/_redirects
 
 
