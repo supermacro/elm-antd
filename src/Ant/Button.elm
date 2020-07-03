@@ -2,6 +2,7 @@ module Ant.Button exposing
     ( Button
     , button, onClick, ButtonType(..), withType, ButtonSize(..)
     , toHtml
+    , disabled
     )
 
 {-| Button component
@@ -23,7 +24,7 @@ import Css exposing (..)
 import Css.Transitions exposing (transition)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as A exposing (css)
 import Html.Styled.Events as Events
 
 
@@ -121,6 +122,23 @@ onClick msg (Button opts label) =
     Button newOpts label
 
 
+{-| Make the button disabled. If you have a `onClick` event registered, it will not be fired.
+
+    button "You can't click this"
+        |> onClick Logout
+        |> disabled True
+        |> toHtml
+
+-}
+disabled : Bool -> Button msg -> Button msg
+disabled disabled_ (Button opts label) =
+    let
+        newOpts =
+            { opts | disabled = disabled_ }
+    in
+    Button newOpts label
+
+
 textColor : Color
 textColor =
     let
@@ -146,8 +164,6 @@ toHtml (Button options label) =
             , height (px 34)
             , outline none
             , Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
-            , hover
-                [ cursor pointer ]
             ]
 
         defaultButtonAttributes =
@@ -237,15 +253,26 @@ toHtml (Button options label) =
                     linkButtonAttributes
 
         combinedButtonStyles =
-            baseAttributes ++ buttonTypeAttributes
+            if options.disabled then
+                baseAttributes
+
+            else
+                baseAttributes ++ buttonTypeAttributes
+
+        cursorPointerOnHover =
+            hover [ cursor pointer ]
 
         attributes =
-            case options.onClick of
-                Just msg ->
-                    [ Events.onClick msg, css combinedButtonStyles ]
+            if not options.disabled then
+                case options.onClick of
+                    Just msg ->
+                        [ Events.onClick msg, css <| cursorPointerOnHover :: combinedButtonStyles ]
 
-                Nothing ->
-                    [ css combinedButtonStyles ]
+                    Nothing ->
+                        [ css <| cursorPointerOnHover :: combinedButtonStyles ]
+
+            else
+                [ A.disabled True, css <| cursor notAllowed :: combinedButtonStyles ]
     in
     toUnstyled
         (H.button

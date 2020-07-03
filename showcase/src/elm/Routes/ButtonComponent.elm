@@ -1,8 +1,9 @@
 module Routes.ButtonComponent exposing (Model, Msg, route)
 
-import Css exposing (displayFlex)
+import Css exposing (displayFlex, marginRight, maxWidth, pct, px)
 import Html.Styled as Styled exposing (div, fromUnstyled, span, text)
 import Html.Styled.Attributes exposing (css)
+import Routes.ButtonComponent.DisabledExample as DisabledExample
 import Routes.ButtonComponent.TypeExample as TypeExample
 import UI.Container as Container
 import UI.Typography as Typography
@@ -67,15 +68,34 @@ example =
         ]"""
 
 
+disabledExampleStr : String
+disabledExampleStr =
+    """module Routes.ButtonComponent.DisabledExample exposing (example)
+
+import Ant.Button exposing (ButtonType(..), button, disabled, toHtml, withType)
+import Html exposing (Html)
+
+
+example : Html msg
+example =
+    button "Primary (disabled)"
+        |> withType Primary
+        |> disabled True
+        |> toHtml
+"""
+
+
 type alias Model =
     { typeExample : Container.Model
     , iconExample : Container.Model
+    , disabledExample : Container.Model
     }
 
 
 type DemoBox
     = ButtonType
     | ButtonWithIcon
+    | DisabledButton
 
 
 type Msg
@@ -102,6 +122,13 @@ update msg model =
                     in
                     ( { model | iconExample = iconExampleModel }, iconExampleCmd )
 
+                DisabledButton ->
+                    let
+                        ( disabledExampleModel, disabledExampleCmd ) =
+                            Container.update demoboxMsg model.disabledExample
+                    in
+                    ( { model | disabledExample = disabledExampleModel }, disabledExampleCmd )
+
         SourceCopiedToClipboard demobox ->
             ( model, Cmd.none )
 
@@ -115,6 +142,7 @@ route =
     , initialModel =
         { typeExample = { sourceCodeVisible = False, sourceCode = typeExampleStr }
         , iconExample = { sourceCodeVisible = False, sourceCode = "" }
+        , disabledExample = { sourceCodeVisible = False, sourceCode = disabledExampleStr }
         }
     }
 
@@ -138,6 +166,27 @@ typeExample model =
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.typeExample
         |> Styled.map (DemoBoxMsg ButtonType)
+
+
+disabledExample : Model -> Styled.Html Msg
+disabledExample model =
+    let
+        styledDisabledExampleContents =
+            fromUnstyled DisabledExample.example
+
+        metaInfo =
+            { title = "Disabled"
+            , content = "You can disable any button"
+            , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
+            , sourceCode = disabledExampleStr
+            }
+
+        styledDemoContents =
+            div [ css [ displayFlex ] ] [ styledDisabledExampleContents ]
+    in
+    Container.demoBox metaInfo styledDemoContents
+        |> Container.view model.disabledExample
+        |> Styled.map (DemoBoxMsg DisabledButton)
 
 
 view : Model -> Styled.Html Msg
@@ -173,6 +222,8 @@ view model =
                 ]
             ]
         , documentationSubheading Typography.WithoutAnchorLink "Examples"
-        , div []
-            [ div [] [ typeExample model ], div [] [] ]
+        , div [ css [ displayFlex ] ]
+            [ div [ css [ maxWidth (pct 45), marginRight (px 13) ] ] [ typeExample model ]
+            , div [ css [ maxWidth (pct 45) ] ] [ disabledExample model ]
+            ]
         ]
