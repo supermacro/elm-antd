@@ -65,7 +65,7 @@ jobs:
       - run:
           name: "Run unit tests"
           command: |
-            elm-test
+            ./run-unit-tests.sh
 
   visual_tests:
     docker:
