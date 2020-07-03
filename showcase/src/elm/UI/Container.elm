@@ -16,7 +16,7 @@ import Css exposing (..)
 import Css.Transitions exposing (transition)
 import Html as Unstyled exposing (Html)
 import Html.Styled as Styled exposing (div, fromUnstyled, span, text, toUnstyled)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as A exposing (css, href)
 import Html.Styled.Events exposing (onClick)
 import SyntaxHighlight exposing (elm, gitHub, toBlockHtml, useTheme)
 import UI.Typography exposing (commonTextStyles)
@@ -123,13 +123,6 @@ paddingLeft val (Container opts children) =
 
 
 
--- type alias ContainerMetaSectionActions a =
---     { ellie : Url
---     , copyCode : Maybe String
---     , showCode : Cmd msg
---     }
-
-
 type alias ContainerMetaSection =
     { title : String
     , content : String
@@ -179,13 +172,17 @@ opacityTransition =
         [ Css.Transitions.opacity 250 ]
 
 
-iconContainer :
-    (List ( String, String ) -> Html msg)
-    -> String
-    -> msg
-    -> List ( String, String )
-    -> Styled.Html msg
-iconContainer icon tooltipText msg extraStyles =
+type Either a b = Left a | Right b
+type alias EllieAppUrl = String
+
+type alias IconContainerOptions msg =
+    { icon : List ( String, String) -> Html msg
+    , tooltipText : String
+    , event : Either msg EllieAppUrl
+    , extraStyles : List ( String, String )
+    }
+iconContainer : IconContainerOptions msg -> Styled.Html msg
+iconContainer { icon, tooltipText, event, extraStyles } =
     let
         commonIconStyles =
             [ ( "margin-right", "10px" )
@@ -193,19 +190,35 @@ iconContainer icon tooltipText msg extraStyles =
             , ( "cursor", "pointer" )
             ]
 
-        bareIconContainer =
-            span
-                [ css
-                    [ opacity inherit
-                    , display inlineBlock
-                    , marginTop (px 5)
-                    , hover
-                        [ opacity (num 1) ]
-                    , opacityTransition
-                    ]
-                , onClick msg
+        baseAttributes =
+            css
+                [ opacity inherit
+                , display inlineBlock
+                , marginTop (px 5)
+                , hover
+                    [ opacity (num 1) ]
+                , opacityTransition
                 ]
-                [ fromUnstyled <| icon (extraStyles ++ commonIconStyles) ]
+
+        childNode =
+            [ fromUnstyled <| icon (extraStyles ++ commonIconStyles) ]
+
+        bareIconContainer =
+            case event of
+                Left msg ->
+                    span
+                        [ baseAttributes
+                        , onClick msg
+                        ]
+                        childNode
+
+                Right ellieAppUrl ->
+                    Styled.a
+                        [ baseAttributes
+                        , A.target "_blank"
+                        , href ellieAppUrl
+                        ]
+                        childNode
     in
     tooltip tooltipText (toUnstyled bareIconContainer)
         |> Tooltip.toHtml
@@ -239,20 +252,20 @@ view model (Container opts children) =
                             , opacityTransition
                             ]
                         ]
-                        [ iconContainer
+                        [ iconContainer <| IconContainerOptions 
                             Icons.ellieLogo
                             "Open in Ellie"
-                            SourceCodeVisibilityToggled
+                            (Right opts.meta.ellieDemo)
                             [ ( "width", "12px" ) ]
-                        , iconContainer
+                        , iconContainer <| IconContainerOptions
                             Icons.copyToClipboard
                             "Copy code"
-                            CopySourceToClipboardRequested
+                            (Left CopySourceToClipboardRequested)
                             [ ( "width", "16px" ) ]
-                        , iconContainer
+                        , iconContainer <| IconContainerOptions
                             Icons.codeOpenBrackets
                             "Show code"
-                            SourceCodeVisibilityToggled
+                            (Left SourceCodeVisibilityToggled)
                             [ ( "width", "17px" ) ]
                         ]
 

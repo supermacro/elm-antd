@@ -123,7 +123,7 @@ basicExample model =
         metaInfo =
             { title = "Basic"
             , content = "A document sample"
-            , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
+            , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
             , sourceCode = basicExampleStr
             }
 
@@ -168,7 +168,7 @@ titleComponentExample model =
         metaInfo =
             { title = "Title Component"
             , content = "Display the various levels for titles"
-            , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
+            , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
             , sourceCode = titleComponentStr
             }
 
@@ -217,7 +217,7 @@ textComponentExample model =
         metaInfo =
             { title = "Text and Link Component"
             , content = "Provides multiple types of text and link."
-            , ellieDemo = "https://ellie-app.com/8LbFzfR449Za1"
+            , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
             , sourceCode = texComponentStr
             }
 
