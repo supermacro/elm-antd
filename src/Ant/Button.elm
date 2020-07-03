@@ -12,7 +12,7 @@ module Ant.Button exposing
 
 # Customizing the Button
 
-@docs button, onClick, ButtonType, withType, ButtonSize
+@docs button, onClick, ButtonType, withType, ButtonSize, disabled
 
 @docs toHtml
 
@@ -128,7 +128,6 @@ onClick msg (Button opts label) =
         |> onClick Logout
         |> disabled True
         |> toHtml
-
 -}
 disabled : Bool -> Button msg -> Button msg
 disabled disabled_ (Button opts label) =

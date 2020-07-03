@@ -17,7 +17,7 @@ Note that by default, a Space value is set to be vertically layed out with a "sm
 
 # Customizing the layout between components
 
-@docs direction, SpaceDirection
+@docs direction, SpaceDirection, SpaceSize
 
 
 # Rendering your Space component
@@ -40,6 +40,8 @@ type SpaceDirection
     | Vertical
 
 
+{-| The size of the space between elements
+-}
 type SpaceSize
     = Small
     | Medium
