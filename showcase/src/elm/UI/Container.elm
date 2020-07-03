@@ -1,6 +1,6 @@
 module UI.Container exposing
     ( Model
-    , Msg
+    , Msg(..)
     , demoBox
     , paddingBottom
     , paddingLeft
@@ -32,6 +32,9 @@ type alias Model =
 type Msg
     = SourceCodeVisibilityToggled
     | CopySourceToClipboardRequested
+    -- ContentMsg represents an opaque message
+    -- emitted by the contents of a demoBox Container
+    | ContentMsg
 
 
 type alias ContainerOptions =
@@ -70,6 +73,8 @@ update msg model =
         CopySourceToClipboardRequested ->
             ( model, Utils.copySourceToClipboard model.sourceCode )
 
+        ContentMsg ->
+            ( model, Cmd.none )
 
 
 -- View code

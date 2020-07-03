@@ -83,14 +83,17 @@ disabledExampleStr : String
 disabledExampleStr =
     """module Routes.ButtonComponent.DisabledExample exposing (example)
 
-import Ant.Button exposing (ButtonType(..), button, disabled, toHtml, withType)
+import Ant.Button exposing (ButtonType(..), button, disabled, onClick, toHtml, withType)
 import Html exposing (Html)
 
+type Msg = Clicked
 
-example : Html msg
+example : Html Msg
 example =
     button "Primary (disabled)"
         |> withType Primary
+        |> onClick Clicked
+        -- It won't emit a Clicked event now
         |> disabled True
         |> toHtml
 """
@@ -107,6 +110,7 @@ type DemoBox
     = ButtonType
     | ButtonWithIcon
     | DisabledButton
+
 
 
 type Msg
@@ -184,6 +188,7 @@ disabledExample model =
     let
         styledDisabledExampleContents =
             fromUnstyled DisabledExample.example
+            |> Styled.map (\_ -> Container.ContentMsg)
 
         metaInfo =
             { title = "Disabled"

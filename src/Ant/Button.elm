@@ -262,16 +262,12 @@ toHtml (Button options label) =
             hover [ cursor pointer ]
 
         attributes =
-            if not options.disabled then
-                case options.onClick of
-                    Just msg ->
-                        [ Events.onClick msg, css <| cursorPointerOnHover :: combinedButtonStyles ]
+            case options.onClick of
+                Just msg ->
+                    [ A.disabled options.disabled, Events.onClick msg, css <| cursorPointerOnHover :: combinedButtonStyles ]
 
-                    Nothing ->
-                        [ css <| cursorPointerOnHover :: combinedButtonStyles ]
-
-            else
-                [ A.disabled True, css <| cursor notAllowed :: combinedButtonStyles ]
+                Nothing ->
+                    [ A.disabled options.disabled, css <| cursorPointerOnHover :: combinedButtonStyles ]
     in
     toUnstyled
         (H.button

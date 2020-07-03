@@ -55,6 +55,18 @@ jobs:
             cd showcase
             npm run build
 
+  unit_tests:
+    docker:
+      - image: giorgio14/elm-antd-ci:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: "Run unit tests"
+          command: |
+            elm-test
+
   visual_tests:
     docker:
       - image: giorgio14/elm-antd-ci:latest
@@ -78,6 +90,9 @@ workflows:
       - install_deps
       - check_formatting
       - verify_build:
+          requires:
+            - install_deps
+      - unit_tests:
           requires:
             - install_deps
       - visual_tests:

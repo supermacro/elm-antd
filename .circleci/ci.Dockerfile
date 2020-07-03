@@ -7,7 +7,7 @@ WORKDIR /app
 COPY install-elm.sh .
 
 RUN npm -g config set user root && \
-    npm install -g elm-format && \
+    npm install -g elm-format elm-test && \
     apt-get update && \
     apt-get install -y curl && \
     ./install-elm.sh && \
