@@ -3,7 +3,10 @@ module Routes.ButtonComponent.DisabledExample exposing (example)
 import Ant.Button exposing (ButtonType(..), button, disabled, onClick, toHtml, withType)
 import Html exposing (Html)
 
-type Msg = Clicked
+
+type Msg
+    = Clicked
+
 
 example : Html Msg
 example =
@@ -13,4 +16,3 @@ example =
         -- It won't emit a Clicked event now
         |> disabled True
         |> toHtml
-

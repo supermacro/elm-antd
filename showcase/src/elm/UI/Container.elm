@@ -32,8 +32,8 @@ type alias Model =
 type Msg
     = SourceCodeVisibilityToggled
     | CopySourceToClipboardRequested
-    -- ContentMsg represents an opaque message
-    -- emitted by the contents of a demoBox Container
+      -- ContentMsg represents an opaque message
+      -- emitted by the contents of a demoBox Container
     | ContentMsg
 
 
@@ -75,6 +75,7 @@ update msg model =
 
         ContentMsg ->
             ( model, Cmd.none )
+
 
 
 -- View code

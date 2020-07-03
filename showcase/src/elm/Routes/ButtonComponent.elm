@@ -112,7 +112,6 @@ type DemoBox
     | DisabledButton
 
 
-
 type Msg
     = DemoBoxMsg DemoBox Container.Msg
     | SourceCopiedToClipboard DemoBox
@@ -188,7 +187,7 @@ disabledExample model =
     let
         styledDisabledExampleContents =
             fromUnstyled DisabledExample.example
-            |> Styled.map (\_ -> Container.ContentMsg)
+                |> Styled.map (\_ -> Container.ContentMsg)
 
         metaInfo =
             { title = "Disabled"
