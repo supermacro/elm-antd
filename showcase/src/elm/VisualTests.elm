@@ -75,7 +75,7 @@ registeredComponents =
     , ( "DashedButton", Button { type_ = Dashed, disabled = False } )
     , ( "TextButton", Button { type_ = Text, disabled = False } )
     , ( "LinkButton", Button { type_ = Link, disabled = False } )
-
+    , ( "DisabledPrimaryButton", Button { type_ = Primary, disabled = True } )
     -- Headings
     , ( "SimpleHeading", Typography { level = H1 } )
     ]
@@ -155,6 +155,7 @@ buildComponent component =
         Button buttonConfig ->
             button "elm"
                 |> Btn.withType buttonConfig.type_
+                |> Btn.disabled buttonConfig.disabled
                 |> Btn.toHtml
 
         Typography typographyConfig ->

@@ -6,7 +6,8 @@ describe('Button', () => {
     'PrimaryButton',
     'DashedButton',
     'TextButton',
-    'LinkButton'
+    'LinkButton',
+    'DisabledPrimaryButton',
   ]
 
   buttons.forEach((btn) => {
