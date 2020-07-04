@@ -30,6 +30,9 @@ import Dict exposing (Dict)
 import Html exposing (Html, a, div, header, nav, text)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (alt, css, href, src)
+import Routes.Home exposing (homePage)
+import Routes.NotFound exposing (notFound)
+import Routes.NotImplemented exposing (notImplemented)
 import Routes.ButtonComponent as ButtonPage
 import Routes.TooltipComponent as TooltipPage
 import Routes.TypographyComponent as TypographyPage
@@ -83,6 +86,7 @@ componentList =
     [ ( ButtonPage.route.title, ButtonPage.route.category, buttonPageView )
     , ( TypographyPage.route.title, TypographyPage.route.category, typographyPageView )
     , ( TooltipPage.route.title, TooltipPage.route.category, tooltipPageView )
+    , ( "BreadCrumb", Navigation, \_ -> notImplemented "BreadCrumb" )
     ]
 
 
@@ -114,12 +118,15 @@ categoryToString category =
 parser : Parser (Route -> a) a
 parser =
     let
+        homeParser =
+            Parser.map "Home" Parser.top 
+
         routeParsers =
             List.map
                 (\( pageTitle, _, _ ) -> Parser.map pageTitle (s "components" </> s (String.toLower pageTitle)))
                 componentList
     in
-    oneOf routeParsers
+    oneOf <| homeParser :: routeParsers
 
 
 fromUrl : Url -> Route
@@ -226,10 +233,7 @@ navBar =
         -- [ Styled.text "search coming soon ..."
         -- ]
         , Styled.nav [ css verticalCenteringStyles ]
-            [ Styled.a [ href "https://ant.design/docs/spec/introduce" ] [ Styled.text "Design" ]
-            , Styled.a [ href "https://github.com/supermacro/elm-antd/blob/master/README.md" ] [ Styled.text "Docs" ]
-            , Styled.a [ href "https://ant.design/docs/resources" ] [ Styled.text "Resources" ]
-            , Styled.a [ href "https://github.com/supermacro/elm-antd" ] [ fromUnstyled UI.Icons.github ]
+            [ Styled.a [ href "https://github.com/supermacro/elm-antd" ] [ fromUnstyled UI.Icons.github ]
             ]
         ]
 
@@ -297,15 +301,19 @@ getPageTitleAndContentView : Route -> ( Route, Model -> Styled.Html Msg )
 getPageTitleAndContentView activeRoute =
     let
         notFoundPage =
-            ( "404", \_ -> Styled.div [] [ Styled.text "404 not found" ] )
+            ( "404", \_ -> notFound )
+
     in
-    List.filter
-        (\( pageTitle, _, _ ) -> pageTitle == activeRoute)
-        componentList
-        |> List.map
-            (\( pageTitle, _, content ) -> ( pageTitle, content ))
-        |> List.head
-        |> Maybe.withDefault notFoundPage
+    if activeRoute == "Home" then
+        ( "Welcome", \_ -> homePage )
+    else
+        List.filter
+            (\( pageTitle, _, _ ) -> pageTitle == activeRoute)
+            componentList
+            |> List.map
+                (\( pageTitle, _, content ) -> ( pageTitle, content ))
+            |> List.head
+            |> Maybe.withDefault notFoundPage
 
 
 view : (Msg -> msg) -> Model -> Browser.Document msg
