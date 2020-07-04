@@ -3,9 +3,9 @@ module Routes.Home exposing (homePage)
 {-| This module represents the Home / Landing page content when a user visits the root path of the URL
 -}
 
-import Html.Styled exposing (Html, div, text)
+import Html.Styled exposing (Html, div, span, text)
 import UI.Footer exposing (pushDown)
-import UI.Typography exposing (SubHeadingOptions(..), codeText, documentationHeading, documentationSubheading, documentationText)
+import UI.Typography exposing (SubHeadingOptions(..), codeText, documentationHeading, documentationSubheading, documentationText, link)
 
 
 homePage : Html msg
@@ -19,6 +19,10 @@ homePage =
         , documentationSubheading WithoutAnchorLink "Early Development Notice"
         , documentationText <| text "Currently Elm Antd is in very early development with only a few components implemented, and bare-bones documentation."
         , documentationText <| text "Do you want to help out and make Elm Ant Design the most comprehensive and feature-full UI library in the universe?"
-        , documentationText <| text "Great! Check out the issues page and the contributing guide at https://github.com/supermacro/elm-antd#contributing"
+        , documentationText <|
+            span []
+                [ text "Great! Check out the issues page and the contributing guide at "
+                , link "https://github.com/supermacro/elm-antd#contributing" "github"
+                ]
         , pushDown
         ]
