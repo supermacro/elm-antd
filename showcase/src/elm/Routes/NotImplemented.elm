@@ -7,6 +7,10 @@ import UI.Typography exposing (SubHeadingOptions(..), documentationHeading, docu
 
 notImplemented : String -> Html msg
 notImplemented componentName =
+    let
+        antdUrl =
+            "https://ant.design/components/" ++ (String.toLower componentName)
+    in
     div
         []
         [ documentationHeading componentName
@@ -15,6 +19,12 @@ notImplemented componentName =
             span []
                 [ text "Check out the contributing guide at "
                 , link "https://github.com/supermacro/elm-antd#contributing" "github"
+                ]
+        , documentationText <|
+            span []
+                [ text "Don't feel like you have to implement all the functionality of Ant's "
+                , link antdUrl (componentName ++ " component.")
+                , text " Start small. Maybe only implement the minimal set of functionality that you need. And others can then extend off of your work :)"
                 ]
         , pushDown
         ]
