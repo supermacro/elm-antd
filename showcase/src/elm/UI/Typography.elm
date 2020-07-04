@@ -6,6 +6,7 @@ module UI.Typography exposing
     , documentationSubheading
     , documentationText
     , documentationUnorderedList
+    , link
     , logoText
     )
 
@@ -15,8 +16,21 @@ import Ant.Typography.Text as Text
 import Css exposing (..)
 import Css.Global exposing (global, selector)
 import Css.Transitions exposing (transition)
-import Html.Styled as Styled exposing (fromUnstyled)
-import Html.Styled.Attributes exposing (class, css, href)
+import Html.Styled as Styled exposing (fromUnstyled, text)
+import Html.Styled.Attributes as A exposing (class, css, href)
+
+
+link : String -> String -> Styled.Html msg
+link url label =
+    let
+        styles =
+            commonTextStyles
+                ++ [ hover [ color (hex primaryColor) ]
+                   ]
+    in
+    Styled.a
+        [ href url, A.target "_blank", css styles ]
+        [ text label ]
 
 
 codeText : String -> Styled.Html msg
