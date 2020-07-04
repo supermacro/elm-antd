@@ -30,10 +30,10 @@ import Dict exposing (Dict)
 import Html exposing (Html, a, div, header, nav, text)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (alt, css, href, src)
+import Routes.ButtonComponent as ButtonPage
 import Routes.Home exposing (homePage)
 import Routes.NotFound exposing (notFound)
 import Routes.NotImplemented exposing (notImplemented)
-import Routes.ButtonComponent as ButtonPage
 import Routes.TooltipComponent as TooltipPage
 import Routes.TypographyComponent as TypographyPage
 import UI.Footer exposing (footer)
@@ -119,7 +119,7 @@ parser : Parser (Route -> a) a
 parser =
     let
         homeParser =
-            Parser.map "Home" Parser.top 
+            Parser.map "Home" Parser.top
 
         routeParsers =
             List.map
@@ -219,13 +219,15 @@ navBar =
                     ++ [ width (px 266), paddingLeft (px 32) ]
                 )
             ]
-            [ Styled.img
-                [ alt "logo"
-                , src "https://github.com/gDelgado14/elm-antd/raw/master/logo.svg"
-                , css [ height (px 50), marginRight (px 10) ]
+            [ Styled.a [ href "/" ]
+                [ Styled.img
+                    [ alt "logo"
+                    , src "https://github.com/gDelgado14/elm-antd/raw/master/logo.svg"
+                    , css [ height (px 50), marginRight (px 10) ]
+                    ]
+                    []
+                , logoText
                 ]
-                []
-            , logoText
             ]
 
         -- Search Bar Placeholder for Algolia Search Bar
@@ -302,10 +304,10 @@ getPageTitleAndContentView activeRoute =
     let
         notFoundPage =
             ( "404", \_ -> notFound )
-
     in
     if activeRoute == "Home" then
         ( "Welcome", \_ -> homePage )
+
     else
         List.filter
             (\( pageTitle, _, _ ) -> pageTitle == activeRoute)

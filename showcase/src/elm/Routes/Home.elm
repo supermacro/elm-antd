@@ -4,8 +4,9 @@ module Routes.Home exposing (homePage)
 -}
 
 import Html.Styled exposing (Html, div, text)
-import UI.Typography exposing (codeText, documentationHeading, documentationText, documentationSubheading, SubHeadingOptions(..))
 import UI.Footer exposing (pushDown)
+import UI.Typography exposing (SubHeadingOptions(..), codeText, documentationHeading, documentationSubheading, documentationText)
+
 
 homePage : Html msg
 homePage =
@@ -21,5 +22,3 @@ homePage =
         , documentationText <| text "Great! Check out the issues page and the contributing guide at https://github.com/supermacro/elm-antd#contributing"
         , pushDown
         ]
-        
-
