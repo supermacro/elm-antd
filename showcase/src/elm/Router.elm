@@ -20,10 +20,12 @@ import Css
         , height
         , justifyContent
         , marginRight
+        , none
         , paddingLeft
         , paddingRight
         , px
         , spaceBetween
+        , textDecoration
         , width
         )
 import Dict exposing (Dict)
@@ -219,7 +221,7 @@ navBar =
                     ++ [ width (px 266), paddingLeft (px 32) ]
                 )
             ]
-            [ Styled.a [ href "/" ]
+            [ Styled.a [ href "/", css (textDecoration none :: verticalCenteringStyles) ]
                 [ Styled.img
                     [ alt "logo"
                     , src "https://github.com/gDelgado14/elm-antd/raw/master/logo.svg"
