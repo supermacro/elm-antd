@@ -70,6 +70,72 @@ type Msg
     | TypographyPageMessage TypographyPage.Msg
 
 
+unimplementedComponents : List ( Route, ComponentCategory, Model -> Styled.Html Msg )
+unimplementedComponents =
+    let
+        createUnimplementedComponentRoute (componentName, category) =
+            ( componentName, category, \_ -> notImplemented componentName )
+    in
+    List.map createUnimplementedComponentRoute
+    [ ("Divider", Layout)
+    , ("Grid", Layout)
+    , ("Affix", Navigation)
+    , ("Breadcrumb", Navigation)
+    , ("Dropdown", Navigation)
+    , ("Pagination", Navigation)
+    , ("PageHeader", Navigation)
+    , ("Steps", Navigation) 
+    , ("AutoComplete", DataEntry)
+    , ("Checkbox", DataEntry)
+    , ("Cascader", DataEntry)
+    , ("DatePicker", DataEntry)
+    , ("Form", DataEntry)
+    , ("InputNumber", DataEntry)
+    , ("Input", DataEntry)
+    , ("Mentions", DataEntry)
+    , ("Rate", DataEntry)
+    , ("Radio", DataEntry)
+    , ("Switch", DataEntry)
+    , ("Slider", DataEntry)
+    , ("Select", DataEntry)
+    , ("TreeSelect", DataEntry)
+    , ("Transfer", DataEntry)
+    , ("TimePicker", DataEntry)
+    , ("Upload", DataEntry)
+    , ("Avatar", DataDisplay)
+    , ("Badge", DataDisplay)
+    , ("Comment", DataDisplay)
+    , ("Collapse", DataDisplay)
+    , ("Carousel", DataDisplay)
+    , ("Card", DataDisplay)
+    , ("Calendar", DataDisplay)
+    , ("Descriptions", DataDisplay)
+    , ("Empty", DataDisplay)
+    , ("List", DataDisplay)
+    , ("Popover", DataDisplay)
+    , ("Statistic", DataDisplay)
+    , ("Tree", DataDisplay)
+    , ("Timeline", DataDisplay)
+    , ("Tag", DataDisplay)
+    , ("Tabs", DataDisplay)
+    , ("Table", DataDisplay)
+    , ("Alert", Feedback)
+    , ("Drawer", Feedback)
+    , ("Modal", Feedback)
+    , ("Message", Feedback)
+    , ("Notification", Feedback)
+    , ("Progress", Feedback)
+    , ("Popconfirm", Feedback)
+    , ("Result", Feedback)
+    , ("Spin", Feedback)
+    , ("Skeleton", Feedback)
+    , ("Anchor", Other)
+    , ("BackTop", Other)
+    , ("ConfigProvider", Other)
+    ]
+    
+
+    
 componentList : List ( Route, ComponentCategory, Model -> Styled.Html Msg )
 componentList =
     let
@@ -88,8 +154,9 @@ componentList =
     [ ( ButtonPage.route.title, ButtonPage.route.category, buttonPageView )
     , ( TypographyPage.route.title, TypographyPage.route.category, typographyPageView )
     , ( TooltipPage.route.title, TooltipPage.route.category, tooltipPageView )
-    , ( "Breadcrumb", Navigation, \_ -> notImplemented "Breadcrumb" )
     ]
+    ++ unimplementedComponents
+
 
 
 categoryToString : ComponentCategory -> String
