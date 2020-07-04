@@ -86,7 +86,7 @@ componentList =
     [ ( ButtonPage.route.title, ButtonPage.route.category, buttonPageView )
     , ( TypographyPage.route.title, TypographyPage.route.category, typographyPageView )
     , ( TooltipPage.route.title, TooltipPage.route.category, tooltipPageView )
-    , ( "BreadCrumb", Navigation, \_ -> notImplemented "BreadCrumb" )
+    , ( "Breadcrumb", Navigation, \_ -> notImplemented "Breadcrumb" )
     ]
 
 
