@@ -1,4 +1,4 @@
-module UI.Footer exposing (footer)
+module UI.Footer exposing (footer, pushDown )
 
 import Css exposing (..)
 import Html.Styled as Styled exposing (div, text)
@@ -19,13 +19,18 @@ footerStyles =
            , textAlign center
            ]
 
+{-| Hack to push down the footer in pages where there isn't enough content
+-}
+pushDown : Styled.Html msg
+pushDown = div [ css [ marginBottom (px 600 ) ] ] [ text "" ]
+
 
 footer : Styled.Html msg
 footer =
     Styled.footer [ css footerStyles ]
         [ div
             []
-            [ text "Made with ❤ by supermacro, "
+            [ text "Made with ❤‌‌ ‌‌  by supermacro, "
             , Styled.a
                 [ href "https://github.com/supermacro/elm-antd/issues"
                 , A.target "_blank"
