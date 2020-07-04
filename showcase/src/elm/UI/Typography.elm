@@ -6,6 +6,7 @@ module UI.Typography exposing
     , documentationSubheading
     , documentationText
     , documentationUnorderedList
+    , internalLink
     , link
     , logoText
     )
@@ -30,6 +31,19 @@ link url label =
     in
     Styled.a
         [ href url, A.target "_blank", css styles ]
+        [ text label ]
+
+
+internalLink : String -> String -> Styled.Html msg
+internalLink url label =
+    let
+        styles =
+            commonTextStyles
+                ++ [ hover [ color (hex primaryColor) ]
+                   ]
+    in
+    Styled.a
+        [ href url, css styles ]
         [ text label ]
 
 
