@@ -28,7 +28,7 @@ elm install supermacro/elm-antd
 Want to help out?
 
 - Check out the [issues](https://github.com/supermacro/elm-antd/issues), and search for "good first issue" or "help wanted"! 
-- Check out the [CONTRIBUTING](CONTRIBUTING.md) doc 
+- Check out the [CONTRIBUTING](https://github.com/supermacro/elm-antd/blob/master/CONTRIBUTING.md) doc 
 
 ## Inspiration:
 
