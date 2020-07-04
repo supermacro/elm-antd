@@ -9,7 +9,7 @@ notImplemented : String -> Html msg
 notImplemented componentName =
     let
         antdUrl =
-            "https://ant.design/components/" ++ (String.toLower componentName)
+            "https://ant.design/components/" ++ String.toLower componentName
     in
     div
         []
