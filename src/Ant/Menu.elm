@@ -336,6 +336,5 @@ toHtml : Menu msg -> Html msg
 toHtml (Menu _ menuContents) =
     ul
         [ style "border-right" "1px solid #f0f0f0"
-        , style "height" "100%"
         ]
         (List.map (toUnstyled << viewMenuContent) menuContents)

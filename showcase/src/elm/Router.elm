@@ -363,8 +363,18 @@ componentMenu activeRoute =
                 Menu.initMenu
                 categoryDict
     in
-    Menu.toHtml menu
+    toUnstyled <|
+        Styled.div
+            [ css
+                [ height (Css.vh 100)
+                , Css.overflowY Css.scroll
+                , Css.position Css.sticky 
+                , Css.top Css.zero
+                ]
+            ]
+            [fromUnstyled <| Menu.toHtml menu]
 
+    
 
 getPageTitleAndContentView : Route -> ( Route, Model -> Styled.Html Msg )
 getPageTitleAndContentView activeRoute =
