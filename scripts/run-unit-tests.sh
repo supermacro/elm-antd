@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Utility script for tests that run in a CI environment
+#
 # For some reason, elm-test emits a non-zero exit code when
 # tests are skipped over.
 # This script ensures that we return a 0 exit code when elm-test
