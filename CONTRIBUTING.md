@@ -16,12 +16,16 @@
 
 #### Unit Testing
 
+Unit tests ensure that things **behave** as expected, and prevent behavioural regressions.
+
 Make sure you have `elm-test` globally installed.
 
 To run tests, run `elm-test` to run tests for the components in `src/Ant`
 
 
 #### Visual Testing
+
+Visual tests ensure that things **look** as expected, and prevent visual regressions.
 
 Visual tests work by running a server that returns a single component. At the moment, the server does not live-reload on file change.
 
