@@ -2,7 +2,7 @@ module Routes.NotImplemented exposing (notImplemented)
 
 import Html.Styled exposing (Html, div, span, text)
 import UI.Footer exposing (pushDown)
-import UI.Typography exposing (SubHeadingOptions(..), documentationHeading, documentationSubheading, documentationText, link, internalLink)
+import UI.Typography exposing (SubHeadingOptions(..), documentationHeading, documentationSubheading, documentationText, internalLink, link)
 
 
 notImplemented : String -> Html msg
