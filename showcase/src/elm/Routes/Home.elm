@@ -14,6 +14,7 @@ homePage =
         []
         [ documentationHeading "Elm Ant Design"
         , documentationText <| text "Welcome to the home of ambitious Elm applications!"
+        , documentationText <| text "Elm Ant Design aims to eventually attain 100% feature parity with the React implementation of Ant Design. Currently, there are only a few components that are partially implemented. See the list below for an up-to-date list of which components are available to be used within supermacro/elm-antd."
         , documentationSubheading WithoutAnchorLink "Getting started"
         , documentationText <| codeText "elm install supermacro/elm-antd"
         , documentationSubheading WithoutAnchorLink "API Docs"
