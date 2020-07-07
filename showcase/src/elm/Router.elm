@@ -33,6 +33,7 @@ import Html exposing (Html, a, div, header, nav, text)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (alt, css, href, src)
 import Routes.ButtonComponent as ButtonPage
+import Routes.DividerComponent as DividerPage
 import Routes.Home exposing (homePage)
 import Routes.NotFound exposing (notFound)
 import Routes.NotImplemented exposing (notImplemented)
@@ -53,6 +54,7 @@ type alias Route =
 type alias Model =
     { activeRoute : Route
     , buttonPageModel : ButtonPage.Model
+    , dividerPageModel : DividerPage.Model
     , typographyPageModel : TypographyPage.Model
     , tooltipPageModel : TooltipPage.Model
     }
@@ -66,6 +68,7 @@ type Msg
     = UrlChanged Url
     | MenuItemClicked Href
     | ButtonPageMessage ButtonPage.Msg
+    | DividerPageMessage DividerPage.Msg
     | TooltipPageMessage TooltipPage.Msg
     | TypographyPageMessage TypographyPage.Msg
 
@@ -77,8 +80,7 @@ unimplementedComponents =
             ( componentName, category, \_ -> notImplemented componentName )
     in
     List.map createUnimplementedComponentRoute
-        [ ( "Divider", Layout )
-        , ( "Grid", Layout )
+        [ ( "Grid", Layout )
         , ( "Affix", Navigation )
         , ( "Breadcrumb", Navigation )
         , ( "Dropdown", Navigation )
@@ -141,6 +143,10 @@ componentList =
         buttonPageView model =
             ButtonPage.route.view model.buttonPageModel
                 |> Styled.map ButtonPageMessage
+        
+        dividerPageView model =
+            DividerPage.route.view model.dividerPageModel
+                |> Styled.map DividerPageMessage
 
         typographyPageView model =
             TypographyPage.route.view model.typographyPageModel
@@ -151,6 +157,7 @@ componentList =
                 |> Styled.map TooltipPageMessage
     in
     [ ( ButtonPage.route.title, ButtonPage.route.category, buttonPageView )
+    , ( DividerPage.route.title, DividerPage.route.category, dividerPageView )
     , ( TypographyPage.route.title, TypographyPage.route.category, typographyPageView )
     , ( TooltipPage.route.title, TooltipPage.route.category, tooltipPageView )
     ]
@@ -209,6 +216,7 @@ init url =
     in
     ( { activeRoute = route
       , buttonPageModel = ButtonPage.route.initialModel
+      , dividerPageModel = DividerPage.route.initialModel
       , typographyPageModel = TypographyPage.route.initialModel
       , tooltipPageModel = TooltipPage.route.initialModel
       }
@@ -238,6 +246,17 @@ update navKey msg model =
                 | buttonPageModel = buttonPageModel
               }
             , Cmd.map ButtonPageMessage buttonPageCmd
+            )
+
+        DividerPageMessage dividerPageMsg ->
+            let
+                ( dividerPageModel, dividerPageCmd ) =
+                    DividerPage.route.update dividerPageMsg model.dividerPageModel
+            in
+            ( { model
+                | dividerPageModel = dividerPageModel
+              }
+            , Cmd.map DividerPageMessage dividerPageCmd
             )
 
         TooltipPageMessage tooltipPageMessage ->
