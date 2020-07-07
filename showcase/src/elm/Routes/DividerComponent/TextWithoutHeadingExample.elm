@@ -1,6 +1,6 @@
-module Routes.DividerComponent.HorizontalExample exposing (example)
+module Routes.DividerComponent.TextWithoutHeadingExample exposing (example)
 
-import Ant.Divider as Divider exposing (divider)
+import Ant.Divider as Divider
 import Ant.Typography.Text as Text
 import Html exposing (Html, text)
 import Html exposing (Html, div, span)
@@ -10,13 +10,22 @@ import Html.Styled as H exposing (text, toUnstyled, fromUnstyled)
 example : Html msg
 example =
     let
-      basicDivider =
+      dividerCenter =
         Divider.divider
+          |> Divider.withLabel "Center"
+          |> Divider.withOrientation Divider.Center
           |> Divider.toHtml
 
-      dashedDivdier =
+      dividerLeft =
         Divider.divider
-          |> Divider.withLine Divider.Dashed
+          |> Divider.withLabel "Left"
+          |> Divider.withOrientation Divider.Left
+          |> Divider.toHtml
+
+      dividerRight =
+        Divider.divider
+          |> Divider.withLabel "Right"
+          |> Divider.withOrientation Divider.Right
           |> Divider.toHtml
 
       loremIpsum =
@@ -26,8 +35,10 @@ example =
     in
     div []
       [ loremIpsum
-      , basicDivider
+      , dividerCenter
       , loremIpsum
-      , dashedDivdier
+      , dividerLeft
+      , loremIpsum
+      , dividerRight
       , loremIpsum
       ]
