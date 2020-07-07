@@ -33,6 +33,7 @@ import Html exposing (Html, a, div, header, nav, text)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (alt, css, href, src)
 import Routes.ButtonComponent as ButtonPage
+import Routes.DrawerComponent as DrawerPage
 import Routes.Home exposing (homePage)
 import Routes.NotFound exposing (notFound)
 import Routes.NotImplemented exposing (notImplemented)
@@ -53,6 +54,7 @@ type alias Route =
 type alias Model =
     { activeRoute : Route
     , buttonPageModel : ButtonPage.Model
+    , drawerPageModel : DrawerPage.Model
     , typographyPageModel : TypographyPage.Model
     , tooltipPageModel : TooltipPage.Model
     }
@@ -66,6 +68,7 @@ type Msg
     = UrlChanged Url
     | MenuItemClicked Href
     | ButtonPageMessage ButtonPage.Msg
+    | DrawerPageMessage DrawerPage.Msg
     | TooltipPageMessage TooltipPage.Msg
     | TypographyPageMessage TypographyPage.Msg
 
@@ -120,7 +123,6 @@ unimplementedComponents =
         , ( "Tabs", DataDisplay )
         , ( "Table", DataDisplay )
         , ( "Alert", Feedback )
-        , ( "Drawer", Feedback )
         , ( "Modal", Feedback )
         , ( "Message", Feedback )
         , ( "Notification", Feedback )
@@ -142,6 +144,10 @@ componentList =
             ButtonPage.route.view model.buttonPageModel
                 |> Styled.map ButtonPageMessage
 
+        drawerPageView model =
+            DrawerPage.route.view model.drawerPageModel
+                |> Styled.map DrawerPageMessage
+
         typographyPageView model =
             TypographyPage.route.view model.typographyPageModel
                 |> Styled.map TypographyPageMessage
@@ -151,6 +157,7 @@ componentList =
                 |> Styled.map TooltipPageMessage
     in
     [ ( ButtonPage.route.title, ButtonPage.route.category, buttonPageView )
+    , ( DrawerPage.route.title, DrawerPage.route.category, drawerPageView )
     , ( TypographyPage.route.title, TypographyPage.route.category, typographyPageView )
     , ( TooltipPage.route.title, TooltipPage.route.category, tooltipPageView )
     ]
@@ -209,6 +216,7 @@ init url =
     in
     ( { activeRoute = route
       , buttonPageModel = ButtonPage.route.initialModel
+      , drawerPageModel = DrawerPage.route.initialModel
       , typographyPageModel = TypographyPage.route.initialModel
       , tooltipPageModel = TooltipPage.route.initialModel
       }
@@ -238,6 +246,17 @@ update navKey msg model =
                 | buttonPageModel = buttonPageModel
               }
             , Cmd.map ButtonPageMessage buttonPageCmd
+            )
+
+        DrawerPageMessage drawerPageMsg ->
+            let 
+                ( drawerPageModel, drawerPageCmd ) = 
+                    DrawerPage.route.update drawerPageMsg model.drawerPageModel
+            in 
+            ( { model
+                | drawerPageModel = drawerPageModel
+              }
+            , Cmd.map DrawerPageMessage drawerPageCmd
             )
 
         TooltipPageMessage tooltipPageMessage ->

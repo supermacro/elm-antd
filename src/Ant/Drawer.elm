@@ -1,0 +1,188 @@
+module Ant.Drawer exposing
+    ( Drawer
+    , drawer, collapsed, withHeader, withPlacement, Placement(..), Header(..)
+    , toHtml
+    )
+
+{-| Drawer component
+
+@docs Drawer
+
+
+# Customizing the Drawer
+
+@docs drawer, collapsed, withHeader, withPlacement, Placement, Header
+
+@docs toHtml
+
+-}
+
+import Css exposing (..)
+import Html exposing (Html)
+import Html.Styled as H exposing (text, toUnstyled)
+import Html.Styled.Attributes exposing (css)
+
+
+{-| Determines the placement of the drawer
+-}
+type Placement
+    = Top
+    | Right
+    | Bottom
+    | Left
+
+
+{-| Determins the type of the Header, either a String or an entire Html node
+-}
+type Header msg
+    = Title String
+    | Node (Html msg)
+
+
+type alias Options msg =
+    { placement : Placement
+    , collapsed : Bool
+    , header : Header msg
+    }
+
+
+defaultOptions : Options msg
+defaultOptions =
+    { placement = Right
+    , collapsed = False
+    , header = Title "Drawer"
+    }
+
+
+{-| Represents a drawer component
+-}
+type Drawer msg
+    = Drawer (Options msg) (Html msg)
+
+
+{-| Create a Drawer component.
+
+    drawer (Text.text "Some content..." |> Text.toHtml)
+        |> witHeader (Title "Basic Drawer")
+        |> collapsed False
+        |> toHtml
+
+-}
+drawer : Html msg -> Drawer msg
+drawer content =
+    Drawer defaultOptions content
+
+
+withPlacement : Placement -> Drawer msg -> Drawer msg
+withPlacement placement (Drawer options content) =
+    let
+        newOptions =
+            { options | placement = placement }
+    in
+    Drawer newOptions content
+
+
+withHeader : Header msg -> Drawer msg -> Drawer msg
+withHeader headerValue (Drawer options content) =
+    let
+        newOptions =
+            { options | header = headerValue }
+    in
+    Drawer newOptions content
+
+
+collapsed : Bool -> Drawer msg -> Drawer msg
+collapsed value (Drawer options content) =
+    let
+        newOptions =
+            { options | collapsed = value }
+    in
+    Drawer newOptions content
+
+
+header : Header msg -> H.Html msg
+header headerValue =
+    case headerValue of
+        Title title ->
+            let
+                headerAttributes =
+                    [ padding2 (px 16) (px 24)
+                    , borderStyle solid
+                    , borderBottom3 (px 1) solid (hex "#f0f0f0")
+                    ]
+            in
+            H.div
+                [ css headerAttributes ]
+                [ H.text title ]
+
+        Node node ->
+            H.fromUnstyled node
+
+
+contentToHtml : Html msg -> H.Html msg
+contentToHtml content =
+    let
+        styledContent =
+            H.div
+                [ css [ padding (px 24) ] ]
+                [ H.fromUnstyled content ]
+    in
+    styledContent
+
+
+{-| Turn your Drawer into Html msg
+-}
+toHtml : Drawer msg -> Html msg
+toHtml (Drawer options content) =
+    let
+        maskAttributes =
+            css
+                [ position fixed
+                , top (px 0)
+                , left (px 0)
+                , bottom (px 0)
+                , right (px 0)
+                , height (pct 100)
+                , width (pct 100)
+                , backgroundColor (Css.rgba 0 0 0 0.45)
+                , zIndex (int 1)
+                ]
+
+        placementAttributes =
+            case options.placement of
+                Left ->
+                    [ top (px 0), left (px 0), width (pct 30), height (pct 100) ]
+
+                Right ->
+                    [ top (px 0), right (px 0), width (pct 30), height (pct 100) ]
+
+                Top ->
+                    [ top (px 0), left (px 0), width (pct 100), height (pct 30) ]
+
+                Bottom ->
+                    [ bottom (px 0), width (pct 100), height (pct 30) ]
+
+        baseAttributes =
+            [ height (pct 100)
+            , width (pct 25)
+            , position absolute
+            , backgroundColor (hex "#fff")
+            ]
+
+        attributes =
+            [ css <| baseAttributes ++ placementAttributes ]
+    in
+    toUnstyled
+        (if options.collapsed then
+            H.div [] []
+
+         else
+            H.div
+                [ maskAttributes ]
+                [ H.div
+                    attributes
+                    [ header options.header
+                    , contentToHtml content
+                    ]
+                ]
+        )
