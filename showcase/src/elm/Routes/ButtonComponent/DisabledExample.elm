@@ -1,4 +1,4 @@
-module Routes.ButtonComponent.DisabledExample exposing (example)
+module Routes.ButtonComponent.DisabledExample exposing (example, Msg)
 
 import Ant.Button exposing (ButtonType(..), button, disabled, onClick, toHtml, withType)
 import Html exposing (Html)

@@ -13,9 +13,9 @@ import Utils exposing (ComponentCategory(..), DocumentationRoute)
 
 
 type alias Model =
-    { basicExample : Container.Model
-    , titleExample : Container.Model
-    , textExample : Container.Model
+    { basicExample : Container.Model Never ()
+    , titleExample : Container.Model Never ()
+    , textExample : Container.Model Never ()
     }
 
 
@@ -25,9 +25,9 @@ route =
     , category = General
     , view = view
     , initialModel =
-        { basicExample = { sourceCodeVisible = False, sourceCode = basicExampleStr }
-        , titleExample = { sourceCodeVisible = False, sourceCode = titleComponentStr }
-        , textExample = { sourceCodeVisible = False, sourceCode = texComponentStr }
+        { basicExample = Container.simpleModel { sourceCodeVisible = False, sourceCode = basicExampleStr }
+        , titleExample = Container.simpleModel { sourceCodeVisible = False, sourceCode = titleComponentStr }
+        , textExample = Container.simpleModel { sourceCodeVisible = False, sourceCode = texComponentStr }
         }
     , update = update
     }
@@ -40,7 +40,7 @@ type DemoBox
 
 
 type Msg
-    = DemoBoxMsg DemoBox Container.Msg
+    = DemoBoxMsg DemoBox (Container.Msg Never)
 
 
 update : Msg -> Model -> ( Model, Cmd msg )

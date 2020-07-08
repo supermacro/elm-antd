@@ -6,9 +6,13 @@ module UI.Container exposing
     , paddingLeft
     , paddingRight
     , paddingTop
+    , simpleModel
     , update
     , view
     )
+
+{-| A demoBox represents the rectangular sections in the showcase where you see live demos of code
+-}
 
 import Ant.Icons as Icons
 import Ant.Tooltip as Tooltip exposing (tooltip)
@@ -23,18 +27,19 @@ import UI.Typography exposing (commonTextStyles)
 import Utils
 
 
-type alias Model =
+type alias Model msg m =
     { sourceCodeVisible : Bool
     , sourceCode : String
+    , demoUpdate : msg -> m -> m
+    , demoModel : m
     }
 
-
-type Msg
+type Msg msg
     = SourceCodeVisibilityToggled
     | CopySourceToClipboardRequested
-      -- ContentMsg represents an opaque message
+      -- ContentMsg represents a message
       -- emitted by the contents of a demoBox Container
-    | ContentMsg
+    | ContentMsg msg
 
 
 type alias ContainerOptions =
@@ -46,8 +51,17 @@ type alias ContainerOptions =
     }
 
 
-type Container
-    = Container ContainerOptions (Styled.Html Msg)
+type Container msg
+    = Container ContainerOptions (Styled.Html (Msg msg))
+
+
+simpleModel : { sourceCodeVisible : Bool , sourceCode : String } -> Model Never ()
+simpleModel { sourceCodeVisible, sourceCode } =
+    { sourceCodeVisible = sourceCodeVisible
+    , sourceCode = sourceCode
+    , demoModel = ()
+    , demoUpdate = \_ _ -> ()
+    }
 
 
 defaultContainerOptions : ContainerMetaSection -> ContainerOptions
@@ -60,7 +74,7 @@ defaultContainerOptions metaSection =
     }
 
 
-update : Msg -> Model -> ( Model, Cmd msg )
+update : Msg contentMsg -> Model contentMsg m -> ( Model contentMsg m, Cmd msg )
 update msg model =
     case msg of
         SourceCodeVisibilityToggled ->
@@ -73,20 +87,22 @@ update msg model =
         CopySourceToClipboardRequested ->
             ( model, Utils.copySourceToClipboard model.sourceCode )
 
-        ContentMsg ->
-            ( model, Cmd.none )
+        ContentMsg contentMsg ->
+            ( { model | demoModel = model.demoUpdate contentMsg model.demoModel }
+            , Cmd.none
+            )
 
 
 
 -- View code
 
 
-container : ContainerMetaSection -> Styled.Html Msg -> Container
+container : ContainerMetaSection -> Styled.Html (Msg msg) -> Container msg
 container =
     Container << defaultContainerOptions
 
 
-paddingTop : Float -> Container -> Container
+paddingTop : Float -> Container msg -> Container msg
 paddingTop val (Container opts children) =
     let
         newOpts =
@@ -95,7 +111,7 @@ paddingTop val (Container opts children) =
     Container newOpts children
 
 
-paddingRight : Float -> Container -> Container
+paddingRight : Float -> Container msg -> Container msg
 paddingRight val (Container opts children) =
     let
         newOpts =
@@ -104,7 +120,7 @@ paddingRight val (Container opts children) =
     Container newOpts children
 
 
-paddingBottom : Float -> Container -> Container
+paddingBottom : Float -> Container msg -> Container msg
 paddingBottom val (Container opts children) =
     let
         newOpts =
@@ -113,7 +129,7 @@ paddingBottom val (Container opts children) =
     Container newOpts children
 
 
-paddingLeft : Float -> Container -> Container
+paddingLeft : Float -> Container msg -> Container msg
 paddingLeft val (Container opts children) =
     let
         newOpts =
@@ -130,7 +146,7 @@ type alias ContainerMetaSection =
     }
 
 
-demoBox : ContainerMetaSection -> Styled.Html Msg -> Container
+demoBox : ContainerMetaSection -> Styled.Html (Msg msg) -> Container msg
 demoBox meta content =
     container meta content
         |> paddingBottom 50
@@ -144,7 +160,7 @@ borderColor =
     hex "#f0f0f0"
 
 
-viewSourceCode : String -> Styled.Html Msg
+viewSourceCode : String -> Styled.Html (Msg msg)
 viewSourceCode sourceCode =
     let
         unstyledSourceCodeView =
@@ -232,7 +248,7 @@ iconContainer { icon, tooltipText, event, extraStyles } =
         |> fromUnstyled
 
 
-view : Model -> Container -> Styled.Html Msg
+view : Model msg m -> Container msg -> Styled.Html (Msg msg)
 view model (Container opts children) =
     let
         metaSectionContent =

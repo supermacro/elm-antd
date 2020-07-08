@@ -20,25 +20,25 @@ basicExampleStr =
   """module Routes.DrawerComponent.SimpleExample exposing (example)"""
 
 type alias Model = 
-  { basicExample : Container.Model }
+  { basicExample : Container.Model BasicExample.Msg BasicExample.Model }
 
 type DemoBox
-  = BasicDrawer
+  = BasicDrawer (Container.Msg BasicExample.Msg)
 
 type Msg
-  = DemoBoxMsg DemoBox Container.Msg
+  = DemoBoxMsg DemoBox 
 
 update : Msg -> Model -> (Model, Cmd msg)
 update msg model = 
   case msg of
-      DemoBoxMsg demobox demoboxMsg ->
+      DemoBoxMsg demobox ->
           case demobox of
-              BasicDrawer ->
+              BasicDrawer demoboxMsg ->
                 let
-                    (basixExampleModel, basicExampleCmd) =
+                    (basicExampleModel, basicExampleCmd) =
                       Container.update demoboxMsg model.basicExample
                   in
-                  ( { model | basicExample = basixExampleModel }, basicExampleCmd )
+                  ( { model | basicExample = basicExampleModel }, basicExampleCmd )
 
 
 route : DocumentationRoute Model Msg
@@ -48,15 +48,22 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { basicExample = { sourceCodeVisible = False, sourceCode = basicExampleStr }
+        { basicExample =
+            { sourceCodeVisible = False
+            , sourceCode = basicExampleStr
+            , demoModel = BasicExample.initialModel
+            , demoUpdate = BasicExample.update
+            }
         }
     }
 
 basicExample : Model -> Styled.Html Msg
 basicExample model =
     let
-        styledBasicExampleContents =
-            fromUnstyled BasicExample.example
+        styledBasicExampleContents = 
+            BasicExample.example model.basicExample.demoModel
+                |> fromUnstyled
+                |> Styled.map Container.ContentMsg
 
         metaInfo =
             { title = "Basic"
@@ -70,7 +77,7 @@ basicExample model =
     in
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.basicExample
-        |> Styled.map (DemoBoxMsg BasicDrawer)
+        |> Styled.map (DemoBoxMsg << BasicDrawer)
 
 view : Model -> Styled.Html Msg
 view model = 

@@ -1,21 +1,42 @@
-module Routes.DrawerComponent.BasicExample exposing (example)
+module Routes.DrawerComponent.BasicExample exposing (example, initialModel, Model, Msg, update)
 
-import Ant.Button as Btn exposing (ButtonType(..), button, toHtml)
+import Ant.Button exposing (ButtonType(..), button, onClick, toHtml, withType)
 import Ant.Drawer as Drawer exposing (collapsed, withPlacement)
-import Ant.Typography.Text as Text
-import Html exposing (Html)
-import Css exposing (..)
-import Html.Styled as H exposing (text, toUnstyled)
+import Html exposing (Html, div, text)
 
-example : Html msg
-example =
-    Drawer.drawer content
-        |> collapsed False
-        |> withPlacement Drawer.Right
-        |> Drawer.withHeader (Drawer.Title "Basic Drawer")
-        |> Drawer.toHtml
+type Msg = ToggleDrawerOpen
 
-content : Html msg
-content =
-  Text.text "Some content..."
-      |> Text.toHtml
+type alias Model =
+    { drawerCollapsed : Bool }
+
+initialModel : Model
+initialModel =
+    { drawerCollapsed = True }
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        ToggleDrawerOpen ->
+            { model | drawerCollapsed = not model.drawerCollapsed }
+
+example : Model -> Html Msg
+example { drawerCollapsed } =
+    let
+        drawerToggleButton =
+            button "toggle drawer"
+                |> withType Primary
+                |> onClick ToggleDrawerOpen
+                |> toHtml
+
+        content = text "Hello, world"
+
+        drawer =
+            Drawer.drawer content
+                |> collapsed drawerCollapsed
+                |> withPlacement Drawer.Right
+                |> Drawer.withHeader (Drawer.Title "Basic Drawer")
+                |> Drawer.toHtml
+    in
+    div [] [ drawerToggleButton, drawer ]
+    

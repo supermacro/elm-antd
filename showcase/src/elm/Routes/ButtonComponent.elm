@@ -100,43 +100,34 @@ example =
 
 
 type alias Model =
-    { typeExample : Container.Model
-    , iconExample : Container.Model
-    , disabledExample : Container.Model
+    { typeExample : Container.Model Never ()
+    , disabledExample : Container.Model DisabledExample.Msg ()
     }
 
 
 type DemoBox
-    = ButtonType
-    | ButtonWithIcon
-    | DisabledButton
+    = ButtonType (Container.Msg Never)
+    | DisabledButton (Container.Msg DisabledExample.Msg)
 
 
 type Msg
-    = DemoBoxMsg DemoBox Container.Msg
+    = DemoBoxMsg DemoBox 
     | SourceCopiedToClipboard DemoBox
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
-        DemoBoxMsg demobox demoboxMsg ->
+        DemoBoxMsg demobox ->
             case demobox of
-                ButtonType ->
+                ButtonType demoboxMsg ->
                     let
                         ( typeExampleModel, typeExampleCmd ) =
                             Container.update demoboxMsg model.typeExample
                     in
                     ( { model | typeExample = typeExampleModel }, typeExampleCmd )
 
-                ButtonWithIcon ->
-                    let
-                        ( iconExampleModel, iconExampleCmd ) =
-                            Container.update demoboxMsg model.iconExample
-                    in
-                    ( { model | iconExample = iconExampleModel }, iconExampleCmd )
-
-                DisabledButton ->
+                DisabledButton demoboxMsg ->
                     let
                         ( disabledExampleModel, disabledExampleCmd ) =
                             Container.update demoboxMsg model.disabledExample
@@ -154,9 +145,13 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { typeExample = { sourceCodeVisible = False, sourceCode = typeExampleStr }
-        , iconExample = { sourceCodeVisible = False, sourceCode = "" }
-        , disabledExample = { sourceCodeVisible = False, sourceCode = disabledExampleStr }
+        { typeExample = Container.simpleModel { sourceCodeVisible = False, sourceCode = typeExampleStr }
+        , disabledExample =
+            { sourceCodeVisible = False
+            , sourceCode = disabledExampleStr
+            , demoUpdate = \_ _ -> ()
+            , demoModel = ()
+            }
         }
     }
 
@@ -179,15 +174,16 @@ typeExample model =
     in
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.typeExample
-        |> Styled.map (DemoBoxMsg ButtonType)
+        |> Styled.map (DemoBoxMsg << ButtonType)
 
 
 disabledExample : Model -> Styled.Html Msg
 disabledExample model =
     let
         styledDisabledExampleContents =
-            fromUnstyled DisabledExample.example
-                |> Styled.map (\_ -> Container.ContentMsg)
+            DisabledExample.example
+                |> fromUnstyled
+                |> Styled.map Container.ContentMsg
 
         metaInfo =
             { title = "Disabled"
@@ -201,7 +197,7 @@ disabledExample model =
     in
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.disabledExample
-        |> Styled.map (DemoBoxMsg DisabledButton)
+        |> Styled.map (DemoBoxMsg << DisabledButton)
 
 
 view : Model -> Styled.Html Msg

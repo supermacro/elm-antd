@@ -21,18 +21,18 @@ title =
 
 
 type alias Model =
-    { basicExample : Container.Model
-    , placementExample : Container.Model
+    { basicExample : Container.Model Never ()
+    , placementExample : Container.Model Never ()
     }
 
 
 type DemoBox
-    = Basic
-    | Placement
+    = Basic (Container.Msg Never)
+    | Placement (Container.Msg Never)
 
 
 type Msg
-    = DemoBoxMsg DemoBox Container.Msg
+    = DemoBoxMsg DemoBox
 
 
 route : DocumentationRoute Model Msg
@@ -42,23 +42,23 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { basicExample = { sourceCodeVisible = False, sourceCode = basicExampleStr }
-        , placementExample = { sourceCodeVisible = False, sourceCode = "" }
+        { basicExample = Container.simpleModel { sourceCodeVisible = False, sourceCode = basicExampleStr }
+        , placementExample = Container.simpleModel { sourceCodeVisible = False, sourceCode = "" }
         }
     }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update (DemoBoxMsg demobox demoboxMsg) model =
+update (DemoBoxMsg demobox) model =
     case demobox of
-        Basic ->
+        Basic demoboxMsg ->
             let
                 ( basicModel, basicCmd ) =
                     Container.update demoboxMsg model.basicExample
             in
             ( { model | basicExample = basicModel }, basicCmd )
 
-        Placement ->
+        Placement demoboxMsg ->
             let
                 ( placementModel, placementCmd ) =
                     Container.update demoboxMsg model.placementExample
@@ -102,7 +102,7 @@ basicExample model =
     in
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.basicExample
-        |> Styled.map (DemoBoxMsg Basic)
+        |> Styled.map (DemoBoxMsg << Basic)
 
 
 view : Model -> Styled.Html Msg
