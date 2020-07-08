@@ -1,8 +1,9 @@
-module Ant.Divider exposing 
-  ( Divider
-  , divider, Line(..), withLine, Orientation(..), withOrientation, Type(..), TextStyle(..), withTextStyle, withLabel
-  , toHtml 
-  )
+module Ant.Divider exposing
+    ( Divider
+    , divider, Line(..), withLine, Orientation(..), withOrientation, Type(..), TextStyle(..), withTextStyle, withLabel
+    , toHtml
+    , withType
+    )
 
 {-| Divider component
 
@@ -22,7 +23,6 @@ import Css exposing (..)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
 import Html.Styled.Attributes exposing (css)
-
 
 
 type Line
@@ -107,6 +107,15 @@ withLine line (Divider options) =
     Divider newOptions
 
 
+withType : Type -> Divider -> Divider
+withType type_ (Divider options) =
+    let
+        newOptions =
+            { options | type_ = type_ }
+    in
+    Divider newOptions
+
+
 withOrientation : Orientation -> Divider -> Divider
 withOrientation orientation (Divider options) =
     let
@@ -126,10 +135,9 @@ labelToHtml label textStyle =
                         |> Text.toHtml
 
                 Heading ->
-                    {- missing functionality -}
                     Text.text label
+                        |> Text.strong
                         |> Text.toHtml
-                        
     in
     H.fromUnstyled content
 
@@ -137,14 +145,21 @@ labelToHtml label textStyle =
 toHtml : Divider -> Html msg
 toHtml (Divider options) =
     let
+        typeAttributes =
+            case options.type_ of
+                Horizontal ->
+                    [ width (pct 100), minWidth (pct 100) ]
+
+                Vertical ->
+                    [ height (pct 100), minHeight (pct 100) ]
+
         baseAttributes =
-            [ width (pct 100)
-            , minWidth (pct 100)
-            , margin2 (px 24) (px 0)
-            , displayFlex
-            , alignItems center
-            , textAlign center
-            ]
+            typeAttributes
+                ++ [ margin2 (px 24) (px 0)
+                   , displayFlex
+                   , alignItems center
+                   , textAlign center
+                   ]
 
         lineAttribute =
             case options.line of

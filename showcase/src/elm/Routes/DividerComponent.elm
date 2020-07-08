@@ -4,7 +4,9 @@ import Css exposing (displayFlex, marginRight, maxWidth, pct, px)
 import Html.Styled as Styled exposing (div, fromUnstyled, span, text)
 import Html.Styled.Attributes exposing (css)
 import Routes.DividerComponent.HorizontalExample as HorizontalExample
+import Routes.DividerComponent.WithTitleExample as WithTitleExample
 import Routes.DividerComponent.TextWithoutHeadingExample as TextWithoutHeadingExample
+import Routes.DividerComponent.VerticalExample as VerticalExample
 import UI.Container as Container
 import UI.Typography as Typography
     exposing
@@ -100,15 +102,73 @@ example =
       , loremIpsum
       ]"""
 
+withTitleExampleStr : String
+withTitleExampleStr = 
+  """module Routes.DividerComponent.WithTitleExample exposing (example)
+
+import Ant.Divider as Divider
+import Ant.Typography.Text as Text
+import Html exposing (Html, text)
+import Html exposing (Html, div, span)
+import Html.Styled as H exposing (text, toUnstyled, fromUnstyled)
+
+
+example : Html msg
+example =
+    let
+      dividerCenter =
+        Divider.divider
+          |> Divider.withLabel "Center"
+          |> Divider.withOrientation Divider.Center
+          |> Divider.withTextStyle Divider.Heading
+          |> Divider.toHtml
+
+      dividerLeft =
+        Divider.divider
+          |> Divider.withLabel "Left"
+          |> Divider.withOrientation Divider.Left
+          |> Divider.withTextStyle Divider.Heading
+          |> Divider.toHtml
+
+      dividerRight =
+        Divider.divider
+          |> Divider.withLabel "Right"
+          |> Divider.withOrientation Divider.Right
+          |> Divider.withTextStyle Divider.Heading
+          |> Divider.toHtml
+
+      loremIpsum =
+        Text.text "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista probare, quae sunt a te dicta? Refert tamen, quo modo."
+          |> Text.toHtml
+          
+    in
+    div []
+      [ loremIpsum
+      , dividerCenter
+      , loremIpsum
+      , dividerLeft
+      , loremIpsum
+      , dividerRight
+      , loremIpsum
+      ]"""
+
+verticalExampleStr : String
+verticalExampleStr = 
+  """"""
+
 type alias Model =
     { horizontalExample : Container.Model
     , textWithoutHeadingExample : Container.Model
+    , withTitleExample : Container.Model
+    , verticalExample : Container.Model
     }
 
 
 type DemoBox
     = HorizontalExample
     | TextWithoutHeadingExample
+    | WithTitleExample
+    | VerticalExample
 
 
 type Msg
@@ -133,6 +193,18 @@ update msg model =
                             Container.update demoboxMsg model.textWithoutHeadingExample
                     in
                     ( { model | textWithoutHeadingExample = textWithoutHeadingExampleModel }, textWithoutHeadingExampleCmd )
+                WithTitleExample ->
+                    let
+                        ( withTitleExampleModel, withTitleExampleCmd ) =
+                            Container.update demoboxMsg model.withTitleExample
+                    in
+                    ( { model | withTitleExample = withTitleExampleModel }, withTitleExampleCmd )
+                VerticalExample ->
+                    let
+                        ( verticalExampleModel, verticalExampleCmd ) =
+                            Container.update demoboxMsg model.verticalExample
+                    in
+                    ( { model | verticalExample = verticalExampleModel }, verticalExampleCmd )
         SourceCopiedToClipboard demobox ->
             ( model, Cmd.none )
 
@@ -146,6 +218,8 @@ route =
     , initialModel =
         { horizontalExample = { sourceCodeVisible = False, sourceCode = horizontalExampleStr }
         , textWithoutHeadingExample = { sourceCodeVisible = False, sourceCode = textWithoutHeadingExampleStr }
+        , withTitleExample = { sourceCodeVisible = False, sourceCode = withTitleExampleStr }
+        , verticalExample = { sourceCodeVisible = False, sourceCode = verticalExampleStr }
         }
     }
 
@@ -190,6 +264,47 @@ textWithoutHeadingExample model =
         |> Container.view model.textWithoutHeadingExample
         |> Styled.map (DemoBoxMsg TextWithoutHeadingExample)
 
+withTitleExample : Model -> Styled.Html Msg
+withTitleExample model =
+   let
+        styleWithTitleExampleContents =
+            fromUnstyled WithTitleExample.example
+
+        metaInfo =
+            { title = "Divider with title"
+            , content = "Divider with inner title, use \"withOrientation\" to align it."
+            , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
+            , sourceCode = withTitleExampleStr
+            }
+
+        styledDemoContents =
+            div [ css [ displayFlex ] ] [ styleWithTitleExampleContents ]
+    in
+    Container.demoBox metaInfo styledDemoContents
+        |> Container.view model.withTitleExample
+        |> Styled.map (DemoBoxMsg WithTitleExample)
+
+
+verticalExample : Model -> Styled.Html Msg
+verticalExample model =
+   let
+        styleVerticalExampleContents =
+            fromUnstyled VerticalExample.example
+
+        metaInfo =
+            { title = "Vertical"
+            , content = "Use \"withType Vertical\" make it vertical."
+            , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
+            , sourceCode = verticalExampleStr
+            }
+
+        styledDemoContents =
+            div [ css [ displayFlex ] ] [ styleVerticalExampleContents ]
+    in
+    Container.demoBox metaInfo styledDemoContents
+        |> Container.view model.verticalExample
+        |> Styled.map (DemoBoxMsg VerticalExample)
+
 view : Model -> Styled.Html Msg
 view model =
     div []
@@ -204,6 +319,9 @@ view model =
         , documentationSubheading Typography.WithoutAnchorLink "Examples"
         , div [ css [ displayFlex ] ]
             [ div [ css [ maxWidth (pct 45), marginRight (px 13) ] ] [ horizontalExample model ]
-            , div [ css [ maxWidth (pct 45) ] ] [ textWithoutHeadingExample model ]
+            , div [ css [ maxWidth (pct 45) ] ] [ withTitleExample model ]
             ]
+        , div [ css [ displayFlex ]]
+            [ div [ css [ maxWidth (pct 45), marginRight (px 13) ] ] [ textWithoutHeadingExample model ]
+            , div [ css [ maxWidth (pct 45) ] ] [ verticalExample model ] ]
         ]
