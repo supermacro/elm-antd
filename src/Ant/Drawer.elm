@@ -50,7 +50,7 @@ defaultOptions : Options msg
 defaultOptions =
     { placement = Right
     , collapsed = False
-    , header = Title "Drawer"
+    , header = Title ""
     }
 
 
