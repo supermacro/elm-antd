@@ -5,6 +5,7 @@ import Ant.Typography.Text as Text
 import Html exposing (Html, text)
 import Html exposing (Html, div, span)
 import Css exposing (..)
+import Html.Attributes exposing (style)
 import Html.Styled as H exposing (text, toUnstyled, fromUnstyled)
 
 
@@ -20,7 +21,7 @@ example =
           |> Text.toHtml
           
     in
-    div [ ]
+    div [ style "display" "flex" ]
       [ text
       , dividerVertical
       , text

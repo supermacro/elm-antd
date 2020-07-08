@@ -148,18 +148,19 @@ toHtml (Divider options) =
         typeAttributes =
             case options.type_ of
                 Horizontal ->
-                    [ width (pct 100), minWidth (pct 100) ]
+                    [ width (pct 100)
+                    , minWidth (pct 100)
+                    , margin2 (px 24) (px 0)
+                    , displayFlex
+                    , alignItems center
+                    , textAlign center
+                    ]
 
                 Vertical ->
                     [ height (pct 100), minHeight (pct 100) ]
 
         baseAttributes =
             typeAttributes
-                ++ [ margin2 (px 24) (px 0)
-                   , displayFlex
-                   , alignItems center
-                   , textAlign center
-                   ]
 
         lineAttribute =
             case options.line of
