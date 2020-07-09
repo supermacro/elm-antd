@@ -2,7 +2,7 @@ module Ant.Drawer exposing
     ( Drawer
     , drawer, collapsed, withHeader, withPlacement, Placement(..), Header(..)
     , toHtml
-    , onClickOutside, onClose
+    , onClickOutside, onClose, withFooter
     )
 
 {-| Drawer component
@@ -47,6 +47,7 @@ type alias Options msg =
     , header : Header msg
     , onClickOutside : Maybe msg
     , onClose : Maybe msg
+    , footer : Maybe (Html msg)
     }
 
 
@@ -57,6 +58,7 @@ defaultOptions =
     , header = Title ""
     , onClickOutside = Nothing
     , onClose = Nothing
+    , footer = Nothing
     }
 
 
@@ -97,6 +99,15 @@ withHeader headerValue (Drawer options content) =
     Drawer newOptions content
 
 
+withFooter : Html msg -> Drawer msg -> Drawer msg
+withFooter footer (Drawer options content) =
+    let
+        newOptions =
+            { options | footer = Just footer }
+    in
+    Drawer newOptions content
+
+
 onClickOutside : msg -> Drawer msg -> Drawer msg
 onClickOutside msg (Drawer options content) =
     let
@@ -124,8 +135,8 @@ collapsed value (Drawer options content) =
     Drawer newOptions content
 
 
-header : Header msg -> H.Html msg
-header headerValue =
+headerToHtml : Header msg -> H.Html msg
+headerToHtml headerValue =
     case headerValue of
         Title title ->
             let
@@ -143,12 +154,31 @@ header headerValue =
             H.fromUnstyled node
 
 
+footerToHtml : Html msg -> H.Html msg
+footerToHtml footer =
+    let
+        footerAttributes =
+            [ padding (px 10)
+            , borderStyle solid
+            , borderTop3 (px 1) solid (hex "#f0f0f0")
+            ]
+    in
+    H.div
+        [ css footerAttributes ]
+        [ H.fromUnstyled footer ]
+
+
 contentToHtml : Html msg -> H.Html msg
 contentToHtml content =
     let
+        bodyAttributes =
+            [ padding (px 24)
+            , overflow auto
+            , flexGrow (int 1)
+            ]
         styledContent =
             H.div
-                [ css [ padding (px 24) ] ]
+                [ css bodyAttributes ]
                 [ H.fromUnstyled content ]
     in
     styledContent
@@ -191,6 +221,8 @@ toHtml (Drawer options content) =
             , width (pct 25)
             , position absolute
             , backgroundColor (hex "#fff")
+            , displayFlex
+            , flexDirection column
             ]
 
         maybeOnClose =
@@ -207,6 +239,19 @@ toHtml (Drawer options content) =
 
         attributes =
             [ css <| baseAttributes ++ placementAttributes ]
+
+        drawerBody =
+            case options.footer of
+                Just footerNode ->
+                    [ headerToHtml options.header
+                    , contentToHtml content
+                    , footerToHtml footerNode
+                    ]
+
+                Nothing ->
+                    [ headerToHtml options.header
+                    , contentToHtml content
+                    ]
     in
     toUnstyled
         (if options.collapsed then
@@ -217,8 +262,6 @@ toHtml (Drawer options content) =
                 (maskAttributes :: maybeOnClickOutside)
                 [ H.div
                     attributes
-                    [ header options.header
-                    , contentToHtml content
-                    ]
+                    drawerBody
                 ]
         )

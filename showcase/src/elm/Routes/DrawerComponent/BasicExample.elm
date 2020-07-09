@@ -31,10 +31,17 @@ example { drawerCollapsed } =
 
         content = text "Hello, world"
 
+        footer = 
+            button "submit"
+                |> withType Primary
+                |> onClick ToggleDrawerOpen
+                |> toHtml
+
         drawer =
             Drawer.drawer content
                 |> collapsed drawerCollapsed
                 |> withPlacement Drawer.Right
+                |> Drawer.withFooter footer
                 |> Drawer.onClickOutside (ToggleDrawerOpen)
                 |> Drawer.withHeader (Drawer.Title "Basic Drawer")
                 |> Drawer.toHtml
