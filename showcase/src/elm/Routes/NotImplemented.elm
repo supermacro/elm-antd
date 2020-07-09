@@ -3,13 +3,13 @@ module Routes.NotImplemented exposing (notImplemented)
 import Html.Styled exposing (Html, div, span, text)
 import UI.Footer exposing (pushDown)
 import UI.Typography exposing (SubHeadingOptions(..), documentationHeading, documentationSubheading, documentationText, internalLink, link)
-
+import Utils exposing (intoKebabCase)
 
 notImplemented : String -> Html msg
 notImplemented componentName =
     let
         antdUrl =
-            "https://ant.design/components/" ++ String.toLower componentName
+            "https://ant.design/components/" ++ intoKebabCase componentName
     in
     div
         []
