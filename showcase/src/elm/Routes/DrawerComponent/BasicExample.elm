@@ -35,6 +35,7 @@ example { drawerCollapsed } =
             Drawer.drawer content
                 |> collapsed drawerCollapsed
                 |> withPlacement Drawer.Right
+                |> Drawer.onClickOutside (ToggleDrawerOpen)
                 |> Drawer.withHeader (Drawer.Title "Basic Drawer")
                 |> Drawer.toHtml
     in

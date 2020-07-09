@@ -2,6 +2,7 @@ module Ant.Drawer exposing
     ( Drawer
     , drawer, collapsed, withHeader, withPlacement, Placement(..), Header(..)
     , toHtml
+    , onClickOutside, onClose
     )
 
 {-| Drawer component
@@ -21,6 +22,7 @@ import Css exposing (..)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
 import Html.Styled.Attributes exposing (css)
+import Html.Styled.Events as Events
 
 
 {-| Determines the placement of the drawer
@@ -43,6 +45,8 @@ type alias Options msg =
     { placement : Placement
     , collapsed : Bool
     , header : Header msg
+    , onClickOutside : Maybe msg
+    , onClose : Maybe msg
     }
 
 
@@ -51,6 +55,8 @@ defaultOptions =
     { placement = Right
     , collapsed = False
     , header = Title ""
+    , onClickOutside = Nothing
+    , onClose = Nothing
     }
 
 
@@ -87,6 +93,24 @@ withHeader headerValue (Drawer options content) =
     let
         newOptions =
             { options | header = headerValue }
+    in
+    Drawer newOptions content
+
+
+onClickOutside : msg -> Drawer msg -> Drawer msg
+onClickOutside msg (Drawer options content) =
+    let
+        newOptions =
+            { options | onClickOutside = Just msg }
+    in
+    Drawer newOptions content
+
+
+onClose : msg -> Drawer msg -> Drawer msg
+onClose msg (Drawer options content) =
+    let
+        newOptions =
+            { options | onClose = Just msg }
     in
     Drawer newOptions content
 
@@ -169,6 +193,18 @@ toHtml (Drawer options content) =
             , backgroundColor (hex "#fff")
             ]
 
+        maybeOnClose =
+            options.onClose
+                |> Maybe.map Events.onClick
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+
+        maybeOnClickOutside =
+            options.onClickOutside
+                |> Maybe.map Events.onClick
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+
         attributes =
             [ css <| baseAttributes ++ placementAttributes ]
     in
@@ -178,7 +214,7 @@ toHtml (Drawer options content) =
 
          else
             H.div
-                [ maskAttributes ]
+                (maskAttributes :: maybeOnClickOutside)
                 [ H.div
                     attributes
                     [ header options.header
