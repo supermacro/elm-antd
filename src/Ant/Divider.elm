@@ -18,11 +18,14 @@ module Ant.Divider exposing
 
 -}
 
+import Ant.Typography as Typography
 import Ant.Typography.Text as Text
 import Css exposing (..)
+import Css.Global exposing (typeSelector)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
 import Html.Styled.Attributes exposing (css)
+import Css.Global exposing (children)
 
 
 type Line
@@ -135,9 +138,9 @@ labelToHtml label textStyle =
                         |> Text.toHtml
 
                 Heading ->
-                    Text.text label
-                        |> Text.strong
-                        |> Text.toHtml
+                    Typography.title label
+                        |> Typography.level Typography.H5
+                        |> Typography.toHtml
     in
     H.fromUnstyled content
 
@@ -198,7 +201,15 @@ toHtml (Divider options) =
                     width (pct 5)
 
         textAttributes =
-            [ css [ padding2 (px 0) (px 8) ] ]
+            [ css
+                [ padding2 (px 0) (px 8)
+                , children
+                    [ typeSelector "h5"
+                        [ margin (px 0)
+                        ]
+                    ]
+                ]
+            ]
 
         attributes =
             [ css <| baseAttributes ++ [ before (pseudoAttributes ++ [ beforeWidth ]), after (pseudoAttributes ++ [ afterWidth ]) ] ]

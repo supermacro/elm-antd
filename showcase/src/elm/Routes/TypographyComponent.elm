@@ -154,6 +154,8 @@ example =
                 |> Typography.level H3
             , title "h4. Ant Design"
                 |> Typography.level H4
+            , title "h5. Ant Design"
+                |> Typography.level h5
             ]
 
 """
