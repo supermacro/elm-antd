@@ -20,6 +20,7 @@ module Ant.Button exposing
 import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
 import Ant.Internals.Typography exposing (textColorRgba)
 import Css exposing (..)
+import Css.Animations as CA exposing (keyframes)
 import Css.Transitions exposing (transition)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
@@ -188,11 +189,19 @@ toHtml (Button options label) =
                 ]
             ]
 
+        animation =
+            keyframes
+                [ ( 50, [ CA.property "transform" "scale(1.5, 1.5)", CA.property "opacity" "0" ] )
+                , ( 99, [ CA.property "transform" "scale(0.001, 0.001)", CA.property "opacity" "0" ] )
+                , ( 100, [ CA.property "transform" "scale(0.001, 0.001)", CA.property "opacity" "1" ] )
+                ]
+
         primaryButtonAttributes =
             [ color (hex "#fff")
             , borderStyle solid
             , backgroundColor (hex primaryColor)
             , borderColor (hex primaryColor)
+            , position relative
             , focus
                 [ backgroundColor (hex primaryColorFaded)
                 , borderColor (hex primaryColorFaded)
@@ -204,6 +213,20 @@ toHtml (Button options label) =
             , active
                 [ backgroundColor (hex primaryColorStrong)
                 , borderColor (hex primaryColorStrong)
+                , before
+                    [ property "content" "\" \""
+                    , display block
+                    , width (pct 100)
+                    , height (pct 100)
+                    , position absolute
+                    , right (px 0)
+                    , left (px 0)
+                    , top (px 0)
+                    , bottom (px 0)
+                    , backgroundColor (hex "#000")
+                    , animationName animation
+                    , animationDuration (sec 2)
+                    ]
                 ]
             , transition
                 [ Css.Transitions.backgroundColor transitionDuration
