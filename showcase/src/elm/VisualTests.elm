@@ -12,6 +12,7 @@ Given a `component` query param, render the associated component
 
 import Ant.Button as Btn exposing (ButtonType(..), button)
 import Ant.Typography as Heading exposing (Level(..), title)
+import Ant.Divider as Divider
 import Browser
 import Browser.Navigation as Nav
 import Css exposing (height, vh)
@@ -60,6 +61,7 @@ type alias TypographyConfig =
 type Component
     = Button ButtonConfig
     | Typography TypographyConfig
+    | Divider 
 
 
 type RawComponent
@@ -79,6 +81,11 @@ registeredComponents =
 
     -- Headings
     , ( "SimpleHeading", Typography { level = H1 } )
+
+    -- Dividers
+    , ( "SimpleDivider", Divider.divider )
+    , ( "DashedDivider", Divider.divider |> Divider.withLine Divider.Dashed )
+    , ( "VerticalDivider", Divider.divider |> Divider.withType Divider.Vertical )
     ]
 
 
