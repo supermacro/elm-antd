@@ -1,10 +1,11 @@
+# skip version 2.2.0 of giorgio14/elm-antd-ci
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.25.0
 jobs:
   install_deps:
     docker:
-      - image: giorgio14/elm-antd-ci:latest
+      - image: giorgio14/elm-antd-ci:2.1.0
     steps:
       - checkout
       - restore_cache:
@@ -30,7 +31,7 @@ jobs:
 
   check_formatting:
     docker:
-      - image: giorgio14/elm-antd-ci:latest
+      - image: giorgio14/elm-antd-ci:2.1.0
     steps:
       - checkout
       - run:
@@ -43,7 +44,7 @@ jobs:
 
   verify_build:
     docker:
-      - image: giorgio14/elm-antd-ci:latest
+      - image: giorgio14/elm-antd-ci:2.1.0
     steps:
       - checkout
       - attach_workspace:
@@ -57,7 +58,7 @@ jobs:
 
   unit_tests:
     docker:
-      - image: giorgio14/elm-antd-ci:latest
+      - image: giorgio14/elm-antd-ci:2.1.0
     steps:
       - checkout
       - attach_workspace:
@@ -69,7 +70,7 @@ jobs:
 
   visual_tests:
     docker:
-      - image: giorgio14/elm-antd-ci:latest
+      - image: giorgio14/elm-antd-ci:2.1.0
     steps:
       - checkout
       - attach_workspace:
