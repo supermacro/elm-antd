@@ -11,8 +11,8 @@ Given a `component` query param, render the associated component
 -}
 
 import Ant.Button as Btn exposing (ButtonType(..), button)
-import Ant.Typography as Heading exposing (Level(..), title)
 import Ant.Divider as Divider
+import Ant.Typography as Heading exposing (Level(..), title)
 import Browser
 import Browser.Navigation as Nav
 import Css exposing (height, vh)
@@ -57,13 +57,15 @@ type alias ButtonConfig =
 type alias TypographyConfig =
     { level : Heading.Level }
 
-type alias DividerConfig = 
+
+type alias DividerConfig =
     { line : Divider.Line
     , orientation : Divider.Orientation
     , type_ : Divider.Type
     , textStyle : Divider.TextStyle
     , label : Maybe String
     }
+
 
 type Component
     = Button ButtonConfig
@@ -180,21 +182,23 @@ buildComponent component =
 
         Divider dividerConfig ->
             let
-              divider = Divider.divider
-                |> Divider.withLine dividerConfig.line
-                |> Divider.withType dividerConfig.type_
-                |> Divider.withOrientation dividerConfig.orientation
-                |> Divider.withTextStyle dividerConfig.textStyle
-                |> Divider.toHtml
-              loremIpsum =
-                  text "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-                      
+                divider =
+                    Divider.divider
+                        |> Divider.withLine dividerConfig.line
+                        |> Divider.withType dividerConfig.type_
+                        |> Divider.withOrientation dividerConfig.orientation
+                        |> Divider.withTextStyle dividerConfig.textStyle
+                        |> Divider.toHtml
+
+                loremIpsum =
+                    text "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
             in
-              div []
+            div []
                 [ loremIpsum
                 , divider
                 , loremIpsum
                 ]
+
 
 view : Model -> { title : String, body : List (Html msg) }
 view { component, label } =

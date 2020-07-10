@@ -19,7 +19,7 @@ example =
             Text.text "Text"
                 |> Text.toHtml
     in
-    div [ ]
+    div []
         [ text
         , dividerVertical
         , text
