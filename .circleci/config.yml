@@ -75,7 +75,7 @@ jobs:
       - run:
           name: "Run visual regression tests"
           command: |
-            git diff --name-only master..{CIRCLE_BRANCH}
+            git diff --name-only master..$CIRCLE_BRANCH
             cd showcase
             npm run visual-tests:start-server &>/dev/null &
             # wait for visual testing app to compile
