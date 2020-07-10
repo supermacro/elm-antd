@@ -4,9 +4,7 @@ describe('Divider', () => {
   const dividers = [
     'SimpleDivider',
     'DashedDivider',
-    'VerticalDivider',
-    'DividerWithText',
-    'DividerWithTitle',
+    'VerticalDivider'
   ]
 
   dividers.forEach((divider) => {
