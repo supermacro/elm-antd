@@ -76,6 +76,9 @@ jobs:
           name: "Run visual regression tests"
           command: |
             git diff --name-only MASTER..MASTER~
+            echo ">>>>"
+            pwd
+            ls .git
             cd showcase
             npm run visual-tests:start-server &>/dev/null &
             # wait for visual testing app to compile
