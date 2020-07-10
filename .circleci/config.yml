@@ -1,6 +1,4 @@
 version: 2.1
-orbs:
-  cypress: cypress-io/cypress@1.25.0
 jobs:
   install_deps:
     docker:
@@ -77,6 +75,7 @@ jobs:
       - run:
           name: "Run visual regression tests"
           command: |
+            git diff --name-only MASTER..MASTER~
             cd showcase
             npm run visual-tests:start-server &>/dev/null &
             # wait for visual testing app to compile
