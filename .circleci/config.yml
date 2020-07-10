@@ -75,9 +75,7 @@ jobs:
       - run:
           name: "Run visual regression tests"
           command: |
-            echo ">>>>"
-            pwd
-            ls .git
+            git diff --name-only master..{CIRCLE_BRANCH}
             cd showcase
             npm run visual-tests:start-server &>/dev/null &
             # wait for visual testing app to compile
@@ -99,3 +97,6 @@ workflows:
       - visual_tests:
           requires:
             - install_deps
+          filters:
+            branches:
+              ignore: master
