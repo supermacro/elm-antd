@@ -4,7 +4,6 @@ import Ant.Divider as Divider
 import Ant.Typography.Text as Text
 import Css exposing (..)
 import Html exposing (Html, div, span, text)
-import Html.Attributes exposing (style)
 import Html.Styled as H exposing (fromUnstyled, text, toUnstyled)
 
 
@@ -20,7 +19,7 @@ example =
             Text.text "Text"
                 |> Text.toHtml
     in
-    div [ style "display" "flex" ]
+    div [ ]
         [ text
         , dividerVertical
         , text

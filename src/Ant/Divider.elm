@@ -147,7 +147,7 @@ labelToHtml label textStyle =
 toHtml : Divider -> Html msg
 toHtml (Divider options) =
     let
-        typeAttributes =
+        baseAttributes =
             case options.type_ of
                 Horizontal ->
                     [ width (pct 100)
@@ -159,10 +159,14 @@ toHtml (Divider options) =
                     ]
 
                 Vertical ->
-                    [ height (pct 100), minHeight (pct 100) ]
-
-        baseAttributes =
-            typeAttributes
+                    [ height (pct 90)
+                    , minHeight (pct 90)
+                    , margin2 (px 0) (px 8)
+                    , display inlineBlock
+                    , verticalAlign middle
+                    , position relative
+                    , top (px -1)
+                    ]
 
         lineAttribute =
             case options.line of
@@ -211,7 +215,12 @@ toHtml (Divider options) =
             ]
 
         attributes =
-            [ css <| baseAttributes ++ [ before (pseudoAttributes ++ [ beforeWidth ]), after (pseudoAttributes ++ [ afterWidth ]) ] ]
+            case options.type_ of
+                Horizontal ->
+                    [ css <| baseAttributes ++ [ before (pseudoAttributes ++ [ beforeWidth ]), after (pseudoAttributes ++ [ afterWidth ]) ] ]
+
+                Vertical ->
+                    [ css <| baseAttributes ++ [ borderLeft3 (px 1) lineAttribute (hex "#f0f0f0") ] ]
     in
     toUnstyled
         (case options.label of
