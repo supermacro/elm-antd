@@ -159,8 +159,7 @@ toHtml (Divider options) =
                     ]
 
                 Vertical ->
-                    [ height (pct 90)
-                    , minHeight (pct 90)
+                    [ height (em 0.9)
                     , margin2 (px 0) (px 8)
                     , display inlineBlock
                     , verticalAlign middle
