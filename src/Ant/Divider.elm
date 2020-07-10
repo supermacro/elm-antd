@@ -21,11 +21,10 @@ module Ant.Divider exposing
 import Ant.Typography as Typography
 import Ant.Typography.Text as Text
 import Css exposing (..)
-import Css.Global exposing (typeSelector)
+import Css.Global exposing (children, typeSelector)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
 import Html.Styled.Attributes exposing (css)
-import Css.Global exposing (children)
 
 
 type Line

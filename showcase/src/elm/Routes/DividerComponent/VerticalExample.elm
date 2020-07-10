@@ -2,29 +2,28 @@ module Routes.DividerComponent.VerticalExample exposing (example)
 
 import Ant.Divider as Divider
 import Ant.Typography.Text as Text
-import Html exposing (Html, text)
-import Html exposing (Html, div, span)
 import Css exposing (..)
+import Html exposing (Html, div, span, text)
 import Html.Attributes exposing (style)
-import Html.Styled as H exposing (text, toUnstyled, fromUnstyled)
+import Html.Styled as H exposing (fromUnstyled, text, toUnstyled)
 
 
 example : Html msg
 example =
     let
-      dividerVertical = 
-        Divider.divider
-          |> Divider.withType Divider.Vertical
-          |> Divider.toHtml
-      text =
-        Text.text "Text"
-          |> Text.toHtml
-          
+        dividerVertical =
+            Divider.divider
+                |> Divider.withType Divider.Vertical
+                |> Divider.toHtml
+
+        text =
+            Text.text "Text"
+                |> Text.toHtml
     in
     div [ style "display" "flex" ]
-      [ text
-      , dividerVertical
-      , text
-      , dividerVertical
-      , text
-      ]
+        [ text
+        , dividerVertical
+        , text
+        , dividerVertical
+        , text
+        ]

@@ -4,9 +4,9 @@ import Css exposing (displayFlex, marginRight, maxWidth, pct, px)
 import Html.Styled as Styled exposing (div, fromUnstyled, span, text)
 import Html.Styled.Attributes exposing (css)
 import Routes.DividerComponent.HorizontalExample as HorizontalExample
-import Routes.DividerComponent.WithTitleExample as WithTitleExample
 import Routes.DividerComponent.TextWithoutHeadingExample as TextWithoutHeadingExample
 import Routes.DividerComponent.VerticalExample as VerticalExample
+import Routes.DividerComponent.WithTitleExample as WithTitleExample
 import UI.Container as Container
 import UI.Typography as Typography
     exposing
@@ -55,6 +55,7 @@ example =
       , loremIpsum
       ]"""
 
+
 textWithoutHeadingExampleStr : String
 textWithoutHeadingExampleStr =
     """module Routes.DividerComponent.TextWithoutHeadingExample exposing (example)
@@ -102,9 +103,10 @@ example =
       , loremIpsum
       ]"""
 
+
 withTitleExampleStr : String
-withTitleExampleStr = 
-  """module Routes.DividerComponent.WithTitleExample exposing (example)
+withTitleExampleStr =
+    """module Routes.DividerComponent.WithTitleExample exposing (example)
 
 import Ant.Divider as Divider
 import Ant.Typography.Text as Text
@@ -152,9 +154,11 @@ example =
       , loremIpsum
       ]"""
 
+
 verticalExampleStr : String
-verticalExampleStr = 
-  """"""
+verticalExampleStr =
+    """"""
+
 
 type alias Model =
     { horizontalExample : Container.Model
@@ -187,24 +191,28 @@ update msg model =
                             Container.update demoboxMsg model.horizontalExample
                     in
                     ( { model | horizontalExample = horizontalExampleModel }, horizontalExampleCdm )
+
                 TextWithoutHeadingExample ->
                     let
                         ( textWithoutHeadingExampleModel, textWithoutHeadingExampleCmd ) =
                             Container.update demoboxMsg model.textWithoutHeadingExample
                     in
                     ( { model | textWithoutHeadingExample = textWithoutHeadingExampleModel }, textWithoutHeadingExampleCmd )
+
                 WithTitleExample ->
                     let
                         ( withTitleExampleModel, withTitleExampleCmd ) =
                             Container.update demoboxMsg model.withTitleExample
                     in
                     ( { model | withTitleExample = withTitleExampleModel }, withTitleExampleCmd )
+
                 VerticalExample ->
                     let
                         ( verticalExampleModel, verticalExampleCmd ) =
                             Container.update demoboxMsg model.verticalExample
                     in
                     ( { model | verticalExample = verticalExampleModel }, verticalExampleCmd )
+
         SourceCopiedToClipboard demobox ->
             ( model, Cmd.none )
 
@@ -244,9 +252,10 @@ horizontalExample model =
         |> Container.view model.horizontalExample
         |> Styled.map (DemoBoxMsg HorizontalExample)
 
+
 textWithoutHeadingExample : Model -> Styled.Html Msg
 textWithoutHeadingExample model =
-   let
+    let
         styleTextWithoutHeadingExampleContents =
             fromUnstyled TextWithoutHeadingExample.example
 
@@ -264,9 +273,10 @@ textWithoutHeadingExample model =
         |> Container.view model.textWithoutHeadingExample
         |> Styled.map (DemoBoxMsg TextWithoutHeadingExample)
 
+
 withTitleExample : Model -> Styled.Html Msg
 withTitleExample model =
-   let
+    let
         styleWithTitleExampleContents =
             fromUnstyled WithTitleExample.example
 
@@ -287,7 +297,7 @@ withTitleExample model =
 
 verticalExample : Model -> Styled.Html Msg
 verticalExample model =
-   let
+    let
         styleVerticalExampleContents =
             fromUnstyled VerticalExample.example
 
@@ -305,6 +315,7 @@ verticalExample model =
         |> Container.view model.verticalExample
         |> Styled.map (DemoBoxMsg VerticalExample)
 
+
 view : Model -> Styled.Html Msg
 view model =
     div []
@@ -321,7 +332,8 @@ view model =
             [ div [ css [ maxWidth (pct 45), marginRight (px 13) ] ] [ horizontalExample model ]
             , div [ css [ maxWidth (pct 45) ] ] [ withTitleExample model ]
             ]
-        , div [ css [ displayFlex ]]
+        , div [ css [ displayFlex ] ]
             [ div [ css [ maxWidth (pct 45), marginRight (px 13) ] ] [ textWithoutHeadingExample model ]
-            , div [ css [ maxWidth (pct 45) ] ] [ verticalExample model ] ]
+            , div [ css [ maxWidth (pct 45) ] ] [ verticalExample model ]
+            ]
         ]

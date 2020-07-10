@@ -143,7 +143,7 @@ componentList =
         buttonPageView model =
             ButtonPage.route.view model.buttonPageModel
                 |> Styled.map ButtonPageMessage
-        
+
         dividerPageView model =
             DividerPage.route.view model.dividerPageModel
                 |> Styled.map DividerPageMessage
