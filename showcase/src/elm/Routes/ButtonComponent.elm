@@ -165,7 +165,7 @@ typeExample model =
         metaInfo =
             { title = "Type"
             , content = "There are \"primary\", \"default\", \"dashed\", \"text\" and \"link\" buttons in Elm Antd."
-            , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
+            , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
             , sourceCode = typeExampleStr
             }
 
@@ -188,7 +188,7 @@ disabledExample model =
         metaInfo =
             { title = "Disabled"
             , content = "You can disable any button"
-            , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
+            , ellieDemo = "https://ellie-app.com/9mjF8c8DLyTa1"
             , sourceCode = disabledExampleStr
             }
 

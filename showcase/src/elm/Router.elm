@@ -34,6 +34,7 @@ import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (alt, css, href, src)
 import Routes.ButtonComponent as ButtonPage
 import Routes.DrawerComponent as DrawerPage
+import Routes.DividerComponent as DividerPage
 import Routes.Home exposing (homePage)
 import Routes.NotFound exposing (notFound)
 import Routes.NotImplemented exposing (notImplemented)
@@ -55,6 +56,7 @@ type alias Model =
     { activeRoute : Route
     , buttonPageModel : ButtonPage.Model
     , drawerPageModel : DrawerPage.Model
+    , dividerPageModel : DividerPage.Model
     , typographyPageModel : TypographyPage.Model
     , tooltipPageModel : TooltipPage.Model
     }
@@ -69,6 +71,7 @@ type Msg
     | MenuItemClicked Href
     | ButtonPageMessage ButtonPage.Msg
     | DrawerPageMessage DrawerPage.Msg
+    | DividerPageMessage DividerPage.Msg
     | TooltipPageMessage TooltipPage.Msg
     | TypographyPageMessage TypographyPage.Msg
 
@@ -80,8 +83,7 @@ unimplementedComponents =
             ( componentName, category, \_ -> notImplemented componentName )
     in
     List.map createUnimplementedComponentRoute
-        [ ( "Divider", Layout )
-        , ( "Grid", Layout )
+        [ ( "Grid", Layout )
         , ( "Affix", Navigation )
         , ( "Breadcrumb", Navigation )
         , ( "Dropdown", Navigation )
@@ -147,6 +149,9 @@ componentList =
         drawerPageView model =
             DrawerPage.route.view model.drawerPageModel
                 |> Styled.map DrawerPageMessage
+        dividerPageView model =
+            DividerPage.route.view model.dividerPageModel
+                |> Styled.map DividerPageMessage
 
         typographyPageView model =
             TypographyPage.route.view model.typographyPageModel
@@ -158,6 +163,7 @@ componentList =
     in
     [ ( ButtonPage.route.title, ButtonPage.route.category, buttonPageView )
     , ( DrawerPage.route.title, DrawerPage.route.category, drawerPageView )
+    , ( DividerPage.route.title, DividerPage.route.category, dividerPageView )
     , ( TypographyPage.route.title, TypographyPage.route.category, typographyPageView )
     , ( TooltipPage.route.title, TooltipPage.route.category, tooltipPageView )
     ]
@@ -217,6 +223,7 @@ init url =
     ( { activeRoute = route
       , buttonPageModel = ButtonPage.route.initialModel
       , drawerPageModel = DrawerPage.route.initialModel
+      , dividerPageModel = DividerPage.route.initialModel
       , typographyPageModel = TypographyPage.route.initialModel
       , tooltipPageModel = TooltipPage.route.initialModel
       }
@@ -257,6 +264,16 @@ update navKey msg model =
                 | drawerPageModel = drawerPageModel
               }
             , Cmd.map DrawerPageMessage drawerPageCmd
+
+        DividerPageMessage dividerPageMsg ->
+            let
+                ( dividerPageModel, dividerPageCmd ) =
+                    DividerPage.route.update dividerPageMsg model.dividerPageModel
+            in
+            ( { model
+                | dividerPageModel = dividerPageModel
+              }
+            , Cmd.map DividerPageMessage dividerPageCmd
             )
 
         TooltipPageMessage tooltipPageMessage ->

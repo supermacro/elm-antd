@@ -1,10 +1,9 @@
+# skip version 2.2.0 of giorgio14/elm-antd-ci
 version: 2.1
-orbs:
-  cypress: cypress-io/cypress@1.25.0
 jobs:
   install_deps:
     docker:
-      - image: giorgio14/elm-antd-ci:latest
+      - image: giorgio14/elm-antd-ci:2.1.0
     steps:
       - checkout
       - restore_cache:
@@ -30,7 +29,7 @@ jobs:
 
   check_formatting:
     docker:
-      - image: giorgio14/elm-antd-ci:latest
+      - image: giorgio14/elm-antd-ci:2.1.0
     steps:
       - checkout
       - run:
@@ -43,7 +42,7 @@ jobs:
 
   verify_build:
     docker:
-      - image: giorgio14/elm-antd-ci:latest
+      - image: giorgio14/elm-antd-ci:2.1.0
     steps:
       - checkout
       - attach_workspace:
@@ -57,7 +56,7 @@ jobs:
 
   unit_tests:
     docker:
-      - image: giorgio14/elm-antd-ci:latest
+      - image: giorgio14/elm-antd-ci:2.1.0
     steps:
       - checkout
       - attach_workspace:
@@ -69,7 +68,7 @@ jobs:
 
   visual_tests:
     docker:
-      - image: giorgio14/elm-antd-ci:latest
+      - image: giorgio14/elm-antd-ci:2.1.0
     steps:
       - checkout
       - attach_workspace:
@@ -77,6 +76,12 @@ jobs:
       - run:
           name: "Run visual regression tests"
           command: |
+            # WIP:
+            # I want to only run visual tests when:
+            # - code inside of src/Ant has changed
+            # - code inside of showcase/src/elm/VisualTests.elm has changed
+            # - code inside of showcase/visual-tests has changed
+            # git diff --name-only master..$CIRCLE_BRANCH
             cd showcase
             npm run visual-tests:start-server &>/dev/null &
             # wait for visual testing app to compile
@@ -98,3 +103,6 @@ workflows:
       - visual_tests:
           requires:
             - install_deps
+          filters:
+            branches:
+              ignore: master

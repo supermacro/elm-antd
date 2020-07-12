@@ -93,7 +93,7 @@ basicExample model =
         metaInfo =
             { title = "Basic"
             , content = "The simplest usage."
-            , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
+            , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
             , sourceCode = basicExampleStr
             }
 

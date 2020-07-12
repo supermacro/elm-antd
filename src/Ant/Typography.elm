@@ -29,6 +29,7 @@ type Level
     | H2
     | H3
     | H4
+    | H5
 
 
 type alias TitleOptions =
@@ -97,6 +98,15 @@ h4Css =
     ]
 
 
+h5Css : List Style
+h5Css =
+    [ fontSize (px 16)
+    , marginTop (em 1)
+    , marginBottom (em 0.5)
+    , lineHeight (px 22)
+    ]
+
+
 {-| Render your title / header
 -}
 toHtml : Title -> Html msg
@@ -115,6 +125,9 @@ toHtml (Title options value) =
 
                 H4 ->
                     ( Styled.h4, h4Css )
+
+                H5 ->
+                    ( Styled.h5, h5Css )
     in
     toUnstyled
         (heading
