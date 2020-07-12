@@ -48,7 +48,6 @@ type ButtonSize
 type alias Options msg =
     { type_ : ButtonType
     , size : ButtonSize
-    , color : String
     , disabled : Bool
     , loading : Bool
     , href : Maybe String
@@ -64,7 +63,6 @@ defaultOptions : Options msg
 defaultOptions =
     { type_ = Default
     , size = DefaultSize
-    , color = "#fff"
     , disabled = False
     , loading = False
     , href = Nothing

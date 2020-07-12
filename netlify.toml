@@ -1,0 +1,10 @@
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build]
+  base = "showcase/"
+  publish = "dist/"
+  command = "npm install -g elm && npm run build"
+
