@@ -1,8 +1,7 @@
 module Ant.Divider exposing
     ( Divider
-    , divider, Line(..), withLine, Orientation(..), withOrientation, Type(..), TextStyle(..), withTextStyle, withLabel
+    , divider, Line(..), withLine, withType, Orientation(..), withOrientation, Type(..), TextStyle(..), withTextStyle, withLabel
     , toHtml
-    , withType
     )
 
 {-| Divider component
@@ -12,7 +11,7 @@ module Ant.Divider exposing
 
 # Customizing the Divider
 
-@docs divider, Line, withLine, Orientation, withOrientation, Type, TextStyle, withTextStyle, withLabel
+@docs divider, Line, withLine, withType, Orientation, withOrientation, Type, TextStyle, withTextStyle, withLabel
 
 @docs toHtml
 
@@ -109,6 +108,14 @@ withLine line (Divider options) =
     Divider newOptions
 
 
+{-| Change the type of the divider. By default the type is `Horizontal`
+
+    verticalDivider =
+        Divider.divider
+            |> withType Vertical
+            |> toHtml
+
+-}
 withType : Type -> Divider -> Divider
 withType type_ (Divider options) =
     let
