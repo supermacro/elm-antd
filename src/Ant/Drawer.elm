@@ -18,6 +18,7 @@ module Ant.Drawer exposing
 
 -}
 
+import Ant.Icons exposing (closeOutlined)
 import Css exposing (..)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
@@ -44,7 +45,7 @@ type Header msg
 type alias Options msg =
     { placement : Placement
     , collapsed : Bool
-    , header : Header msg
+    , header : Maybe (Header msg)
     , onClickOutside : Maybe msg
     , onClose : Maybe msg
     , footer : Maybe (Html msg)
@@ -55,7 +56,7 @@ defaultOptions : Options msg
 defaultOptions =
     { placement = Right
     , collapsed = False
-    , header = Title ""
+    , header = Nothing
     , onClickOutside = Nothing
     , onClose = Nothing
     , footer = Nothing
@@ -94,7 +95,7 @@ withHeader : Header msg -> Drawer msg -> Drawer msg
 withHeader headerValue (Drawer options content) =
     let
         newOptions =
-            { options | header = headerValue }
+            { options | header = Just headerValue }
     in
     Drawer newOptions content
 
@@ -144,11 +145,16 @@ headerToHtml headerValue =
                     [ padding2 (px 16) (px 24)
                     , borderStyle solid
                     , borderBottom3 (px 1) solid (hex "#f0f0f0")
+                    , displayFlex
+                    , flexDirection row
+                    , justifyContent spaceBetween
                     ]
             in
             H.div
                 [ css headerAttributes ]
-                [ H.text title ]
+                [ H.text title
+                , H.fromUnstyled (closeOutlined [ ( "width", "16px" ), ( "cursor", "pointer" ) ])
+                ]
 
         Node node ->
             H.fromUnstyled node
@@ -176,6 +182,7 @@ contentToHtml content =
             , overflow auto
             , flexGrow (int 1)
             ]
+
         styledContent =
             H.div
                 [ css bodyAttributes ]
@@ -240,16 +247,24 @@ toHtml (Drawer options content) =
         attributes =
             [ css <| baseAttributes ++ placementAttributes ]
 
+        header =
+            case options.header of
+                Just headerNode ->
+                    headerToHtml headerNode
+
+                Nothing ->
+                    H.div [] []
+
         drawerBody =
             case options.footer of
                 Just footerNode ->
-                    [ headerToHtml options.header
+                    [ header
                     , contentToHtml content
                     , footerToHtml footerNode
                     ]
 
                 Nothing ->
-                    [ headerToHtml options.header
+                    [ header
                     , contentToHtml content
                     ]
     in
