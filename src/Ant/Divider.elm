@@ -6,12 +6,12 @@ module Ant.Divider exposing
 
 {-| Divider component
 
+
 # Divider
 
 A divider represents a visual line that separates content either horizontally or vertically.
 
 [Demo](https://elm-antd.netlify.app/components/divider)
-
 
 @docs Divider
 
