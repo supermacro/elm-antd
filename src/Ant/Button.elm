@@ -153,6 +153,9 @@ toHtml (Button options label) =
         transitionDuration =
             350
 
+        antButtonBoxShadow =
+            Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
+
         baseAttributes =
             [ borderRadius (px 2)
             , padding2 (px 4) (px 15)
@@ -160,7 +163,6 @@ toHtml (Button options label) =
             , fontSize (px 14)
             , height (px 34)
             , outline none
-            , Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
             ]
 
         defaultButtonAttributes =
@@ -168,6 +170,7 @@ toHtml (Button options label) =
             , borderStyle solid
             , backgroundColor (hex "#fff")
             , borderColor <| rgb 217 217 217
+            , antButtonBoxShadow
             , focus
                 [ borderColor (hex primaryColorFaded)
                 , color (hex primaryColorFaded)
@@ -191,6 +194,7 @@ toHtml (Button options label) =
             , borderStyle solid
             , backgroundColor (hex primaryColor)
             , borderColor (hex primaryColor)
+            , antButtonBoxShadow
             , focus
                 [ backgroundColor (hex primaryColorFaded)
                 , borderColor (hex primaryColorFaded)
@@ -210,7 +214,7 @@ toHtml (Button options label) =
             ]
 
         dashedButtonAttributes =
-            defaultButtonAttributes ++ [ borderStyle dashed ]
+            defaultButtonAttributes ++ [ borderStyle dashed, antButtonBoxShadow ]
 
         textButtonAttributes =
             [ color textColor
@@ -251,21 +255,51 @@ toHtml (Button options label) =
 
         combinedButtonStyles =
             if options.disabled then
-                baseAttributes
+                case options.type_ of
+                    Default ->
+                        baseAttributes ++
+                            [ borderColor <| rgb 217 217 217
+                            , borderStyle solid
+                            ]
+
+                    Primary ->
+                        baseAttributes ++
+                            [ borderColor <| rgb 217 217 217
+                            , borderStyle solid
+                            ]
+
+
+                    Dashed ->
+                        baseAttributes ++
+                            [ borderColor <| rgb 217 217 217
+                            , borderStyle dashed
+                            ]
+
+                    Text ->
+                        baseAttributes ++
+                            [ border zero
+                            , backgroundColor transparent
+                            ]
+
+                    _ -> baseAttributes
+
 
             else
                 baseAttributes ++ buttonTypeAttributes
 
-        cursorPointerOnHover =
-            hover [ cursor pointer ]
+        cursorHoverStyles =
+            if options.disabled then
+                hover [ cursor notAllowed ]
+            else
+                hover [ cursor pointer ]
 
         attributes =
             case options.onClick of
                 Just msg ->
-                    [ A.disabled options.disabled, Events.onClick msg, css <| cursorPointerOnHover :: combinedButtonStyles ]
+                    [ A.disabled options.disabled, Events.onClick msg, css <| cursorHoverStyles :: combinedButtonStyles ]
 
                 Nothing ->
-                    [ A.disabled options.disabled, css <| cursorPointerOnHover :: combinedButtonStyles ]
+                    [ A.disabled options.disabled, css <| cursorHoverStyles :: combinedButtonStyles ]
     in
     toUnstyled
         (H.button
