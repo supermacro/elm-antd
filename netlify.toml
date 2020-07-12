@@ -4,6 +4,10 @@
   status = 200
 
 [build]
+  # Always generate a build
+  # https://docs.netlify.com/configure-builds/file-based-configuration/#ignore-builds
+  ignore = "exit 1"
+  
   base = "showcase/"
   publish = "dist/"
   command = "npm install -g elm && npm run build"
