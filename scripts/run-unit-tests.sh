@@ -15,10 +15,15 @@ function check-failure () {
 
     if [ $ELM_TEST_EXIT_CODE -eq $ELM_TEST_FAILURE_CODE ]; then
         exit 1
-    else
-        exit 0
     fi
 }
 
+echo "> Running component tests"
 elm-test || check-failure
+
+echo "> Running showcase tests"
+cd showcase
+elm-test || check-failure
+
+exit 0
 

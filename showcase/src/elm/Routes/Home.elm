@@ -24,6 +24,7 @@ homePage =
             [ internalLink "/components/button" "Button"
             , internalLink "/components/tooltip" "Tooltip"
             , internalLink "/components/typography" "Typography"
+            , internalLink "/components/divider" "Divider"
             , link "https://github.com/supermacro/elm-antd/issues/26" "Icon"
             , link "https://github.com/supermacro/elm-antd/issues/23" "Layout"
             , link "https://github.com/supermacro/elm-antd/issues/25" "Menu"

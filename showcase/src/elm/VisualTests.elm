@@ -11,12 +11,13 @@ Given a `component` query param, render the associated component
 -}
 
 import Ant.Button as Btn exposing (ButtonType(..), button)
+import Ant.Divider as Divider
 import Ant.Typography as Heading exposing (Level(..), title)
 import Browser
 import Browser.Navigation as Nav
 import Css exposing (height, vh)
 import Css.Global exposing (global, selector)
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (style)
 import Html.Styled exposing (toUnstyled)
 import Url exposing (Url)
@@ -57,9 +58,19 @@ type alias TypographyConfig =
     { level : Heading.Level }
 
 
+type alias DividerConfig =
+    { line : Divider.Line
+    , orientation : Divider.Orientation
+    , type_ : Divider.Type
+    , textStyle : Divider.TextStyle
+    , label : Maybe String
+    }
+
+
 type Component
     = Button ButtonConfig
     | Typography TypographyConfig
+    | Divider DividerConfig
 
 
 type RawComponent
@@ -79,6 +90,11 @@ registeredComponents =
 
     -- Headings
     , ( "SimpleHeading", Typography { level = H1 } )
+
+    -- Dividers
+    , ( "SimpleDivider", Divider { line = Divider.Solid, orientation = Divider.Center, type_ = Divider.Horizontal, textStyle = Divider.Plain, label = Nothing } )
+    , ( "DashedDivider", Divider { line = Divider.Dashed, orientation = Divider.Center, type_ = Divider.Horizontal, textStyle = Divider.Plain, label = Nothing } )
+    , ( "VerticalDivider", Divider { line = Divider.Solid, orientation = Divider.Center, type_ = Divider.Vertical, textStyle = Divider.Plain, label = Nothing } )
     ]
 
 
@@ -163,6 +179,25 @@ buildComponent component =
             title "elm"
                 |> Heading.level typographyConfig.level
                 |> Heading.toHtml
+
+        Divider dividerConfig ->
+            let
+                divider =
+                    Divider.divider
+                        |> Divider.withLine dividerConfig.line
+                        |> Divider.withType dividerConfig.type_
+                        |> Divider.withOrientation dividerConfig.orientation
+                        |> Divider.withTextStyle dividerConfig.textStyle
+                        |> Divider.toHtml
+
+                loremIpsum =
+                    text "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            in
+            div []
+                [ loremIpsum
+                , divider
+                , loremIpsum
+                ]
 
 
 view : Model -> { title : String, body : List (Html msg) }
