@@ -8,6 +8,9 @@
   - Add applicable unit tests (unit tests are written in Elm) 
 
 
+**If you're adding a brand new component**, make sure to add it to the list of `exposed-modules` within `elm.json`.
+
+
 ### Running the development server
 
 `npm run dev` will boot a "component showcase" on port 3000 that you can use to sanity check the visuals and behaviour of your components.
