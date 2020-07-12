@@ -6,5 +6,5 @@
 [build]
   base = "showcase/"
   publish = "dist/"
-  command = "npm run build"
+  command = "npm install -g elm && npm run build"
 
