@@ -6,6 +6,7 @@
     "version": "2.0.0",
     "exposed-modules": [
         "Ant.Button",
+        "Ant.Divider",
         "Ant.Icons",
         "Ant.Layout",
         "Ant.Menu",
