@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --port 3000",
-    "build": "NODE_ENV=production webpack",
+    "build": "NODE_ENV=production webpack && echo \"/* /index.html 200\" > ./dist/_redirects",
     "clean": "rm -rf ./dist/",
     "visual-tests:build": "npm run clean && APP_MODE=visual_testing NODE_ENV=production webpack",
     "visual-tests:start-server": "npm run visual-tests:build && serve -l 3000 dist",
