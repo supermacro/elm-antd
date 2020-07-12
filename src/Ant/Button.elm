@@ -21,7 +21,7 @@ import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryC
 import Ant.Internals.Typography exposing (textColorRgba)
 import Css exposing (..)
 import Css.Animations as CA exposing (keyframes)
-import Css.Transitions exposing (transition)
+import Css.Transitions exposing (cubicBezier, transition)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
 import Html.Styled.Attributes as A exposing (css)
@@ -156,6 +156,36 @@ toHtml (Button options label) =
         transitionDuration =
             350
 
+        animation =
+            keyframes
+                [ ( 50, [ CA.property "transform" "scale(1.1, 1.3)", CA.property "opacity" "0" ] )
+                , ( 99, [ CA.property "transform" "scale(0.001, 0.001)", CA.property "opacity" "0" ] )
+                , ( 100, [ CA.property "transform" "scale(0.001, 0.001)", CA.property "opacity" "1" ] )
+                ]
+
+        animatedBefore : ColorValue compatible -> Style
+        animatedBefore color =
+            before
+                [ property "content" "\" \""
+                , display block
+                , position absolute
+                , width (pct 100)
+                , height (pct 100)
+                , right (px 0)
+                , left (px 0)
+                , top (px 0)
+                , bottom (px 0)
+                , borderRadius (px 5)
+                , backgroundColor color
+                , transition [ clickTransition ]
+                , animationName animation
+                , animationDuration (sec 1)
+                , zIndex (int -1)
+                ]
+
+        clickTransition =
+            Css.Transitions.transform3 2000 2000 <| cubicBezier 0.08 0.82 0.17 1
+
         baseAttributes =
             [ borderRadius (px 2)
             , padding2 (px 4) (px 15)
@@ -167,7 +197,8 @@ toHtml (Button options label) =
             ]
 
         defaultButtonAttributes =
-            [ color textColor
+            [ position relative
+            , color textColor
             , borderStyle solid
             , backgroundColor (hex "#fff")
             , borderColor <| rgb 217 217 217
@@ -182,6 +213,7 @@ toHtml (Button options label) =
             , active
                 [ borderColor (hex primaryColor)
                 , color (hex primaryColor)
+                , animatedBefore (hex primaryColorFaded)
                 ]
             , transition
                 [ Css.Transitions.borderColor transitionDuration
@@ -189,19 +221,12 @@ toHtml (Button options label) =
                 ]
             ]
 
-        animation =
-            keyframes
-                [ ( 50, [ CA.property "transform" "scale(1.5, 1.5)", CA.property "opacity" "0" ] )
-                , ( 99, [ CA.property "transform" "scale(0.001, 0.001)", CA.property "opacity" "0" ] )
-                , ( 100, [ CA.property "transform" "scale(0.001, 0.001)", CA.property "opacity" "1" ] )
-                ]
-
         primaryButtonAttributes =
-            [ color (hex "#fff")
+            [ position relative
+            , color (hex "#fff")
             , borderStyle solid
             , backgroundColor (hex primaryColor)
             , borderColor (hex primaryColor)
-            , position relative
             , focus
                 [ backgroundColor (hex primaryColorFaded)
                 , borderColor (hex primaryColorFaded)
@@ -213,20 +238,7 @@ toHtml (Button options label) =
             , active
                 [ backgroundColor (hex primaryColorStrong)
                 , borderColor (hex primaryColorStrong)
-                , before
-                    [ property "content" "\" \""
-                    , display block
-                    , width (pct 100)
-                    , height (pct 100)
-                    , position absolute
-                    , right (px 0)
-                    , left (px 0)
-                    , top (px 0)
-                    , bottom (px 0)
-                    , backgroundColor (hex "#000")
-                    , animationName animation
-                    , animationDuration (sec 2)
-                    ]
+                , animatedBefore (hex primaryColor)
                 ]
             , transition
                 [ Css.Transitions.backgroundColor transitionDuration
