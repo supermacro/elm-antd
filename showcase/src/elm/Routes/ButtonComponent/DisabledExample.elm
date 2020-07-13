@@ -12,33 +12,33 @@ type Msg
 row : List (Button msg) -> Html msg
 row buttons =
     List.map toHtml buttons
-    |> space
-    |> Space.direction Space.Horizontal
-    |> Space.toHtml
+        |> space
+        |> Space.direction Space.Horizontal
+        |> Space.toHtml
 
 
 baseButton : String -> Button Msg
 baseButton label =
     button label
-    |> onClick Clicked
+        |> onClick Clicked
 
 
 primaryButton : String -> Button Msg
 primaryButton label =
     baseButton label
-    |> withType Primary
+        |> withType Primary
 
 
 dashedButton : String -> Button Msg
 dashedButton label =
     baseButton label
-    |> withType Dashed
+        |> withType Dashed
 
 
 textButton : String -> Button Msg
 textButton label =
     baseButton label
-    |> withType Text
+        |> withType Text
 
 
 example : Html Msg
@@ -77,4 +77,3 @@ example =
     in
     space examples
         |> Space.toHtml
-

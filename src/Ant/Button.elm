@@ -257,32 +257,31 @@ toHtml (Button options label) =
             if options.disabled then
                 case options.type_ of
                     Default ->
-                        baseAttributes ++
-                            [ borderColor <| rgb 217 217 217
-                            , borderStyle solid
-                            ]
+                        baseAttributes
+                            ++ [ borderColor <| rgb 217 217 217
+                               , borderStyle solid
+                               ]
 
                     Primary ->
-                        baseAttributes ++
-                            [ borderColor <| rgb 217 217 217
-                            , borderStyle solid
-                            ]
-
+                        baseAttributes
+                            ++ [ borderColor <| rgb 217 217 217
+                               , borderStyle solid
+                               ]
 
                     Dashed ->
-                        baseAttributes ++
-                            [ borderColor <| rgb 217 217 217
-                            , borderStyle dashed
-                            ]
+                        baseAttributes
+                            ++ [ borderColor <| rgb 217 217 217
+                               , borderStyle dashed
+                               ]
 
                     Text ->
-                        baseAttributes ++
-                            [ border zero
-                            , backgroundColor transparent
-                            ]
+                        baseAttributes
+                            ++ [ border zero
+                               , backgroundColor transparent
+                               ]
 
-                    _ -> baseAttributes
-
+                    _ ->
+                        baseAttributes
 
             else
                 baseAttributes ++ buttonTypeAttributes
@@ -290,6 +289,7 @@ toHtml (Button options label) =
         cursorHoverStyles =
             if options.disabled then
                 hover [ cursor notAllowed ]
+
             else
                 hover [ cursor pointer ]
 
