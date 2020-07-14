@@ -1,18 +1,24 @@
 module Ant.Divider exposing
     ( Divider
-    , divider, Line(..), withLine, Orientation(..), withOrientation, Type(..), TextStyle(..), withTextStyle, withLabel
+    , divider, Line(..), withLine, withType, Orientation(..), withOrientation, Type(..), TextStyle(..), withTextStyle, withLabel
     , toHtml
-    , withType
     )
 
 {-| Divider component
+
+
+# Divider
+
+A divider represents a visual line that separates content either horizontally or vertically.
+
+[Demo](https://elm-antd.netlify.app/components/divider)
 
 @docs Divider
 
 
 # Customizing the Divider
 
-@docs divider, Line, withLine, Orientation, withOrientation, Type, TextStyle, withTextStyle, withLabel
+@docs divider, Line, withLine, withType, Orientation, withOrientation, Type, TextStyle, withTextStyle, withLabel
 
 @docs toHtml
 
@@ -27,22 +33,30 @@ import Html.Styled as H exposing (text, toUnstyled)
 import Html.Styled.Attributes exposing (css)
 
 
+{-| The visual look of the divider
+-}
 type Line
     = Dashed
     | Solid
 
 
+{-| Orientation defines the positioning of the divider label.
+-}
 type Orientation
     = Left
     | Right
     | Center
 
 
+{-| Whether the divider is separating content vertically or horizontally.
+-}
 type Type
     = Horizontal
     | Vertical
 
 
+{-| Defines the size and emphasis of the divider label.
+-}
 type TextStyle
     = Plain
     | Heading
@@ -67,6 +81,8 @@ defaultOptions =
     }
 
 
+{-| A customizeable divider that is used to separate pieces of content.
+-}
 type Divider
     = Divider Options
 
@@ -82,6 +98,8 @@ divider =
     Divider defaultOptions
 
 
+{-| The label of the divider.
+-}
 withLabel : String -> Divider -> Divider
 withLabel label (Divider options) =
     let
@@ -91,6 +109,8 @@ withLabel label (Divider options) =
     Divider newOptions
 
 
+{-| Defines whether the divider titles will get rendered as Headings or as smaller text.
+-}
 withTextStyle : TextStyle -> Divider -> Divider
 withTextStyle textStyle (Divider options) =
     let
@@ -100,6 +120,8 @@ withTextStyle textStyle (Divider options) =
     Divider newOptions
 
 
+{-| Defines the line type of the divider.
+-}
 withLine : Line -> Divider -> Divider
 withLine line (Divider options) =
     let
@@ -109,6 +131,14 @@ withLine line (Divider options) =
     Divider newOptions
 
 
+{-| Change the type of the divider. By default the type is `Horizontal`
+
+    verticalDivider =
+        Divider.divider
+            |> withType Vertical
+            |> toHtml
+
+-}
 withType : Type -> Divider -> Divider
 withType type_ (Divider options) =
     let
@@ -118,6 +148,8 @@ withType type_ (Divider options) =
     Divider newOptions
 
 
+{-| Defines the positioning of the label. If your divider doesn't have a label, then this option is redundant.
+-}
 withOrientation : Orientation -> Divider -> Divider
 withOrientation orientation (Divider options) =
     let
@@ -144,6 +176,8 @@ labelToHtml label textStyle =
     H.fromUnstyled content
 
 
+{-| Convert a Divider into Html
+-}
 toHtml : Divider -> Html msg
 toHtml (Divider options) =
     let
