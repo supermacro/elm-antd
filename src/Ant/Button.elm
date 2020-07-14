@@ -178,9 +178,12 @@ toHtml (Button options label) =
                 , borderRadius (px 5)
                 , backgroundColor color
                 , transition [ clickTransition ]
-                , animationName animation
-                , animationDuration (sec 1)
                 , zIndex (int -1)
+                , animationName animation
+                , animationDuration (sec 2)
+                , property "animation-timing-function" "cubic-bezier(0.08, 0.82, 0.17, 1)"
+                , property "animation-fill-mode" "forwards"
+                , animationIterationCount (int 1)
                 ]
 
         clickTransition =
