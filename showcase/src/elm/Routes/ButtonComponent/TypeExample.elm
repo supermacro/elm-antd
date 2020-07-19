@@ -1,7 +1,7 @@
 module Routes.ButtonComponent.TypeExample exposing (example)
 
 import Ant.Button as Btn exposing (ButtonType(..), button, toHtml)
-import Ant.Space as Space exposing (SpaceDirection(..))
+import Ant.Space exposing (SpaceDirection(..))
 import Html exposing (Html, div, span)
 import Html.Attributes exposing (style)
 

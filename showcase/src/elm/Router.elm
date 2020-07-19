@@ -8,6 +8,7 @@ module Router exposing
 
 import Ant.Layout as Layout exposing (LayoutTree)
 import Ant.Menu as Menu exposing (Menu)
+import Base64
 import Browser
 import Browser.Navigation as Nav
 import Css
@@ -32,6 +33,7 @@ import Dict exposing (Dict)
 import Html exposing (Html, a, div, header, nav, text)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (alt, css, href, src)
+import Http
 import Routes.ButtonComponent as ButtonPage
 import Routes.DividerComponent as DividerPage
 import Routes.Home exposing (homePage)
@@ -39,13 +41,16 @@ import Routes.NotFound exposing (notFound)
 import Routes.NotImplemented exposing (notImplemented)
 import Routes.TooltipComponent as TooltipPage
 import Routes.TypographyComponent as TypographyPage
+import Task
 import UI.Footer exposing (footer)
 import UI.Icons
 import UI.Typography exposing (logoText)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
-import Utils exposing (ComponentCategory(..))
+import Utils exposing (ComponentCategory(..), Flags, RawSourceCode, SourceCode)
 
+
+type alias CommitHash = Maybe String
 
 type alias Route =
     String
@@ -53,6 +58,17 @@ type alias Route =
 
 type alias Model =
     { activeRoute : Route
+    -- Contains state around which pages
+    -- already have their example code loaded
+    -- into memory
+    , examplesFetched : List Route
+    -- This is used to fetch source code from a particular commit
+    -- Locally, this value will be Nothing / null
+    -- and files will be fetched from the file system
+    --
+    -- You'll need to be running the file-server locally
+    , commitHash : CommitHash
+    , fileServerUrl : String
     , buttonPageModel : ButtonPage.Model
     , dividerPageModel : DividerPage.Model
     , typographyPageModel : TypographyPage.Model
@@ -71,13 +87,30 @@ type Msg
     | DividerPageMessage DividerPage.Msg
     | TooltipPageMessage TooltipPage.Msg
     | TypographyPageMessage TypographyPage.Msg
+    -- represents the outcome of having asynchronously fetched
+    -- the source code of the examples for a particular component page
+    | ComponentPageReceivedExamples Route (Result Http.Error (List RawSourceCode))
 
 
-unimplementedComponents : List ( Route, ComponentCategory, Model -> Styled.Html Msg )
+
+type alias Component =
+    { route : Route
+    , category : ComponentCategory
+    , view : Model -> Styled.Html Msg
+    , saveExampleSourceCode : (List SourceCode) -> Cmd Msg
+    }
+
+
+
+unimplementedComponents : List Component
 unimplementedComponents =
     let
         createUnimplementedComponentRoute ( componentName, category ) =
-            ( componentName, category, \_ -> notImplemented componentName )
+            { route = componentName
+            , category = category
+            , view = \_ -> notImplemented componentName  
+            , saveExampleSourceCode = \_ -> Cmd.none
+            }
     in
     List.map createUnimplementedComponentRoute
         [ ( "Grid", Layout )
@@ -137,7 +170,16 @@ unimplementedComponents =
         ]
 
 
-componentList : List ( Route, ComponentCategory, Model -> Styled.Html Msg )
+triggerSaveExampleSourceCode : (msg -> Msg) -> (List SourceCode -> msg) -> List SourceCode -> Cmd Msg
+triggerSaveExampleSourceCode tagger subMsgTagger examplesSourceCode =
+    let
+        subMsg = subMsgTagger examplesSourceCode
+        task = Task.succeed subMsg
+    in
+    Task.perform tagger task
+
+
+componentList : List Component
 componentList =
     let
         buttonPageView model =
@@ -155,13 +197,36 @@ componentList =
         tooltipPageView model =
             TooltipPage.route.view model.tooltipPageModel
                 |> Styled.map TooltipPageMessage
+
     in
-    [ ( ButtonPage.route.title, ButtonPage.route.category, buttonPageView )
-    , ( DividerPage.route.title, DividerPage.route.category, dividerPageView )
-    , ( TypographyPage.route.title, TypographyPage.route.category, typographyPageView )
-    , ( TooltipPage.route.title, TooltipPage.route.category, tooltipPageView )
-    ]
-        ++ unimplementedComponents
+    [ { route = ButtonPage.route.title
+      , category = ButtonPage.route.category
+      , view = buttonPageView
+      , saveExampleSourceCode =
+          triggerSaveExampleSourceCode ButtonPageMessage ButtonPage.route.saveExampleSourceCodeToModel
+     }
+
+    , { route = DividerPage.route.title
+      , category = DividerPage.route.category
+      , view = dividerPageView
+      , saveExampleSourceCode =
+          triggerSaveExampleSourceCode DividerPageMessage DividerPage.route.saveExampleSourceCodeToModel
+      }
+
+    , { route = TypographyPage.route.title
+      , category = TypographyPage.route.category
+      , view = typographyPageView
+      , saveExampleSourceCode =
+          triggerSaveExampleSourceCode TypographyPageMessage TypographyPage.route.saveExampleSourceCodeToModel
+      }
+
+    , { route = TooltipPage.route.title
+      , category = TooltipPage.route.category
+      , view = tooltipPageView
+      , saveExampleSourceCode =
+          triggerSaveExampleSourceCode TooltipPageMessage TooltipPage.route.saveExampleSourceCodeToModel
+      }
+    ] ++ unimplementedComponents
 
 
 categoryToString : ComponentCategory -> String
@@ -197,7 +262,7 @@ parser =
 
         routeParsers =
             List.map
-                (\( pageTitle, _, _ ) -> Parser.map pageTitle (s "components" </> s (String.toLower pageTitle)))
+                (\{ route } -> Parser.map route (s "components" </> s (String.toLower route)))
                 componentList
     in
     oneOf <| homeParser :: routeParsers
@@ -208,20 +273,55 @@ fromUrl =
     Maybe.withDefault "NotFound" << Parser.parse parser
 
 
-init : Url -> ( Model, Cmd Msg )
-init url =
+
+fetchComponentExamples : Model -> Route -> Cmd Msg 
+fetchComponentExamples { commitHash, fileServerUrl, examplesFetched } routeName =
+    let
+        tagger = ComponentPageReceivedExamples routeName
+
+        fileFetcher = Utils.fetchComponentExamples fileServerUrl commitHash
+        
+        shouldFetchExamples = 
+            (not <| List.member routeName examplesFetched) &&
+            (not <| List.member routeName <|
+                List.map (\{ route } -> route) unimplementedComponents)
+    in
+    if shouldFetchExamples then
+        fileFetcher routeName tagger
+    else
+        Cmd.none
+
+
+
+init : Url -> Flags -> ( Model, Cmd Msg )
+init url { commitHash, fileServerUrl } =
     let
         route =
             fromUrl url
+
+        model =
+          { activeRoute = route
+          , examplesFetched = []
+          , commitHash = commitHash
+          , fileServerUrl = fileServerUrl
+          , buttonPageModel = ButtonPage.route.initialModel
+          , dividerPageModel = DividerPage.route.initialModel
+          , typographyPageModel = TypographyPage.route.initialModel
+          , tooltipPageModel = TooltipPage.route.initialModel
+          }
     in
-    ( { activeRoute = route
-      , buttonPageModel = ButtonPage.route.initialModel
-      , dividerPageModel = DividerPage.route.initialModel
-      , typographyPageModel = TypographyPage.route.initialModel
-      , tooltipPageModel = TooltipPage.route.initialModel
-      }
-    , Cmd.none
+    ( model 
+    , fetchComponentExamples model route
     )
+
+
+updateComponentModelWithExampleSourceFiles : Route -> (List SourceCode) -> Cmd Msg
+updateComponentModelWithExampleSourceFiles routeName sourceCodeList =
+    componentList
+        |> List.filter (\{ route } -> route == routeName)
+        |> List.head
+        |> Maybe.map (\{ saveExampleSourceCode } -> saveExampleSourceCode sourceCodeList)
+        |> Maybe.withDefault Cmd.none
 
 
 update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
@@ -231,11 +331,53 @@ update navKey msg model =
             let
                 newRoute =
                     fromUrl url
+
             in
-            ( { model | activeRoute = newRoute }, Cmd.none )
+            ( { model | activeRoute = newRoute }
+            , fetchComponentExamples model newRoute 
+            )
 
         MenuItemClicked hrefString ->
             ( model, Nav.pushUrl navKey hrefString )
+
+        ComponentPageReceivedExamples routeName fetchResult ->
+            let
+                decodeFileContents : List RawSourceCode -> Result String (List SourceCode)
+                decodeFileContents rawFiles =
+                    rawFiles
+                        |> List.map
+                            (\{ fileName, base64File } -> { fileName = fileName, result = Base64.decode base64File })
+                        |> List.foldl
+                            (\{ fileName, result } fileContentsResult ->
+                                case (fileContentsResult, result) of
+                                    (Ok sourceCodeList, Ok sourceCode) ->
+                                        Ok <| { fileName = fileName, fileContents = sourceCode } :: sourceCodeList
+
+                                    (Ok _, Err reason) ->
+                                        Err <| "[" ++ fileName ++ "] - " ++ reason
+
+                                    (Err reason, _) ->
+                                        Err reason
+                                        
+                            )
+                            (Ok [])
+
+                decodedFileListResult =
+                    fetchResult
+                        |> Result.mapError (\_ -> "http error")
+                        |> Result.andThen decodeFileContents
+
+            in
+            case decodedFileListResult of
+                Ok decodedFileList ->
+                    ( { model | examplesFetched = routeName :: model.examplesFetched }
+                    , updateComponentModelWithExampleSourceFiles routeName decodedFileList
+                    )
+
+                -- TODO: do some sort of error logging
+                Err e ->
+                    (model, Cmd.none)
+
 
         ButtonPageMessage buttonPageMsg ->
             let
@@ -308,7 +450,7 @@ navBar =
             [ Styled.a [ href "/", css (textDecoration none :: verticalCenteringStyles) ]
                 [ Styled.img
                     [ alt "logo"
-                    , src "https://github.com/gDelgado14/elm-antd/raw/master/logo.svg"
+                    , src "https://github.com/supermacro/elm-antd/raw/master/logo.svg"
                     , css [ height (px 50), marginRight (px 10) ]
                     ]
                     []
@@ -336,16 +478,16 @@ componentMenu activeRoute =
         categoryDict : Dict String (List Route)
         categoryDict =
             List.foldl
-                (\( pageTitle, componentCategory, _ ) categoryDictAccumulator ->
+                (\ { route, category } categoryDictAccumulator ->
                     let
                         categoryString =
-                            categoryToString componentCategory
+                            categoryToString category
 
                         categoryComponentNames =
                             getList <| Dict.get categoryString categoryDictAccumulator
 
                         updatedCategoryComponentNames =
-                            pageTitle :: categoryComponentNames
+                            route :: categoryComponentNames
                     in
                     Dict.insert categoryString updatedCategoryComponentNames categoryDictAccumulator
                 )
@@ -405,10 +547,10 @@ getPageTitleAndContentView activeRoute =
 
     else
         List.filter
-            (\( pageTitle, _, _ ) -> pageTitle == activeRoute)
+            (\{ route } -> route == activeRoute)
             componentList
             |> List.map
-                (\( pageTitle, _, content ) -> ( pageTitle, content ))
+                (\component -> (component.route, component.view))
             |> List.head
             |> Maybe.withDefault notFoundPage
 

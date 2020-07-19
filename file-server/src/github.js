@@ -1,5 +1,5 @@
 const github = require('octonode')
-
+const { SHOWCASE_ELM_SRC_DIR } = require('./constants')
 
 
 const client = github.client()
@@ -8,53 +8,93 @@ const repo = client.repo('supermacro/elm-antd')
 /**
  * {
  *   [commitHash]: {
- *       [filePath]: base64EncodedFile
+ *       [componentName]: Array<{ fileContents: base64EncodedFile, fileName: string }>
  *   }
  * }
  */
 const fileCache = {}
 
-const saveToFileCache = (pathToShowcaseFile, commitRef, base64EncodedFile) => {
+const saveExamplesToFileCache = (component, commitRef, files) => {
   const cachedFilesForCommit = fileCache[commitRef]
 
   if (cachedFilesForCommit) {
     cachedFilesForCommit[commitRef] = {
       ...cachedFilesForCommit,
-      [pathToShowcaseFile]: base64EncodedFile
+      [component]: files
     }
   } else {
     fileCache[commitRef] = {
-      [pathToShowcaseFile]: base64EncodedFile
+      [component]: files
     }
   }
 }
 
-const getFileFromCache = (pathToShowcaseFile, commitRef) => {
+const getComponentExamplesFromCache = (component, commitRef) => {
   const cachedFilesForCommit = fileCache[commitRef]
   if (cachedFilesForCommit) {
-    return cachedFilesForCommit[pathToShowcaseFile]
+    return cachedFilesForCommit[component]
   }
 }
 
-const getFileFromRepo = (pathToShowcaseFile, commitRef) => new Promise((resolve, reject) => {
-  // We need a cache, otherwise we'll quickly use up github's unauthenticated quota
-  const cachedFile = getFileFromCache(pathToShowcaseFile, commitRef)
 
-  if (cachedFile) {
-    resolve(cachedFile)
-    return
-  }
+const createDirectoryPath = (component) => 
+  `${SHOWCASE_ELM_SRC_DIR}/Routes/${component}Component`
 
-  // The root of the search tree is assumed to be 'showcase/src/elm'
-  const fullPath = `showcase/src/elm/${pathToShowcaseFile}`
-  repo.contents(fullPath, commitRef, (err, data, headers) => {
+
+const createFullFilePath = (component, fileName) =>
+  `${createDirectoryPath(component)}/${fileName}`
+
+
+const getFileFromRepo = (fullFilePath, commitRef) => new Promise((resolve, reject) => {
+  repo.contents(fullFilePath, commitRef, (err, data, headers) => {
     if (err) {
       reject(err)
     } else {
-      saveToFileCache(pathToShowcaseFile, commitRef, data.content)
-      resolve(data.content)
+      // Github chunks the base64 encoded file into
+      // <Carriage_Return> delimited lines
+      resolve(data.content.split('\n').join(''))
     }
   })
 })
 
-module.exports = { getFileFromRepo }
+// Get the filenames of the examples for a given component
+//
+// Returns Promise<string[]>
+const getFileNamesFromDirectory = (component, commitRef) => new Promise((resolve, reject) => {
+  const fullPath = createDirectoryPath(component)
+  repo.contents(fullPath, commitRef, (err, data) => {
+    if (err) {
+      reject(err)
+    } else {
+      resolve(data.map(({ name }) => name))
+    }
+  })
+})
+
+
+const getExampleFilesForComponent = (component, commitRef) => {
+  const cachedExamples = getComponentExamplesFromCache(component, commitRef)
+
+  if (cachedExamples) {
+    return Promise.resolve(cachedExamples)
+  }
+
+  return getFileNamesFromDirectory(component, commitRef)
+    .then((files) =>
+      Promise.all(files.map(
+        (fileName) => {
+          const fullFilePath = createFullFilePath(component, fileName)
+          return getFileFromRepo(fullFilePath, commitRef)
+            .then((base64FileContents) => ({ fileName, base64File: base64FileContents }))
+        }
+      ))
+    )
+    .then((result) => {
+      saveExamplesToFileCache(component, commitRef, result)
+
+      return result
+    })
+}
+
+module.exports = { getExampleFilesForComponent }
+

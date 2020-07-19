@@ -2,9 +2,8 @@ const express = require('express')
 const searcher = require('./file-searcher')
 const router = express.Router()
 
-const fileSearchValidator = (req, res, next) => {
+const validateRequest = (req, res, next) => {
   const commitRef = req.query.commitRef
-  const fileName = req.query.fileName
 
   if (process.env.NODE_ENV === 'production' && !commitRef) {
     res.status(400).json({
@@ -13,25 +12,19 @@ const fileSearchValidator = (req, res, next) => {
     return
   }
 
-  if (!fileName) {
-    res.status(400).json({
-      error: 'Missing `fileName` query parameter'
-    })
-    return
-  }
-
   next()
 }
 
-router.get('/file', fileSearchValidator, async (req, res) => {
-  const commitRef = req.query.commitRef
-  const fileName = req.query.fileName
 
-  const searchResult = await searcher(fileName, commitRef)
+router.get('/example-files/:component', validateRequest, async (req, res) => {
+  const commitRef = req.query.commitRef
+  const component = req.params.component
+
+  const searchResult = await searcher(component, commitRef)
 
   searchResult
-    .map((base64File) => {
-      res.json({ base64File })
+    .map((files) => {
+      res.json(files)
     })
     .mapErr((errorCode) => {
       if (errorCode === 'NOT_FOUND') {

@@ -12,7 +12,7 @@ import UI.Typography as Typography
         , documentationText
         , documentationUnorderedList
         )
-import Utils exposing (ComponentCategory(..), DocumentationRoute)
+import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 
 title : String
@@ -22,17 +22,16 @@ title =
 
 type alias Model =
     { basicExample : Container.Model
-    , placementExample : Container.Model
     }
 
 
 type DemoBox
     = Basic
-    | Placement
 
 
 type Msg
     = DemoBoxMsg DemoBox Container.Msg
+    | ExampleSourceCodeLoaded (List SourceCode)
 
 
 route : DocumentationRoute Model Msg
@@ -42,48 +41,33 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { basicExample = { sourceCodeVisible = False, sourceCode = basicExampleStr }
-        , placementExample = { sourceCodeVisible = False, sourceCode = "" }
+        { basicExample = Container.initModel "BasicExample.elm"
         }
+    , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update (DemoBoxMsg demobox demoboxMsg) model =
-    case demobox of
-        Basic ->
-            let
-                ( basicModel, basicCmd ) =
-                    Container.update demoboxMsg model.basicExample
-            in
-            ( { model | basicExample = basicModel }, basicCmd )
+update msg model =
+    case msg of
+        DemoBoxMsg demoBox demoboxMsg ->
+            case demoBox of
+                Basic ->
+                    let
+                        ( basicModel, basicCmd ) =
+                            Container.update demoboxMsg model.basicExample
+                    in
+                    ( { model | basicExample = basicModel }, basicCmd )
 
-        Placement ->
-            let
-                ( placementModel, placementCmd ) =
-                    Container.update demoboxMsg model.placementExample
-            in
-            ( { model | placementExample = placementModel }, placementCmd )
-
-
-basicExampleStr : String
-basicExampleStr =
-    """module Routes.TooltipComponent.BasicExample exposing (example)
-
-import Ant.Tooltip as Tooltip exposing (tooltip)
-import Ant.Typography.Text as Text
-import Html exposing (Html, text)
-
-example : Html msg
-example =
-    Text.text "Tooltip will show on mouse enter."
-    |> Text.toHtml
-    |> tooltip "prompt text"
-    |> Tooltip.toHtml
-
-"""
+        ExampleSourceCodeLoaded examplesSourceCode ->
+            ( { model |
+                    basicExample = Container.setSourceCode examplesSourceCode model.basicExample
+              }
+            , Cmd.none
+            )
 
 
+        
 basicExample : Model -> Styled.Html Msg
 basicExample model =
     let
@@ -94,7 +78,6 @@ basicExample model =
             { title = "Basic"
             , content = "The simplest usage."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
-            , sourceCode = basicExampleStr
             }
 
         styledDemoContents =

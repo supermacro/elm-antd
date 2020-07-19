@@ -2,4 +2,3 @@ runtime: nodejs12
 
 env_variables:
   NODE_ENV: "production"
-

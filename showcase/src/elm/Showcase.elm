@@ -4,7 +4,7 @@ import Browser
 import Browser.Navigation as Nav
 import Router
 import Url
-import Utils
+import Utils exposing (Flags)
 
 
 type Msg
@@ -19,7 +19,7 @@ type alias Model =
     }
 
 
-main : Program () Model Msg
+main : Program Flags Model Msg
 main =
     Browser.application
         { init = init
@@ -31,21 +31,17 @@ main =
         }
 
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init _ url key =
+init : Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
     let
         ( routerModel, routerCmd ) =
-            Router.init url
+            Router.init url flags
     in
     ( { navKey = key
       , router = routerModel
       }
     , Cmd.map RouterMsg routerCmd
     )
-
-
-
--- model -> Document msg
 
 
 view : Model -> Browser.Document Msg
