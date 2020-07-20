@@ -50,7 +50,9 @@ import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 import Utils exposing (ComponentCategory(..), Flags, RawSourceCode, SourceCode)
 
 
-type alias CommitHash = Maybe String
+type alias CommitHash =
+    Maybe String
+
 
 type alias Route =
     String
@@ -58,10 +60,12 @@ type alias Route =
 
 type alias Model =
     { activeRoute : Route
+
     -- Contains state around which pages
     -- already have their example code loaded
     -- into memory
     , examplesFetched : List Route
+
     -- This is used to fetch source code from a particular commit
     -- Locally, this value will be Nothing / null
     -- and files will be fetched from the file system
@@ -87,19 +91,17 @@ type Msg
     | DividerPageMessage DividerPage.Msg
     | TooltipPageMessage TooltipPage.Msg
     | TypographyPageMessage TypographyPage.Msg
-    -- represents the outcome of having asynchronously fetched
-    -- the source code of the examples for a particular component page
+      -- represents the outcome of having asynchronously fetched
+      -- the source code of the examples for a particular component page
     | ComponentPageReceivedExamples Route (Result Http.Error (List RawSourceCode))
-
 
 
 type alias Component =
     { route : Route
     , category : ComponentCategory
     , view : Model -> Styled.Html Msg
-    , saveExampleSourceCode : (List SourceCode) -> Cmd Msg
+    , saveExampleSourceCode : List SourceCode -> Cmd Msg
     }
-
 
 
 unimplementedComponents : List Component
@@ -108,7 +110,7 @@ unimplementedComponents =
         createUnimplementedComponentRoute ( componentName, category ) =
             { route = componentName
             , category = category
-            , view = \_ -> notImplemented componentName  
+            , view = \_ -> notImplemented componentName
             , saveExampleSourceCode = \_ -> Cmd.none
             }
     in
@@ -173,8 +175,11 @@ unimplementedComponents =
 triggerSaveExampleSourceCode : (msg -> Msg) -> (List SourceCode -> msg) -> List SourceCode -> Cmd Msg
 triggerSaveExampleSourceCode tagger subMsgTagger examplesSourceCode =
     let
-        subMsg = subMsgTagger examplesSourceCode
-        task = Task.succeed subMsg
+        subMsg =
+            subMsgTagger examplesSourceCode
+
+        task =
+            Task.succeed subMsg
     in
     Task.perform tagger task
 
@@ -197,36 +202,33 @@ componentList =
         tooltipPageView model =
             TooltipPage.route.view model.tooltipPageModel
                 |> Styled.map TooltipPageMessage
-
     in
     [ { route = ButtonPage.route.title
       , category = ButtonPage.route.category
       , view = buttonPageView
       , saveExampleSourceCode =
-          triggerSaveExampleSourceCode ButtonPageMessage ButtonPage.route.saveExampleSourceCodeToModel
-     }
-
+            triggerSaveExampleSourceCode ButtonPageMessage ButtonPage.route.saveExampleSourceCodeToModel
+      }
     , { route = DividerPage.route.title
       , category = DividerPage.route.category
       , view = dividerPageView
       , saveExampleSourceCode =
-          triggerSaveExampleSourceCode DividerPageMessage DividerPage.route.saveExampleSourceCodeToModel
+            triggerSaveExampleSourceCode DividerPageMessage DividerPage.route.saveExampleSourceCodeToModel
       }
-
     , { route = TypographyPage.route.title
       , category = TypographyPage.route.category
       , view = typographyPageView
       , saveExampleSourceCode =
-          triggerSaveExampleSourceCode TypographyPageMessage TypographyPage.route.saveExampleSourceCodeToModel
+            triggerSaveExampleSourceCode TypographyPageMessage TypographyPage.route.saveExampleSourceCodeToModel
       }
-
     , { route = TooltipPage.route.title
       , category = TooltipPage.route.category
       , view = tooltipPageView
       , saveExampleSourceCode =
-          triggerSaveExampleSourceCode TooltipPageMessage TooltipPage.route.saveExampleSourceCodeToModel
+            triggerSaveExampleSourceCode TooltipPageMessage TooltipPage.route.saveExampleSourceCodeToModel
       }
-    ] ++ unimplementedComponents
+    ]
+        ++ unimplementedComponents
 
 
 categoryToString : ComponentCategory -> String
@@ -273,24 +275,27 @@ fromUrl =
     Maybe.withDefault "NotFound" << Parser.parse parser
 
 
-
-fetchComponentExamples : Model -> Route -> Cmd Msg 
+fetchComponentExamples : Model -> Route -> Cmd Msg
 fetchComponentExamples { commitHash, fileServerUrl, examplesFetched } routeName =
     let
-        tagger = ComponentPageReceivedExamples routeName
+        tagger =
+            ComponentPageReceivedExamples routeName
 
-        fileFetcher = Utils.fetchComponentExamples fileServerUrl commitHash
-        
-        shouldFetchExamples = 
-            (not <| List.member routeName examplesFetched) &&
-            (not <| List.member routeName <|
-                List.map (\{ route } -> route) unimplementedComponents)
+        fileFetcher =
+            Utils.fetchComponentExamples fileServerUrl commitHash
+
+        shouldFetchExamples =
+            (not <| List.member routeName examplesFetched)
+                && (not <|
+                        List.member routeName <|
+                            List.map (\{ route } -> route) unimplementedComponents
+                   )
     in
     if shouldFetchExamples then
         fileFetcher routeName tagger
+
     else
         Cmd.none
-
 
 
 init : Url -> Flags -> ( Model, Cmd Msg )
@@ -300,22 +305,22 @@ init url { commitHash, fileServerUrl } =
             fromUrl url
 
         model =
-          { activeRoute = route
-          , examplesFetched = []
-          , commitHash = commitHash
-          , fileServerUrl = fileServerUrl
-          , buttonPageModel = ButtonPage.route.initialModel
-          , dividerPageModel = DividerPage.route.initialModel
-          , typographyPageModel = TypographyPage.route.initialModel
-          , tooltipPageModel = TooltipPage.route.initialModel
-          }
+            { activeRoute = route
+            , examplesFetched = []
+            , commitHash = commitHash
+            , fileServerUrl = fileServerUrl
+            , buttonPageModel = ButtonPage.route.initialModel
+            , dividerPageModel = DividerPage.route.initialModel
+            , typographyPageModel = TypographyPage.route.initialModel
+            , tooltipPageModel = TooltipPage.route.initialModel
+            }
     in
-    ( model 
+    ( model
     , fetchComponentExamples model route
     )
 
 
-updateComponentModelWithExampleSourceFiles : Route -> (List SourceCode) -> Cmd Msg
+updateComponentModelWithExampleSourceFiles : Route -> List SourceCode -> Cmd Msg
 updateComponentModelWithExampleSourceFiles routeName sourceCodeList =
     componentList
         |> List.filter (\{ route } -> route == routeName)
@@ -331,10 +336,9 @@ update navKey msg model =
             let
                 newRoute =
                     fromUrl url
-
             in
             ( { model | activeRoute = newRoute }
-            , fetchComponentExamples model newRoute 
+            , fetchComponentExamples model newRoute
             )
 
         MenuItemClicked hrefString ->
@@ -349,16 +353,15 @@ update navKey msg model =
                             (\{ fileName, base64File } -> { fileName = fileName, result = Base64.decode base64File })
                         |> List.foldl
                             (\{ fileName, result } fileContentsResult ->
-                                case (fileContentsResult, result) of
-                                    (Ok sourceCodeList, Ok sourceCode) ->
+                                case ( fileContentsResult, result ) of
+                                    ( Ok sourceCodeList, Ok sourceCode ) ->
                                         Ok <| { fileName = fileName, fileContents = sourceCode } :: sourceCodeList
 
-                                    (Ok _, Err reason) ->
+                                    ( Ok _, Err reason ) ->
                                         Err <| "[" ++ fileName ++ "] - " ++ reason
 
-                                    (Err reason, _) ->
+                                    ( Err reason, _ ) ->
                                         Err reason
-                                        
                             )
                             (Ok [])
 
@@ -366,7 +369,6 @@ update navKey msg model =
                     fetchResult
                         |> Result.mapError (\_ -> "http error")
                         |> Result.andThen decodeFileContents
-
             in
             case decodedFileListResult of
                 Ok decodedFileList ->
@@ -376,8 +378,7 @@ update navKey msg model =
 
                 -- TODO: do some sort of error logging
                 Err e ->
-                    (model, Cmd.none)
-
+                    ( model, Cmd.none )
 
         ButtonPageMessage buttonPageMsg ->
             let
@@ -478,7 +479,7 @@ componentMenu activeRoute =
         categoryDict : Dict String (List Route)
         categoryDict =
             List.foldl
-                (\ { route, category } categoryDictAccumulator ->
+                (\{ route, category } categoryDictAccumulator ->
                     let
                         categoryString =
                             categoryToString category
@@ -550,7 +551,7 @@ getPageTitleAndContentView activeRoute =
             (\{ route } -> route == activeRoute)
             componentList
             |> List.map
-                (\component -> (component.route, component.view))
+                (\component -> ( component.route, component.view ))
             |> List.head
             |> Maybe.withDefault notFoundPage
 

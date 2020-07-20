@@ -77,11 +77,11 @@ update msg model =
             ( model, Cmd.none )
 
         ExampleSourceCodeLoaded examplesSourceCode ->
-            ( { model |
-                    verticalExample = Container.setSourceCode examplesSourceCode model.verticalExample
-                ,   withTitleExample = Container.setSourceCode examplesSourceCode model.withTitleExample
-                ,   horizontalExample = Container.setSourceCode examplesSourceCode model.horizontalExample
-                ,   textWithoutHeadingExample = Container.setSourceCode examplesSourceCode model.textWithoutHeadingExample
+            ( { model
+                | verticalExample = Container.setSourceCode examplesSourceCode model.verticalExample
+                , withTitleExample = Container.setSourceCode examplesSourceCode model.withTitleExample
+                , horizontalExample = Container.setSourceCode examplesSourceCode model.horizontalExample
+                , textWithoutHeadingExample = Container.setSourceCode examplesSourceCode model.textWithoutHeadingExample
               }
             , Cmd.none
             )

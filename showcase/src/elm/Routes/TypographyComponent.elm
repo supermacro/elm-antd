@@ -72,16 +72,13 @@ update msg model =
                     ( { model | textExample = textExampleModel }, textExampleCmd )
 
         ExampleSourceCodeLoaded examplesSourceCode ->
-            ( { model |
-                    basicExample = Container.setSourceCode examplesSourceCode model.basicExample
-                ,   textExample = Container.setSourceCode examplesSourceCode model.textExample
-                ,   titleExample = Container.setSourceCode examplesSourceCode model.titleExample
+            ( { model
+                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
+                , textExample = Container.setSourceCode examplesSourceCode model.textExample
+                , titleExample = Container.setSourceCode examplesSourceCode model.titleExample
               }
             , Cmd.none
             )
-
-
-
 
 
 basicExample : Model -> Styled.Html Msg
@@ -104,7 +101,6 @@ basicExample model =
         |> Styled.map (DemoBoxMsg Basic)
 
 
-
 titleComponentExample : Model -> Styled.Html Msg
 titleComponentExample model =
     let
@@ -123,7 +119,6 @@ titleComponentExample model =
     Container.demoBox metaInfo styledDemoContents
         |> Container.view model.titleExample
         |> Styled.map (DemoBoxMsg TitleComponent)
-
 
 
 textComponentExample : Model -> Styled.Html Msg

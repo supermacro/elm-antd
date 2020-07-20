@@ -56,10 +56,9 @@ update msg model =
         SourceCopiedToClipboard demobox ->
             ( model, Cmd.none )
 
-
         ExampleSourceCodeLoaded examplesSourceCode ->
-            ( { model |
-                  typeExample = Container.setSourceCode examplesSourceCode model.typeExample
+            ( { model
+                | typeExample = Container.setSourceCode examplesSourceCode model.typeExample
                 , disabledExample = Container.setSourceCode examplesSourceCode model.disabledExample
               }
             , Cmd.none

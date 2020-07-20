@@ -60,14 +60,13 @@ update msg model =
                     ( { model | basicExample = basicModel }, basicCmd )
 
         ExampleSourceCodeLoaded examplesSourceCode ->
-            ( { model |
-                    basicExample = Container.setSourceCode examplesSourceCode model.basicExample
+            ( { model
+                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
               }
             , Cmd.none
             )
 
 
-        
 basicExample : Model -> Styled.Html Msg
 basicExample model =
     let

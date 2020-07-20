@@ -25,13 +25,13 @@ import UI.Typography exposing (commonTextStyles)
 import Utils exposing (SourceCode)
 
 
-type alias Model = 
+type alias Model =
     { fileName : String
     , sourceCodeVisible : Bool
     , sourceCode : Maybe String
     }
 
-    
+
 type Msg
     = SourceCodeVisibilityToggled
     | CopySourceToClipboardRequested
@@ -69,7 +69,6 @@ setSourceCode sourceCodeList model =
                 |> List.filter (\{ fileName } -> fileName == model.fileName)
                 |> List.head
                 |> Maybe.map .fileContents
-
     in
     { model | sourceCode = maybeSourceCode }
 
@@ -98,6 +97,7 @@ update msg model =
             case model.sourceCode of
                 Just source ->
                     ( model, Utils.copySourceToClipboard source )
+
                 Nothing ->
                     ( model, Cmd.none )
 
@@ -311,6 +311,7 @@ view model (Container opts children) =
                         case model.sourceCode of
                             Just source ->
                                 viewSourceCode source
+
                             Nothing ->
                                 div [] []
 

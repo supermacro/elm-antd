@@ -1,12 +1,12 @@
 port module Utils exposing
     ( ComponentCategory(..)
     , DocumentationRoute
-    , copySourceToClipboard
     , Flags
-    , intoKebabCase
-    , fetchComponentExamples 
-    , RawSourceCode 
+    , RawSourceCode
     , SourceCode
+    , copySourceToClipboard
+    , fetchComponentExamples
+    , intoKebabCase
     )
 
 import Html.Styled as Styled
@@ -14,13 +14,15 @@ import Http
 import Json.Decode as D exposing (Decoder)
 
 
+type alias CommitHash =
+    Maybe String
 
-type alias CommitHash = Maybe String
 
 type alias Flags =
     { commitHash : CommitHash
     , fileServerUrl : String
     }
+
 
 port copySourceToClipboard : String -> Cmd msg
 
@@ -38,11 +40,14 @@ type ComponentCategory
 type alias RouteTitle =
     String
 
+
+
 {-
-type alias FileName = String
-type alias Source = String
-type alias ExamplesSourceCode = Dict FileName Source
+   type alias FileName = String
+   type alias Source = String
+   type alias ExamplesSourceCode = Dict FileName Source
 -}
+
 
 type alias DocumentationRoute model msg =
     { title : RouteTitle
@@ -90,7 +95,6 @@ intoKebabCase str =
 
 
 
-
 {-
    Below is what __seems__ to be a very straightforward and simple mechanism for loading source code.
 
@@ -102,17 +106,20 @@ intoKebabCase str =
    Locally, you'll need to run file-server (which accesses the filesystem). In https://elm-antd.netlify.app/
    the code is accessed via a github proxy server on GCP.
 -}
-
 -- Represents the decoded file
+
+
 type alias SourceCode =
     { fileName : String
     , fileContents : String
     }
 
+
 type alias RawSourceCode =
     { fileName : String
     , base64File : String
     }
+
 
 sourceCodeDecoder : Decoder RawSourceCode
 sourceCodeDecoder =
@@ -121,26 +128,35 @@ sourceCodeDecoder =
         (D.field "base64File" D.string)
 
 
+
 -- TODO: Should probably create an actual Route type. I keep having to create this type alias.
 -- this is going to lead to subtle bugs in the future
-type alias Route = String
+
+
+type alias Route =
+    String
+
 
 ignoreRoutes : List Route
 ignoreRoutes =
     [ "NotFound", "Home" ]
 
 
-type alias FetchResult = Result Http.Error (List RawSourceCode)
+type alias FetchResult =
+    Result Http.Error (List RawSourceCode)
+
 
 fetchComponentExamples : String -> Maybe String -> String -> (FetchResult -> msg) -> Cmd msg
 fetchComponentExamples baseUrl commitHash componentName tagger =
     let
-        urlWithPath = baseUrl ++ "/example-files/" ++ componentName
+        urlWithPath =
+            baseUrl ++ "/example-files/" ++ componentName
 
         url =
             case commitHash of
                 Just hash ->
                     urlWithPath ++ "?commitRef=" ++ hash
+
                 Nothing ->
                     urlWithPath
     in
@@ -148,4 +164,3 @@ fetchComponentExamples baseUrl commitHash componentName tagger =
         { url = url
         , expect = Http.expectJson tagger (D.list sourceCodeDecoder)
         }
-
