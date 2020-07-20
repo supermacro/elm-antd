@@ -40,11 +40,5 @@ if (VISUAL_TESTING_MODE) {
       console.log('Service worker registration failed with ' + e)
     })
   }
-
-  setTimeout(() => {
-    fetch('https://jsonplaceholder.typicode.com/todos/1')
-    .then(response => response.json())
-    .then(json => console.log(json))
-  }, 1000)
 }
 

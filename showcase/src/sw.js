@@ -1,16 +1,10 @@
-const PouchDB = require('pouchdb-browser').default
+const { findExamplesForComponent, saveExamplesToCache } = require('./file-cache')
 
 const FILE_SERVER_URL = process.env.FILE_SERVER_URL
 
 if (!FILE_SERVER_URL) {
   throw new Error('Missing required environment variable `FILE_SERVER_URL`')
 }
-
-if (process.env.NODE_ENV === 'development') {
-  PouchDB.debug.enable('*');
-}
-
-const db = new PouchDB('elm-antd-cache')
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(clients.claim())
@@ -39,10 +33,38 @@ self.addEventListener('fetch', (event) => {
  *
  * @returns Promise<Response>
  */
-const handleFileServerRequest = (event) => {
+const handleFileServerRequest = async (event) => {
   console.log('> Request to file server: ' + event.request.url)
   const url = new URL(event.request.url)
-  return fetch(event.request)
+  const isRequestToGetFile = url.pathname.includes('example-files') && event.request.method === 'GET'
+
+  if (!isRequestToGetFile) {
+    return fetch(event.request)
+  }
+
+  const filePathRegex = /\/example-files\/(\w+)/g
+
+  const [, componentName] = filePathRegex.exec(url.pathname)
+
+  const cachedFiles = await findExamplesForComponent(componentName)
+
+  if (cachedFiles) {
+    const rawData = new Blob([ JSON.stringify(cachedFiles) ])
+    const response = new Response(rawData, {
+      status: 200,
+      type: 'application/json',
+    })
+
+    return response
+  }
+
+  const response = await fetch(event.request)
+  const cloned = response.clone()
+  const componentExamples = await cloned.json()
+
+  await saveExamplesToCache(componentName, componentExamples)
+
+  return response 
 }
 
 
