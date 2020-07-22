@@ -1,31 +1,39 @@
-module Ant.Input exposing (input, InputSize(..), onInput, toHtml, withPlaceholder, withSize)
+module Ant.Input exposing (input, InputSize(..), withSize, onInput, withPlaceholder, toHtml)
 
 {-| Input widget for data entry
 
 @docs input, InputSize, withSize, onInput, withPlaceholder, toHtml
+
 -}
 
 import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
-import Ant.Internals.Typography exposing (textColorRgba, commonFontStyles)
+import Ant.Internals.Typography exposing (commonFontStyles, textColorRgba)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
 import Html exposing (Html)
 import Html.Styled as H exposing (toUnstyled)
 import Html.Styled.Attributes exposing (css, placeholder)
-import Html.Styled.Events as E 
+import Html.Styled.Events as E
 
-type Input msg = Input (InputOpts msg)
+
+type Input msg
+    = Input (InputOpts msg)
 
 
 {-| Determines the vertical height of the input
 -}
-type InputSize = Default | Large | Small
+type InputSize
+    = Default
+    | Large
+    | Small
+
 
 type alias InputOpts msg =
     { size : InputSize
     , placeholder : Maybe String
     , onInput : Maybe (String -> msg)
     }
+
 
 defaultInputOpts : InputOpts msg
 defaultInputOpts =
@@ -34,10 +42,12 @@ defaultInputOpts =
     , onInput = Nothing
     }
 
+
 {-| Create a customizeable input component
 -}
 input : Input msg
-input = Input defaultInputOpts
+input =
+    Input defaultInputOpts
 
 
 {-| Add a placeholder to the input
@@ -45,7 +55,8 @@ input = Input defaultInputOpts
 withPlaceholder : String -> Input msg -> Input msg
 withPlaceholder value (Input inputOpts) =
     let
-        newOpts = { inputOpts | placeholder = Just value } 
+        newOpts =
+            { inputOpts | placeholder = Just value }
     in
     Input newOpts
 
@@ -55,7 +66,8 @@ withPlaceholder value (Input inputOpts) =
 withSize : InputSize -> Input msg -> Input msg
 withSize size (Input inputOpts) =
     let
-        newOpts = { inputOpts | size = size }
+        newOpts =
+            { inputOpts | size = size }
     in
     Input newOpts
 
@@ -65,17 +77,15 @@ withSize size (Input inputOpts) =
 onInput : (String -> msg) -> Input msg -> Input msg
 onInput tagger (Input inputOpts) =
     let
-        newOpts = { inputOpts | onInput = Just tagger }
+        newOpts =
+            { inputOpts | onInput = Just tagger }
     in
     Input newOpts
 
 
 
-
-
-
-
 --- UI Code
+
 
 textColor : Color
 textColor =
@@ -86,7 +96,6 @@ textColor =
     rgba r g b a
 
 
-
 {-| Convert the input into a `Html msg`
 -}
 toHtml : Input msg -> Html msg
@@ -95,45 +104,46 @@ toHtml (Input inputOpts) =
         transitionDuration =
             350
 
-        inputStyles = 
-            commonFontStyles ++
-            [ color textColor
-            , borderWidth (px 1)
-            , borderRadius (px 2)
-            , width (pct 100)
-            , height (px 30)
-            , borderStyle solid
-            , backgroundColor (hex "#fff")
-            , borderColor <| rgb 217 217 217
-            , property "caret-color" "#000"
-            , padding2 (px 4) (px 11)
-            , focus
-                [ borderColor (hex primaryColorFaded)
-                , boxShadow5 zero zero zero (px 2) (rgba 24 144 255 0.2)
-                ]
-            , hover
-                [ borderColor (hex primaryColorFaded)
-                ]
-            , active
-                [ borderColor (hex primaryColor)
-                ]
-            , focus
-                [ outline none ]
-            , transition
-                [ Css.Transitions.borderColor transitionDuration
-                , Css.Transitions.boxShadow transitionDuration
-                ]
-            ]
+        inputStyles =
+            commonFontStyles
+                ++ [ color textColor
+                   , borderWidth (px 1)
+                   , borderRadius (px 2)
+                   , width (pct 100)
+                   , height (px 30)
+                   , borderStyle solid
+                   , backgroundColor (hex "#fff")
+                   , borderColor <| rgb 217 217 217
+                   , property "caret-color" "#000"
+                   , padding2 (px 4) (px 11)
+                   , focus
+                        [ borderColor (hex primaryColorFaded)
+                        , boxShadow5 zero zero zero (px 2) (rgba 24 144 255 0.2)
+                        ]
+                   , hover
+                        [ borderColor (hex primaryColorFaded)
+                        ]
+                   , active
+                        [ borderColor (hex primaryColor)
+                        ]
+                   , focus
+                        [ outline none ]
+                   , transition
+                        [ Css.Transitions.borderColor transitionDuration
+                        , Css.Transitions.boxShadow transitionDuration
+                        ]
+                   ]
 
-        placeholderValue = Maybe.withDefault "" inputOpts.placeholder
-
+        placeholderValue =
+            Maybe.withDefault "" inputOpts.placeholder
 
         optionalAttributes =
             case inputOpts.onInput of
-                Just tagger -> [ E.onInput tagger ]
-                Nothing -> []
+                Just tagger ->
+                    [ E.onInput tagger ]
 
+                Nothing ->
+                    []
     in
     toUnstyled <|
         H.input ([ css inputStyles, placeholder placeholderValue ] ++ optionalAttributes) []
-    

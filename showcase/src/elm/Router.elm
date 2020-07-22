@@ -225,7 +225,7 @@ componentList =
       , category = InputPage.route.category
       , view = inputPageView
       , saveExampleSourceCode =
-          triggerSaveExampleSourceCode InputPageMessage InputPage.route.saveExampleSourceCodeToModel
+            triggerSaveExampleSourceCode InputPageMessage InputPage.route.saveExampleSourceCodeToModel
       }
     , { route = TypographyPage.route.title
       , category = TypographyPage.route.category
@@ -417,7 +417,7 @@ update navKey msg model =
 
         InputPageMessage inputPageMsg ->
             let
-                ( inputPageModel, inputPageCmd) =
+                ( inputPageModel, inputPageCmd ) =
                     InputPage.route.update inputPageMsg model.inputPageModel
             in
             ( { model

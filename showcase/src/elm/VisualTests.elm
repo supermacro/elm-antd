@@ -69,8 +69,9 @@ type alias DividerConfig =
 
 
 type alias InputConfig =
-    { size: InputSize
+    { size : InputSize
     }
+
 
 type Component
     = Button ButtonConfig
@@ -95,7 +96,7 @@ registeredComponents =
     , ( "DisabledPrimaryButton", Button { type_ = Primary, disabled = True } )
 
     -- Inputs
-    , ( "SimpleInput", Input { size = Input.Default })
+    , ( "SimpleInput", Input { size = Input.Default } )
 
     -- Headings
     , ( "SimpleHeading", Typography { level = H1 } )
@@ -217,6 +218,7 @@ buildComponent component =
                         |> Input.toHtml
             in
             div [ style "max-width" "200px" ] [ input ]
+
 
 view : Model -> { title : String, body : List (Html msg) }
 view { component, label } =
