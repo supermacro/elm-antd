@@ -12,6 +12,7 @@ Given a `component` query param, render the associated component
 
 import Ant.Button as Btn exposing (ButtonType(..), button)
 import Ant.Divider as Divider
+import Ant.Input as Input exposing (InputSize)
 import Ant.Typography as Heading exposing (Level(..), title)
 import Browser
 import Browser.Navigation as Nav
@@ -67,10 +68,15 @@ type alias DividerConfig =
     }
 
 
+type alias InputConfig =
+    { size: InputSize
+    }
+
 type Component
     = Button ButtonConfig
     | Typography TypographyConfig
     | Divider DividerConfig
+    | Input InputConfig
 
 
 type RawComponent
@@ -87,6 +93,9 @@ registeredComponents =
     , ( "TextButton", Button { type_ = Text, disabled = False } )
     , ( "LinkButton", Button { type_ = Link, disabled = False } )
     , ( "DisabledPrimaryButton", Button { type_ = Primary, disabled = True } )
+
+    -- Inputs
+    , ( "SimpleInput", Input { size = Input.Default })
 
     -- Headings
     , ( "SimpleHeading", Typography { level = H1 } )
@@ -199,6 +208,15 @@ buildComponent component =
                 , loremIpsum
                 ]
 
+        Input inputConfig ->
+            let
+                input =
+                    Input.input
+                        |> Input.withSize inputConfig.size
+                        |> Input.withPlaceholder "Placeholder"
+                        |> Input.toHtml
+            in
+            div [ style "max-width" "200px" ] [ input ]
 
 view : Model -> { title : String, body : List (Html msg) }
 view { component, label } =

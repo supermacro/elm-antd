@@ -1,5 +1,3 @@
-'use strict';
-
 const VISUAL_TESTING_MODE = process.env.APP_MODE === 'visual_testing'
 
 if (VISUAL_TESTING_MODE) {
@@ -27,7 +25,6 @@ if (VISUAL_TESTING_MODE) {
 
   if ('serviceWorker' in navigator) {
     console.log('Registering service worker ... ')
-    // TODO: have webpack emit the sw in a dedicated file
     navigator.serviceWorker.register('/sw.js').then((reg) => {
       if (reg.installing) {
         console.log('> Service worker installing')

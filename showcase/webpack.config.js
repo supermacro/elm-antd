@@ -70,6 +70,7 @@ const commonConfig = {
         'APP_MODE',
         'FILE_SERVER_URL',
         'COMMIT_REF',
+        'DISABLE_CACHE',
       ]),
     })
   ],

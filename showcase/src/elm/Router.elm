@@ -37,6 +37,7 @@ import Http
 import Routes.ButtonComponent as ButtonPage
 import Routes.DividerComponent as DividerPage
 import Routes.Home exposing (homePage)
+import Routes.InputComponent as InputPage
 import Routes.NotFound exposing (notFound)
 import Routes.NotImplemented exposing (notImplemented)
 import Routes.TooltipComponent as TooltipPage
@@ -77,6 +78,7 @@ type alias Model =
     , dividerPageModel : DividerPage.Model
     , typographyPageModel : TypographyPage.Model
     , tooltipPageModel : TooltipPage.Model
+    , inputPageModel : InputPage.Model
     }
 
 
@@ -89,6 +91,7 @@ type Msg
     | MenuItemClicked Href
     | ButtonPageMessage ButtonPage.Msg
     | DividerPageMessage DividerPage.Msg
+    | InputPageMessage InputPage.Msg
     | TooltipPageMessage TooltipPage.Msg
     | TypographyPageMessage TypographyPage.Msg
       -- represents the outcome of having asynchronously fetched
@@ -128,7 +131,6 @@ unimplementedComponents =
         , ( "DatePicker", DataEntry )
         , ( "Form", DataEntry )
         , ( "InputNumber", DataEntry )
-        , ( "Input", DataEntry )
         , ( "Mentions", DataEntry )
         , ( "Rate", DataEntry )
         , ( "Radio", DataEntry )
@@ -202,6 +204,10 @@ componentList =
         tooltipPageView model =
             TooltipPage.route.view model.tooltipPageModel
                 |> Styled.map TooltipPageMessage
+
+        inputPageView model =
+            InputPage.route.view model.inputPageModel
+                |> Styled.map InputPageMessage
     in
     [ { route = ButtonPage.route.title
       , category = ButtonPage.route.category
@@ -214,6 +220,12 @@ componentList =
       , view = dividerPageView
       , saveExampleSourceCode =
             triggerSaveExampleSourceCode DividerPageMessage DividerPage.route.saveExampleSourceCodeToModel
+      }
+    , { route = InputPage.route.title
+      , category = InputPage.route.category
+      , view = inputPageView
+      , saveExampleSourceCode =
+          triggerSaveExampleSourceCode InputPageMessage InputPage.route.saveExampleSourceCodeToModel
       }
     , { route = TypographyPage.route.title
       , category = TypographyPage.route.category
@@ -313,6 +325,7 @@ init url { commitHash, fileServerUrl } =
             , dividerPageModel = DividerPage.route.initialModel
             , typographyPageModel = TypographyPage.route.initialModel
             , tooltipPageModel = TooltipPage.route.initialModel
+            , inputPageModel = InputPage.route.initialModel
             }
     in
     ( model
@@ -400,6 +413,17 @@ update navKey msg model =
                 | dividerPageModel = dividerPageModel
               }
             , Cmd.map DividerPageMessage dividerPageCmd
+            )
+
+        InputPageMessage inputPageMsg ->
+            let
+                ( inputPageModel, inputPageCmd) =
+                    InputPage.route.update inputPageMsg model.inputPageModel
+            in
+            ( { model
+                | inputPageModel = inputPageModel
+              }
+            , Cmd.map InputPageMessage inputPageCmd
             )
 
         TooltipPageMessage tooltipPageMessage ->

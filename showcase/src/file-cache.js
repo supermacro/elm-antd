@@ -42,6 +42,7 @@ const getCachedFiles = () =>
 
 const findExamplesForComponent = async (componentName) => {
   if (DISABLE_CACHE) {
+    log('Cache disabled')
     return
   }
 
