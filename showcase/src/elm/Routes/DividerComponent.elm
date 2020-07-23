@@ -16,148 +16,7 @@ import UI.Typography as Typography
         , documentationText
         , documentationUnorderedList
         )
-import Utils exposing (ComponentCategory(..), DocumentationRoute)
-
-
-horizontalExampleStr : String
-horizontalExampleStr =
-    """module Routes.DividerComponent.HorizontalExample exposing (example)
-
-import Ant.Divider as Divider exposing (divider)
-import Ant.Typography.Text as Text
-import Html exposing (Html, text)
-import Html exposing (Html, div, span)
-import Html.Styled as H exposing (text, toUnstyled, fromUnstyled)
-
-
-example : Html msg
-example =
-    let
-      basicDivider =
-        Divider.divider
-          |> Divider.toHtml
-
-      dashedDivdier =
-        Divider.divider
-          |> Divider.withLine Divider.Dashed
-          |> Divider.toHtml
-
-      loremIpsum =
-        Text.text "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista probare, quae sunt a te dicta? Refert tamen, quo modo."
-          |> Text.toHtml
-          
-    in
-    div []
-      [ loremIpsum
-      , basicDivider
-      , loremIpsum
-      , dashedDivdier
-      , loremIpsum
-      ]"""
-
-
-textWithoutHeadingExampleStr : String
-textWithoutHeadingExampleStr =
-    """module Routes.DividerComponent.TextWithoutHeadingExample exposing (example)
-
-import Ant.Divider as Divider
-import Ant.Typography.Text as Text
-import Html exposing (Html, text)
-import Html exposing (Html, div, span)
-import Html.Styled as H exposing (text, toUnstyled, fromUnstyled)
-
-
-example : Html msg
-example =
-    let
-      dividerCenter =
-        Divider.divider
-          |> Divider.withLabel "Center"
-          |> Divider.withOrientation Divider.Center
-          |> Divider.toHtml
-
-      dividerLeft =
-        Divider.divider
-          |> Divider.withLabel "Left"
-          |> Divider.withOrientation Divider.Left
-          |> Divider.toHtml
-
-      dividerRight =
-        Divider.divider
-          |> Divider.withLabel "Right"
-          |> Divider.withOrientation Divider.Right
-          |> Divider.toHtml
-
-      loremIpsum =
-        Text.text "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista probare, quae sunt a te dicta? Refert tamen, quo modo."
-          |> Text.toHtml
-          
-    in
-    div []
-      [ loremIpsum
-      , dividerCenter
-      , loremIpsum
-      , dividerLeft
-      , loremIpsum
-      , dividerRight
-      , loremIpsum
-      ]"""
-
-
-withTitleExampleStr : String
-withTitleExampleStr =
-    """module Routes.DividerComponent.WithTitleExample exposing (example)
-
-import Ant.Divider as Divider
-import Ant.Typography.Text as Text
-import Html exposing (Html, text)
-import Html exposing (Html, div, span)
-import Html.Styled as H exposing (text, toUnstyled, fromUnstyled)
-
-
-example : Html msg
-example =
-    let
-      dividerCenter =
-        Divider.divider
-          |> Divider.withLabel "Center"
-          |> Divider.withOrientation Divider.Center
-          |> Divider.withTextStyle Divider.Heading
-          |> Divider.toHtml
-
-      dividerLeft =
-        Divider.divider
-          |> Divider.withLabel "Left"
-          |> Divider.withOrientation Divider.Left
-          |> Divider.withTextStyle Divider.Heading
-          |> Divider.toHtml
-
-      dividerRight =
-        Divider.divider
-          |> Divider.withLabel "Right"
-          |> Divider.withOrientation Divider.Right
-          |> Divider.withTextStyle Divider.Heading
-          |> Divider.toHtml
-
-      loremIpsum =
-        Text.text "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista probare, quae sunt a te dicta? Refert tamen, quo modo."
-          |> Text.toHtml
-          
-    in
-    div []
-      [ loremIpsum
-      , dividerCenter
-      , loremIpsum
-      , dividerLeft
-      , loremIpsum
-      , dividerRight
-      , loremIpsum
-      ]"""
-
-
-verticalExampleStr : String
-verticalExampleStr =
-    """"""
+import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 
 type alias Model =
@@ -178,6 +37,7 @@ type DemoBox
 type Msg
     = DemoBoxMsg DemoBox Container.Msg
     | SourceCopiedToClipboard DemoBox
+    | ExampleSourceCodeLoaded (List SourceCode)
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -216,6 +76,16 @@ update msg model =
         SourceCopiedToClipboard demobox ->
             ( model, Cmd.none )
 
+        ExampleSourceCodeLoaded examplesSourceCode ->
+            ( { model
+                | verticalExample = Container.setSourceCode examplesSourceCode model.verticalExample
+                , withTitleExample = Container.setSourceCode examplesSourceCode model.withTitleExample
+                , horizontalExample = Container.setSourceCode examplesSourceCode model.horizontalExample
+                , textWithoutHeadingExample = Container.setSourceCode examplesSourceCode model.textWithoutHeadingExample
+              }
+            , Cmd.none
+            )
+
 
 route : DocumentationRoute Model Msg
 route =
@@ -224,11 +94,12 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { horizontalExample = { sourceCodeVisible = False, sourceCode = horizontalExampleStr }
-        , textWithoutHeadingExample = { sourceCodeVisible = False, sourceCode = textWithoutHeadingExampleStr }
-        , withTitleExample = { sourceCodeVisible = False, sourceCode = withTitleExampleStr }
-        , verticalExample = { sourceCodeVisible = False, sourceCode = verticalExampleStr }
+        { horizontalExample = Container.initModel "HorizontalExample.elm"
+        , textWithoutHeadingExample = Container.initModel "TextWithoutHeadingExample.elm"
+        , withTitleExample = Container.initModel "WithTitleExample.elm"
+        , verticalExample = Container.initModel "VerticalExample.elm"
         }
+    , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
 
 
@@ -242,7 +113,6 @@ horizontalExample model =
             { title = "Horizontal"
             , content = "Divider is \"horizontal\" by default. You can add text within Divider."
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
-            , sourceCode = horizontalExampleStr
             }
 
         styledDemoContents =
@@ -263,7 +133,6 @@ textWithoutHeadingExample model =
             { title = "Text without heading style"
             , content = "You can use non-heading style of divider text by setting Plain textStyle"
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
-            , sourceCode = textWithoutHeadingExampleStr
             }
 
         styledDemoContents =
@@ -284,7 +153,6 @@ withTitleExample model =
             { title = "Divider with title"
             , content = "Divider with inner title, use \"withOrientation\" to align it."
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
-            , sourceCode = withTitleExampleStr
             }
 
         styledDemoContents =
@@ -305,7 +173,6 @@ verticalExample model =
             { title = "Vertical"
             , content = "Use \"withType Vertical\" make it vertical."
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
-            , sourceCode = verticalExampleStr
             }
 
         styledDemoContents =

@@ -2,10 +2,12 @@ module UI.Container exposing
     ( Model
     , Msg(..)
     , demoBox
+    , initModel
     , paddingBottom
     , paddingLeft
     , paddingRight
     , paddingTop
+    , setSourceCode
     , update
     , view
     )
@@ -20,12 +22,13 @@ import Html.Styled.Attributes as A exposing (css, href)
 import Html.Styled.Events exposing (onClick)
 import SyntaxHighlight exposing (elm, gitHub, toBlockHtml, useTheme)
 import UI.Typography exposing (commonTextStyles)
-import Utils
+import Utils exposing (SourceCode)
 
 
 type alias Model =
-    { sourceCodeVisible : Bool
-    , sourceCode : String
+    { fileName : String
+    , sourceCodeVisible : Bool
+    , sourceCode : Maybe String
     }
 
 
@@ -50,6 +53,26 @@ type Container
     = Container ContainerOptions (Styled.Html Msg)
 
 
+initModel : String -> Model
+initModel fileName =
+    { sourceCodeVisible = False
+    , sourceCode = Nothing
+    , fileName = fileName
+    }
+
+
+setSourceCode : List SourceCode -> Model -> Model
+setSourceCode sourceCodeList model =
+    let
+        maybeSourceCode =
+            sourceCodeList
+                |> List.filter (\{ fileName } -> fileName == model.fileName)
+                |> List.head
+                |> Maybe.map .fileContents
+    in
+    { model | sourceCode = maybeSourceCode }
+
+
 defaultContainerOptions : ContainerMetaSection -> ContainerOptions
 defaultContainerOptions metaSection =
     { paddingTop = Css.paddingTop (px 10)
@@ -71,7 +94,12 @@ update msg model =
             )
 
         CopySourceToClipboardRequested ->
-            ( model, Utils.copySourceToClipboard model.sourceCode )
+            case model.sourceCode of
+                Just source ->
+                    ( model, Utils.copySourceToClipboard source )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         ContentMsg ->
             ( model, Cmd.none )
@@ -126,7 +154,6 @@ type alias ContainerMetaSection =
     { title : String
     , content : String
     , ellieDemo : String
-    , sourceCode : String
     }
 
 
@@ -281,7 +308,12 @@ view model (Container opts children) =
 
                 sourceCodeView =
                     if model.sourceCodeVisible then
-                        viewSourceCode opts.meta.sourceCode
+                        case model.sourceCode of
+                            Just source ->
+                                viewSourceCode source
+
+                            Nothing ->
+                                div [] []
 
                     else
                         div [] []

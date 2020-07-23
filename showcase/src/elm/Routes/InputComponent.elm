@@ -1,9 +1,9 @@
-module Routes.TooltipComponent exposing (Model, Msg, route)
+module Routes.InputComponent exposing (Model, Msg, route)
 
-import Css exposing (displayFlex)
+import Css exposing (displayFlex, maxWidth, pct)
 import Html.Styled as Styled exposing (div, fromUnstyled, text)
 import Html.Styled.Attributes exposing (css)
-import Routes.TooltipComponent.BasicExample as BasicExample
+import Routes.InputComponent.BasicExample as BasicExample
 import UI.Container as Container
 import UI.Typography as Typography
     exposing
@@ -17,7 +17,7 @@ import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 title : String
 title =
-    "Tooltip"
+    "Input"
 
 
 type alias Model =
@@ -37,7 +37,7 @@ type Msg
 route : DocumentationRoute Model Msg
 route =
     { title = title
-    , category = DataDisplay
+    , category = DataEntry
     , view = view
     , update = update
     , initialModel =
@@ -72,10 +72,11 @@ basicExample model =
     let
         styledTypeExampleContents =
             fromUnstyled BasicExample.example
+                |> Styled.map (\_ -> Container.ContentMsg)
 
         metaInfo =
             { title = "Basic"
-            , content = "The simplest usage."
+            , content = "Basic usage example."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
             }
 
@@ -91,13 +92,13 @@ view : Model -> Styled.Html Msg
 view model =
     div []
         [ documentationHeading title
-        , documentationText <| text "A simple text popup tip."
+        , documentationText <| text "A basic widget for getting the user input is a text field. Keyboard and mouse can be used for providing or changing data."
         , documentationSubheading Typography.WithAnchorLink "When To Use"
         , documentationUnorderedList
-            [ text "The tip is shown on mouse enter, and is hidden on mouse leave. The Tooltip doesn't support complex text or operations."
-            , text "To provide an explanation of a button/text/operation. It's often used instead of the html title attribute."
+            [ text "A user input in a form field is needed."
+            , text "A search input is required."
             ]
         , documentationSubheading Typography.WithoutAnchorLink "Examples"
         , div []
-            [ div [] [ basicExample model ], div [] [] ]
+            [ div [ css [ maxWidth (pct 45) ] ] [ basicExample model ], div [] [] ]
         ]

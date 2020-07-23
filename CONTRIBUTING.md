@@ -6,9 +6,18 @@
   - Add applicable visual tests to `./showcase/visual-tests` (visual tests are written in JavaScript)
 - If implementing / changing behaviour:
   - Add applicable unit tests (unit tests are written in Elm) 
+- **If you're adding a brand new component**, make sure to add it to the list of `exposed-modules` within `elm.json`. 
 
+### Project Structure
 
-**If you're adding a brand new component**, make sure to add it to the list of `exposed-modules` within `elm.json`.
+- `src/Ant`: Contains the actual Elm Antd components that can be used by a user
+- `tests`: Unit tests for components
+- `showcase`: Contains the component showcase (https://elm-antd.netlify.app/)
+  - `/tests`: Unit tests for component showcase
+  - `/visual-tests`: Visual regression / UI tests for the components in `src/Ant`
+    - The reason that these tests live here is because I am leveraging the existing showcase application when doing UI tests. The app gets booted into "visual testing mode" using `showcase/src/elm/VisualTests.elm`
+- `file-server`: NodeJS web application that is used to fetch source code from either your file system (local development) or github (production)
+
 
 
 ### Running the development server

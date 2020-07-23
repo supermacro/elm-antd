@@ -14,171 +14,24 @@ import UI.Typography as Typography
         , documentationText
         , documentationUnorderedList
         )
-import Utils exposing (ComponentCategory(..), DocumentationRoute)
-
-
-typeExampleStr : String
-typeExampleStr =
-    """module Routes.ButtonComponent.TypeExample exposing (example)
-
-import Ant.Button as Btn exposing (ButtonType(..), button, toHtml)
-import Ant.Space as Space exposing (SpaceDirection(..))
-import Html exposing (Html, div, span)
-import Html.Attributes exposing (style)
-
-
-withSpace : Html msg -> Html msg
-withSpace element =
-    span
-        [ style "margin-bottom" "13px"
-        , style "display" "inline-block"
-        , style "margin-right" "13px"
-        ]
-        [ element ]
-
-
-example : Html msg
-example =
-    let
-        primaryButton =
-            button "Primary Button"
-                |> Btn.withType Primary
-                |> toHtml
-                |> withSpace
-
-        defaultButton =
-            button "Default Button"
-                |> Btn.withType Default
-                |> toHtml
-                |> withSpace
-
-        dashedButton =
-            button "Dashed Button"
-                |> Btn.withType Dashed
-                |> toHtml
-                |> withSpace
-
-        textButton =
-            button "Text Button"
-                |> Btn.withType Text
-                |> toHtml
-                |> withSpace
-
-        linkButton =
-            button "Link Button"
-                |> Btn.withType Link
-                |> toHtml
-                |> withSpace
-    in
-    div []
-        [ primaryButton
-        , defaultButton
-        , dashedButton
-        , textButton
-        , linkButton
-        ]"""
-
-
-disabledExampleStr : String
-disabledExampleStr =
-    """module Routes.ButtonComponent.DisabledExample exposing (example)
-
-import Ant.Button exposing (Button, ButtonType(..), button, disabled, onClick, toHtml, withType)
-import Ant.Space as Space exposing (space)
-import Html exposing (Html, div)
-
-
-type Msg
-    = Clicked
-
-
-row : List (Button msg) -> Html msg
-row buttons =
-    List.map toHtml buttons
-    |> space
-    |> Space.direction Space.Horizontal
-    |> Space.toHtml
-
-
-baseButton : String -> Button Msg
-baseButton label =
-    button label
-    |> onClick Clicked
-
-
-primaryButton : String -> Button Msg
-primaryButton label =
-    baseButton label
-    |> withType Primary
-
-
-dashedButton : String -> Button Msg
-dashedButton label =
-    baseButton label
-    |> withType Dashed
-
-
-textButton : String -> Button Msg
-textButton label =
-    baseButton label
-    |> withType Text
-
-
-example : Html Msg
-example =
-    let
-        primaryExample =
-            row
-                [ primaryButton "Primary"
-                , primaryButton "Primary (disabled)" |> disabled True
-                ]
-
-        defaultExample =
-            row
-                [ baseButton "Default"
-                , baseButton "Default (disabled)" |> disabled True
-                ]
-
-        dashedExample =
-            row
-                [ dashedButton "Dashed"
-                , dashedButton "Dashed (disabled)" |> disabled True
-                ]
-
-        textExample =
-            row
-                [ textButton "Text"
-                , textButton "Text (disabled)" |> disabled True
-                ]
-
-        examples =
-            [ primaryExample
-            , defaultExample
-            , dashedExample
-            , textExample
-            ]
-    in
-    space examples
-        |> Space.toHtml
-"""
+import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 
 type alias Model =
     { typeExample : Container.Model
-    , iconExample : Container.Model
     , disabledExample : Container.Model
     }
 
 
 type DemoBox
     = ButtonType
-    | ButtonWithIcon
     | DisabledButton
 
 
 type Msg
     = DemoBoxMsg DemoBox Container.Msg
     | SourceCopiedToClipboard DemoBox
+    | ExampleSourceCodeLoaded (List SourceCode)
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -193,13 +46,6 @@ update msg model =
                     in
                     ( { model | typeExample = typeExampleModel }, typeExampleCmd )
 
-                ButtonWithIcon ->
-                    let
-                        ( iconExampleModel, iconExampleCmd ) =
-                            Container.update demoboxMsg model.iconExample
-                    in
-                    ( { model | iconExample = iconExampleModel }, iconExampleCmd )
-
                 DisabledButton ->
                     let
                         ( disabledExampleModel, disabledExampleCmd ) =
@@ -210,6 +56,14 @@ update msg model =
         SourceCopiedToClipboard demobox ->
             ( model, Cmd.none )
 
+        ExampleSourceCodeLoaded examplesSourceCode ->
+            ( { model
+                | typeExample = Container.setSourceCode examplesSourceCode model.typeExample
+                , disabledExample = Container.setSourceCode examplesSourceCode model.disabledExample
+              }
+            , Cmd.none
+            )
+
 
 route : DocumentationRoute Model Msg
 route =
@@ -217,10 +71,10 @@ route =
     , category = General
     , view = view
     , update = update
+    , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     , initialModel =
-        { typeExample = { sourceCodeVisible = False, sourceCode = typeExampleStr }
-        , iconExample = { sourceCodeVisible = False, sourceCode = "" }
-        , disabledExample = { sourceCodeVisible = False, sourceCode = disabledExampleStr }
+        { typeExample = Container.initModel "TypeExample.elm"
+        , disabledExample = Container.initModel "DisabledExample.elm"
         }
     }
 
@@ -235,7 +89,6 @@ typeExample model =
             { title = "Type"
             , content = "There are \"primary\", \"default\", \"dashed\", \"text\" and \"link\" buttons in Elm Antd."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
-            , sourceCode = typeExampleStr
             }
 
         styledDemoContents =
@@ -257,7 +110,6 @@ disabledExample model =
             { title = "Disabled"
             , content = "You can disable any button"
             , ellieDemo = "https://ellie-app.com/9mjF8c8DLyTa1"
-            , sourceCode = disabledExampleStr
             }
 
         styledDemoContents =

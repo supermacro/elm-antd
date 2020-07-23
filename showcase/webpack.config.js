@@ -27,9 +27,8 @@ const commonConfig = {
     : 'development',
   
   entry: {
-    app: [
-      './src/index.js'
-    ]
+    app: './src/index.js',
+    sw: './src/sw.js'
   },
 
   output: {
@@ -69,6 +68,9 @@ const commonConfig = {
         'NODE_ENV',
         'API',
         'APP_MODE',
+        'FILE_SERVER_URL',
+        'COMMIT_REF',
+        'DISABLE_CACHE',
       ]),
     })
   ],
