@@ -21,7 +21,8 @@ import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryC
 import Ant.Internals.Typography exposing (textColorRgba)
 import Css exposing (..)
 import Css.Animations as CA exposing (keyframes)
-import Css.Transitions exposing (cubicBezier, transition)
+import Css.Global as CG
+import Css.Transitions exposing (transition)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
 import Html.Styled.Attributes as A exposing (css)
@@ -175,7 +176,6 @@ toHtml (Button options label) =
                 , bottom (px 0)
                 , borderRadius (px 5)
                 , backgroundColor color
-                , transition [ clickTransition ]
                 , zIndex (int -1)
                 , animationName animation
                 , animationDuration (sec 2)
@@ -183,9 +183,6 @@ toHtml (Button options label) =
                 , property "animation-fill-mode" "forwards"
                 , animationIterationCount (int 1)
                 ]
-
-        clickTransition =
-            Css.Transitions.transform3 2000 2000 <| cubicBezier 0.08 0.82 0.17 1
 
         antButtonBoxShadow =
             Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
@@ -206,6 +203,7 @@ toHtml (Button options label) =
             , backgroundColor (hex "#fff")
             , borderColor <| rgb 217 217 217
             , antButtonBoxShadow
+            , CG.withClass "animated-before" <| [ animatedBefore (hex primaryColor) ]
             , focus
                 [ borderColor (hex primaryColorFaded)
                 , color (hex primaryColorFaded)
@@ -217,7 +215,6 @@ toHtml (Button options label) =
             , active
                 [ borderColor (hex primaryColor)
                 , color (hex primaryColor)
-                , animatedBefore (hex primaryColorFaded)
                 ]
             , transition
                 [ Css.Transitions.borderColor transitionDuration
@@ -232,6 +229,7 @@ toHtml (Button options label) =
             , backgroundColor (hex primaryColor)
             , borderColor (hex primaryColor)
             , antButtonBoxShadow
+            , CG.withClass "animated-before" <| [ animatedBefore (hex primaryColor) ]
             , focus
                 [ backgroundColor (hex primaryColorFaded)
                 , borderColor (hex primaryColorFaded)
@@ -243,7 +241,6 @@ toHtml (Button options label) =
             , active
                 [ backgroundColor (hex primaryColorStrong)
                 , borderColor (hex primaryColorStrong)
-                , animatedBefore (hex primaryColor)
                 ]
             , transition
                 [ Css.Transitions.backgroundColor transitionDuration
@@ -252,7 +249,11 @@ toHtml (Button options label) =
             ]
 
         dashedButtonAttributes =
-            defaultButtonAttributes ++ [ borderStyle dashed, antButtonBoxShadow ]
+            defaultButtonAttributes
+                ++ [ borderStyle dashed
+                   , antButtonBoxShadow
+                   , CG.withClass "animated-before" <| [ animatedBefore (hex primaryColor) ]
+                   ]
 
         textButtonAttributes =
             [ color textColor
@@ -334,10 +335,10 @@ toHtml (Button options label) =
         attributes =
             case options.onClick of
                 Just msg ->
-                    [ A.disabled options.disabled, Events.onClick msg, css <| cursorHoverStyles :: combinedButtonStyles ]
+                    [ A.class "animated-btn", A.disabled options.disabled, Events.onClick msg, css <| cursorHoverStyles :: combinedButtonStyles ]
 
                 Nothing ->
-                    [ A.disabled options.disabled, css <| cursorHoverStyles :: combinedButtonStyles ]
+                    [ A.class "animated-btn", A.disabled options.disabled, css <| cursorHoverStyles :: combinedButtonStyles ]
     in
     toUnstyled
         (H.button
