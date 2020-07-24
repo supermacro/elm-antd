@@ -155,11 +155,11 @@ toHtml (Button options label) =
         transitionDuration =
             350
 
-        animation =
+        waveEffect =
             keyframes
-                [ ( 50, [ CA.property "transform" "scale(1.1, 1.3)", CA.property "opacity" "0" ] )
-                , ( 99, [ CA.property "transform" "scale(0.001, 0.001)", CA.property "opacity" "0" ] )
-                , ( 100, [ CA.property "transform" "scale(0.001, 0.001)", CA.property "opacity" "1" ] )
+                [ ( 100, [ CA.property "box-shadow" <| "0 0 0 " ++ primaryColorStrong ] )
+                , ( 100, [ CA.property "box-shadow" <| "0 0 0 8px " ++ primaryColorStrong ] )
+                , ( 100, [ CA.property "opacity" "0" ] )
                 ]
 
         animatedBefore : ColorValue compatible -> Style
@@ -174,15 +174,20 @@ toHtml (Button options label) =
                 , left (px 0)
                 , top (px 0)
                 , bottom (px 0)
-                , borderRadius (px 5)
+                , borderRadius (px 2)
                 , backgroundColor color
+                , boxShadow4 (px 0) (px 0) (px 0) (hex primaryColor)
+                , opacity (num 0.2)
                 , zIndex (int -1)
-                , animationName animation
+                , animationName waveEffect
                 , animationDuration (sec 2)
                 , property "animation-timing-function" "cubic-bezier(0.08, 0.82, 0.17, 1)"
                 , property "animation-fill-mode" "forwards"
-                , animationIterationCount (int 1)
+                , pointerEvents none
                 ]
+
+        animationStyle =
+            CG.withClass "animated-before" <| [ position relative, animatedBefore (hex primaryColorStrong) ]
 
         antButtonBoxShadow =
             Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
@@ -197,13 +202,12 @@ toHtml (Button options label) =
             ]
 
         defaultButtonAttributes =
-            [ position relative
-            , color textColor
+            [ color textColor
             , borderStyle solid
             , backgroundColor (hex "#fff")
             , borderColor <| rgb 217 217 217
             , antButtonBoxShadow
-            , CG.withClass "animated-before" <| [ animatedBefore (hex primaryColor) ]
+            , animationStyle
             , focus
                 [ borderColor (hex primaryColorFaded)
                 , color (hex primaryColorFaded)
@@ -223,13 +227,12 @@ toHtml (Button options label) =
             ]
 
         primaryButtonAttributes =
-            [ position relative
-            , color (hex "#fff")
+            [ color (hex "#fff")
             , borderStyle solid
             , backgroundColor (hex primaryColor)
             , borderColor (hex primaryColor)
             , antButtonBoxShadow
-            , CG.withClass "animated-before" <| [ animatedBefore (hex primaryColor) ]
+            , animationStyle
             , focus
                 [ backgroundColor (hex primaryColorFaded)
                 , borderColor (hex primaryColorFaded)
@@ -252,7 +255,7 @@ toHtml (Button options label) =
             defaultButtonAttributes
                 ++ [ borderStyle dashed
                    , antButtonBoxShadow
-                   , CG.withClass "animated-before" <| [ animatedBefore (hex primaryColor) ]
+                   , animationStyle
                    ]
 
         textButtonAttributes =
