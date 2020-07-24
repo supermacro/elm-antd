@@ -7,7 +7,6 @@ let timeout = null;
 
 buttons.forEach((btn) => {
 	btn.addEventListener('mousedown', function (e) {
-		console.log('mousedown');
 		if (timeout) {
 			clearTimeout(timeout);
 		}
