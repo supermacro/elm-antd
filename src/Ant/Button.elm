@@ -180,14 +180,14 @@ toHtml (Button options label) =
                 , opacity (num 0.2)
                 , zIndex (int -1)
                 , animationName waveEffect
-                , animationDuration (sec 2)
+                , animationDuration (sec 1.5)
                 , property "animation-timing-function" "cubic-bezier(0.08, 0.82, 0.17, 1)"
                 , property "animation-fill-mode" "forwards"
                 , pointerEvents none
                 ]
 
         animationStyle =
-            CG.withClass "animated-before" <| [ position relative, animatedBefore (hex primaryColorStrong) ]
+            CG.withClass "elm-antd__animated_before" <| [ position relative, animatedBefore (hex primaryColorStrong) ]
 
         antButtonBoxShadow =
             Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
@@ -338,10 +338,10 @@ toHtml (Button options label) =
         attributes =
             case options.onClick of
                 Just msg ->
-                    [ A.class "animated-btn", A.disabled options.disabled, Events.onClick msg, css <| cursorHoverStyles :: combinedButtonStyles ]
+                    [ A.class "elm-antd__animated_btn", A.disabled options.disabled, Events.onClick msg, css <| cursorHoverStyles :: combinedButtonStyles ]
 
                 Nothing ->
-                    [ A.class "animated-btn", A.disabled options.disabled, css <| cursorHoverStyles :: combinedButtonStyles ]
+                    [ A.class "elm-antd__animated_btn", A.disabled options.disabled, css <| cursorHoverStyles :: combinedButtonStyles ]
     in
     toUnstyled
         (H.button

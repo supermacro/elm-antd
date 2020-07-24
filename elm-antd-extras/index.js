@@ -1,10 +1,23 @@
-const buttons = document.querySelectorAll('.animated-btn');
+const animatedButtonClassName = '.elm-antd__animated_btn';
+const animatedBeforeClassName = 'elm-antd__animated_before';
 
-buttons.forEach(btn => {
-  btn.addEventListener('mouseup', function (e) {
-    btn.classList.add('animated-before');
-    setTimeout(() => {
-      btn.classList.remove('animated-before')
-    }, 2000);
-  })
+const buttons = document.querySelectorAll(animatedButtonClassName);
+
+let timeout = null;
+
+buttons.forEach((btn) => {
+	btn.addEventListener('mousedown', function (e) {
+		console.log('mousedown');
+		if (timeout) {
+			clearTimeout(timeout);
+		}
+		btn.classList.remove(animatedBeforeClassName);
+	});
+
+	btn.addEventListener('mouseup', function (e) {
+		btn.classList.add(animatedBeforeClassName);
+		timeout = setTimeout(() => {
+			btn.classList.remove(animatedBeforeClassName);
+		}, 1500);
+	});
 });
