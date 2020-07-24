@@ -336,12 +336,19 @@ toHtml (Button options label) =
                 hover [ cursor pointer ]
 
         attributes =
+            let
+                commonAttributes =
+                    [ A.class "elm-antd__animated_btn"
+                    , A.disabled options.disabled
+                    , css <| cursorHoverStyles :: combinedButtonStyles
+                    ]
+            in
             case options.onClick of
                 Just msg ->
-                    [ A.class "elm-antd__animated_btn", A.disabled options.disabled, Events.onClick msg, css <| cursorHoverStyles :: combinedButtonStyles ]
+                    Events.onClick msg :: commonAttributes
 
                 Nothing ->
-                    [ A.class "elm-antd__animated_btn", A.disabled options.disabled, css <| cursorHoverStyles :: combinedButtonStyles ]
+                    commonAttributes
     in
     toUnstyled
         (H.button
