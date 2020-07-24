@@ -5,6 +5,6 @@ buttons.forEach(btn => {
     btn.classList.add('animated-before');
     setTimeout(() => {
       btn.classList.remove('animated-before')
-    }, 1000);
+    }, 2000);
   })
 });
