@@ -25,10 +25,11 @@ const commonConfig = {
   mode: IS_PROD
     ? 'production'
     : 'development',
-  
+
   entry: {
     app: './src/index.js',
-    sw: './src/sw.js'
+    sw: './src/sw.js',
+    extra: '../elm-antd-extras'
   },
 
   output: {
@@ -83,8 +84,8 @@ const developmentConfig = {
     historyApiFallback: true
   },
 }
-  
-  
+
+
 module.exports = IS_DEVELOPMENT
   ? { ...commonConfig, ...developmentConfig }
   : commonConfig;

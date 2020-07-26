@@ -20,6 +20,8 @@ module Ant.Button exposing
 import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
 import Ant.Internals.Typography exposing (textColorRgba)
 import Css exposing (..)
+import Css.Animations as CA exposing (keyframes)
+import Css.Global as CG
 import Css.Transitions exposing (transition)
 import Html exposing (Html)
 import Html.Styled as H exposing (text, toUnstyled)
@@ -153,6 +155,40 @@ toHtml (Button options label) =
         transitionDuration =
             350
 
+        waveEffect =
+            keyframes
+                [ ( 100, [ CA.property "box-shadow" <| "0 0 0 " ++ primaryColorStrong ] )
+                , ( 100, [ CA.property "box-shadow" <| "0 0 0 8px " ++ primaryColorStrong ] )
+                , ( 100, [ CA.property "opacity" "0" ] )
+                ]
+
+        animatedBefore : ColorValue compatible -> Style
+        animatedBefore color =
+            before
+                [ property "content" "\" \""
+                , display block
+                , position absolute
+                , width (pct 100)
+                , height (pct 100)
+                , right (px 0)
+                , left (px 0)
+                , top (px 0)
+                , bottom (px 0)
+                , borderRadius (px 2)
+                , backgroundColor color
+                , boxShadow4 (px 0) (px 0) (px 0) (hex primaryColor)
+                , opacity (num 0.2)
+                , zIndex (int -1)
+                , animationName waveEffect
+                , animationDuration (sec 1.5)
+                , property "animation-timing-function" "cubic-bezier(0.08, 0.82, 0.17, 1)"
+                , property "animation-fill-mode" "forwards"
+                , pointerEvents none
+                ]
+
+        animationStyle =
+            CG.withClass "elm-antd__animated_before" <| [ position relative, animatedBefore (hex primaryColorStrong) ]
+
         antButtonBoxShadow =
             Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
 
@@ -171,6 +207,7 @@ toHtml (Button options label) =
             , backgroundColor (hex "#fff")
             , borderColor <| rgb 217 217 217
             , antButtonBoxShadow
+            , animationStyle
             , focus
                 [ borderColor (hex primaryColorFaded)
                 , color (hex primaryColorFaded)
@@ -195,6 +232,7 @@ toHtml (Button options label) =
             , backgroundColor (hex primaryColor)
             , borderColor (hex primaryColor)
             , antButtonBoxShadow
+            , animationStyle
             , focus
                 [ backgroundColor (hex primaryColorFaded)
                 , borderColor (hex primaryColorFaded)
@@ -214,7 +252,11 @@ toHtml (Button options label) =
             ]
 
         dashedButtonAttributes =
-            defaultButtonAttributes ++ [ borderStyle dashed, antButtonBoxShadow ]
+            defaultButtonAttributes
+                ++ [ borderStyle dashed
+                   , antButtonBoxShadow
+                   , animationStyle
+                   ]
 
         textButtonAttributes =
             [ color textColor
@@ -294,12 +336,19 @@ toHtml (Button options label) =
                 hover [ cursor pointer ]
 
         attributes =
+            let
+                commonAttributes =
+                    [ A.class "elm-antd__animated_btn"
+                    , A.disabled options.disabled
+                    , css <| cursorHoverStyles :: combinedButtonStyles
+                    ]
+            in
             case options.onClick of
                 Just msg ->
-                    [ A.disabled options.disabled, Events.onClick msg, css <| cursorHoverStyles :: combinedButtonStyles ]
+                    Events.onClick msg :: commonAttributes
 
                 Nothing ->
-                    [ A.disabled options.disabled, css <| cursorHoverStyles :: combinedButtonStyles ]
+                    commonAttributes
     in
     toUnstyled
         (H.button
