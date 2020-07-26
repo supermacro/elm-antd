@@ -23,6 +23,20 @@ Styled entirely using `elm-css`! No external stylesheet needed. Just `elm instal
 elm install supermacro/elm-antd
 ```
 
+#### [Optional] - Add Extra animations
+
+There are additional animations you can add to your `elm-antd` project by adding JS event handlers to your app.
+
+You can add them in one of two ways:
+
+- Add the following `script` tag to the `head` of your html file:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/elm-antd-extras@1.0.0/index.js"></script>
+```
+
+- install `elm-antd-extras` npm package and use a bundling tool like webpack, gulp, etc in order to include the code into your html file
+
 ## Contributing
 
 Want to help out?
