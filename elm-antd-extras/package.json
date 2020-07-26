@@ -1,0 +1,19 @@
+{
+  "name": "elm-antd-extras",
+  "version": "1.0.0",
+  "description": "Extra, and optional, functionality for elm-antd components",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/supermacro/elm-antd.git"
+  },
+  "author": "Giorgio Delgado",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/supermacro/elm-antd/issues"
+  },
+  "homepage": "https://github.com/supermacro/elm-antd#readme"
+}
