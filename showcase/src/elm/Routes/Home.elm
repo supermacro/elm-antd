@@ -28,7 +28,7 @@ homePage =
             , internalLink "/components/input" "Input"
             , link "https://github.com/supermacro/elm-antd/issues/26" "Icon"
             , link "https://github.com/supermacro/elm-antd/issues/23" "Layout"
-            , link "https://github.com/supermacro/elm-antd/issues/25" "Menu"
+            , internalLink "/components/menu" "Menu"
             , link "https://github.com/supermacro/elm-antd/issues/24" "Space"
             ]
         , documentationSubheading WithoutAnchorLink "Early Development Notice"

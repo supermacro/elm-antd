@@ -8,3 +8,4 @@ showcase/dist/
 showcase/elm-stuff/
 showcase/node_modules/
 file-server/node_modules/
+showcase/.vscode/settings.json

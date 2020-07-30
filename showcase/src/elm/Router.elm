@@ -36,6 +36,7 @@ import Html.Styled.Attributes exposing (alt, css, href, src)
 import Http
 import Routes.ButtonComponent as ButtonPage
 import Routes.DividerComponent as DividerPage
+import Routes.MenuComponent as MenuPage
 import Routes.Home exposing (homePage)
 import Routes.InputComponent as InputPage
 import Routes.NotFound exposing (notFound)
@@ -76,6 +77,7 @@ type alias Model =
     , fileServerUrl : String
     , buttonPageModel : ButtonPage.Model
     , dividerPageModel : DividerPage.Model
+    , menuPageModel : MenuPage.Model
     , typographyPageModel : TypographyPage.Model
     , tooltipPageModel : TooltipPage.Model
     , inputPageModel : InputPage.Model
@@ -91,6 +93,7 @@ type Msg
     | MenuItemClicked Href
     | ButtonPageMessage ButtonPage.Msg
     | DividerPageMessage DividerPage.Msg
+    | MenuPageMessage MenuPage.Msg
     | InputPageMessage InputPage.Msg
     | TooltipPageMessage TooltipPage.Msg
     | TypographyPageMessage TypographyPage.Msg
@@ -197,6 +200,10 @@ componentList =
             DividerPage.route.view model.dividerPageModel
                 |> Styled.map DividerPageMessage
 
+        menuPageView model =
+            MenuPage.route.view model.menuPageModel
+                |> Styled.map MenuPageMessage
+
         typographyPageView model =
             TypographyPage.route.view model.typographyPageModel
                 |> Styled.map TypographyPageMessage
@@ -220,6 +227,12 @@ componentList =
       , view = dividerPageView
       , saveExampleSourceCode =
             triggerSaveExampleSourceCode DividerPageMessage DividerPage.route.saveExampleSourceCodeToModel
+      }
+    , { route = MenuPage.route.title
+      , category = MenuPage.route.category
+      , view = menuPageView
+      , saveExampleSourceCode =
+            triggerSaveExampleSourceCode MenuPageMessage MenuPage.route.saveExampleSourceCodeToModel
       }
     , { route = InputPage.route.title
       , category = InputPage.route.category
@@ -323,6 +336,7 @@ init url { commitHash, fileServerUrl } =
             , fileServerUrl = fileServerUrl
             , buttonPageModel = ButtonPage.route.initialModel
             , dividerPageModel = DividerPage.route.initialModel
+            , menuPageModel = MenuPage.route.initialModel
             , typographyPageModel = TypographyPage.route.initialModel
             , tooltipPageModel = TooltipPage.route.initialModel
             , inputPageModel = InputPage.route.initialModel
@@ -414,6 +428,15 @@ update navKey msg model =
               }
             , Cmd.map DividerPageMessage dividerPageCmd
             )
+
+        MenuPageMessage menuPageMsg ->
+            let
+                (menuPageModel, menuPageCmd ) =
+                    MenuPage.route.update menuPageMsg model.menuPageModel
+            in
+                ({ model
+                    | menuPageModel = menuPageModel }
+                , Cmd.map MenuPageMessage menuPageCmd )
 
         InputPageMessage inputPageMsg ->
             let
