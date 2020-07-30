@@ -1,4 +1,7 @@
-module Ant.Menu exposing (initMenuItem, selected, initMenu, initSubMenu, initItemGroup, pushItem, pushSubMenu, pushItemGroup, pushItemToSubMenu, pushItemGroupToSubMenu, pushSubMenuToSubMenu, pushItemToItemGroup, toHtml, Menu, SubMenu, ItemGroup, MenuMode(..))
+module Ant.Menu exposing
+    ( initMenuItem, selected, initMenu, initSubMenu, initItemGroup, pushItem, pushSubMenu, pushItemGroup, pushItemToSubMenu, pushItemGroupToSubMenu, pushSubMenuToSubMenu, pushItemToItemGroup, toHtml, Menu, SubMenu, ItemGroup, MenuMode(..)
+    , disabled, mode
+    )
 
 {-| Primitives for creating Menus.
 
@@ -66,6 +69,17 @@ selected (MenuItem msg currentState contents) =
     MenuItem msg newState contents
 
 
+{-| disable the menu item
+-}
+disabled : MenuItem msg -> MenuItem msg
+disabled (MenuItem msg currentState contents) =
+    let
+        newState =
+            { currentState | disabled = True }
+    in
+    MenuItem msg newState contents
+
+
 {-| This type defines how the menu will be positioned
 -}
 type MenuMode
@@ -110,6 +124,17 @@ type Menu msg
 initMenu : Menu msg
 initMenu =
     Menu defaultMenuConfig []
+
+
+{-| Change mode of the Menu
+-}
+mode : MenuMode -> Menu msg -> Menu msg
+mode newMode (Menu config contents) =
+    let
+        newConfig =
+            { config | mode = newMode }
+    in
+    Menu newConfig contents
 
 
 {-| push a menu item to the end of the menu

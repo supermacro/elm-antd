@@ -9,11 +9,17 @@ example : msg -> Html msg
 example msg =
   let
     menuItem1 =
-      Menu.initMenuItem msg <| text "Menu Item 1"
+      Menu.initMenuItem msg <| text "Navigation One"
+
+    menuItem2 =
+      Menu.initMenuItem msg (text "Navigation Two")
+        |> Menu.disabled
 
     horizontalExample =
       Menu.initMenu
         |> Menu.pushItem menuItem1
+        |> Menu.pushItem menuItem2
+        |> Menu.mode Menu.Horizontal
         |> Menu.toHtml
   in
     div []
