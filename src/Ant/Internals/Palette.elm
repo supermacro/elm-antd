@@ -1,5 +1,6 @@
 module Ant.Internals.Palette exposing
-    ( dangerColor
+    ( black
+    , dangerColor
     , primaryColor
     , primaryColorFaded
     , primaryColorStrong
@@ -30,3 +31,8 @@ warningColor =
 dangerColor : String
 dangerColor =
     "#ff4d4f"
+
+
+black : String
+black =
+    "#000000"
