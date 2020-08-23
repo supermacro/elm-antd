@@ -20,7 +20,7 @@ A good example can be found in this project's [showcase](https://github.com/supe
 
 -}
 
-import Ant.Internals.Palette exposing (primaryColor)
+import Ant.Internals.Palette exposing (black, primaryColor)
 import Ant.Internals.Typography exposing (fontList, textColorRgba)
 import Ant.Typography.Text as Text
 import Css exposing (..)
@@ -264,15 +264,23 @@ menuItemColor =
     color (rgba r g b a)
 
 
-viewMenuItem : MenuItem msg -> Styled.Html msg
-viewMenuItem (MenuItem msg state itemContents) =
+viewMenuItem : MenuConfig -> MenuItem msg -> Styled.Html msg
+viewMenuItem menuConfig (MenuItem msg state itemContents) =
     let
+        borderStyle =
+            case menuConfig.mode of
+                Horizontal ->
+                    borderBottom3 (px 3) solid (hex primaryColor)
+
+                _ ->
+                    borderRight3 (px 3) solid (hex primaryColor)
+
         selectedItemStyles =
             if state.selected then
                 batch
                     [ color (hex primaryColor)
                     , backgroundColor (hex "#e6f7ff")
-                    , borderRight3 (px 3) solid (hex primaryColor)
+                    , borderStyle
                     ]
 
             else
@@ -281,11 +289,26 @@ viewMenuItem (MenuItem msg state itemContents) =
                     , hover
                         [ color (hex primaryColor) ]
                     ]
+
+        disabledItemStyles =
+            if state.disabled then
+                batch
+                    [ cursor notAllowed
+                    , color (hex black)
+                    , opacity <| num 0.25
+                    , hover [ color (hex black) ] -- to override the hover styles set in selectedItemStyles
+                    ]
+
+            else
+                batch
+                    [ cursor pointer
+                    ]
     in
     Styled.li
         [ onClick msg
         , css
             [ selectedItemStyles
+            , disabledItemStyles
             , fontFamilies fontList
             , fontSize (px 14)
             , paddingLeft (px 40)
@@ -294,14 +317,13 @@ viewMenuItem (MenuItem msg state itemContents) =
             , marginBottom (px 8)
             , lineHeight (px 40)
             , transition [ Css.Transitions.color 250 ]
-            , cursor pointer
             ]
         ]
         [ fromUnstyled itemContents ]
 
 
-viewItemGroup : ItemGroup msg -> Styled.Html msg
-viewItemGroup (ItemGroup title menuItems) =
+viewItemGroup : MenuConfig -> ItemGroup msg -> Styled.Html msg
+viewItemGroup menuConfig (ItemGroup title menuItems) =
     let
         itemGroupLabel =
             fromUnstyled
@@ -317,49 +339,62 @@ viewItemGroup (ItemGroup title menuItems) =
             ]
             [ itemGroupLabel ]
         , Styled.ul [] <|
-            List.map viewMenuItem menuItems
+            List.map (viewMenuItem menuConfig) menuItems
         ]
 
 
-viewSubMenuContent : SubMenuContent msg -> Styled.Html msg
-viewSubMenuContent subMenuContent =
+viewSubMenuContent : MenuConfig -> SubMenuContent msg -> Styled.Html msg
+viewSubMenuContent menuConfig subMenuContent =
     case subMenuContent of
         SubMenuItem menuItem ->
-            viewMenuItem menuItem
+            viewMenuItem menuConfig menuItem
 
         SubMenuGroup itemGroup ->
-            viewItemGroup itemGroup
+            viewItemGroup menuConfig itemGroup
 
         NestedSubMenu subMenu ->
-            viewSubMenu subMenu
+            viewSubMenu menuConfig subMenu
 
 
-viewSubMenu : SubMenu msg -> Styled.Html msg
-viewSubMenu (SubMenu _ subMenuContentList) =
+viewSubMenu : MenuConfig -> SubMenu msg -> Styled.Html msg
+viewSubMenu menuConfig (SubMenu _ subMenuContentList) =
     Styled.li []
         [ Styled.ul [] <|
-            List.map viewSubMenuContent subMenuContentList
+            List.map (viewSubMenuContent menuConfig) subMenuContentList
         ]
 
 
-viewMenuContent : MenuContent msg -> Styled.Html msg
-viewMenuContent menuContent =
+viewMenuContent : MenuConfig -> MenuContent msg -> Styled.Html msg
+viewMenuContent menuConfig menuContent =
     case menuContent of
         Item menuItem ->
-            viewMenuItem menuItem
+            viewMenuItem menuConfig menuItem
 
         Sub subMenu ->
-            viewSubMenu subMenu
+            viewSubMenu menuConfig subMenu
 
         Group itemGroup ->
-            viewItemGroup itemGroup
+            viewItemGroup menuConfig itemGroup
 
 
 {-| Turn your Menu into a `Html msg`
 -}
 toHtml : Menu msg -> Html msg
-toHtml (Menu _ menuContents) =
+toHtml (Menu state menuContents) =
+    let
+        modeStyles =
+            case state.mode of
+                Horizontal ->
+                    [ style "display" "flex" ]
+
+                _ ->
+                    [ style "display" "flex"
+                    , style "flex-direction" "column"
+                    ]
+    in
     ul
-        [ style "border-right" "1px solid #f0f0f0"
-        ]
-        (List.map (toUnstyled << viewMenuContent) menuContents)
+        (modeStyles
+            ++ [ style "border-right" "1px solid #f0f0f0"
+               ]
+        )
+        (List.map (toUnstyled << viewMenuContent state) menuContents)
