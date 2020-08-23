@@ -5,22 +5,24 @@ import Ant.Space exposing (SpaceDirection(..))
 import Html exposing (Html, div, span, text)
 import Html.Attributes exposing (style)
 
+
 example : msg -> Html msg
 example msg =
-  let
-    menuItem1 =
-      Menu.initMenuItem msg <| text "Navigation One"
+    let
+        menuItem1 =
+            Menu.initMenuItem msg (text "Navigation One")
+                |> Menu.selected
 
-    menuItem2 =
-      Menu.initMenuItem msg (text "Navigation Two")
-        |> Menu.disabled
+        menuItem2 =
+            Menu.initMenuItem msg (text "Navigation Two")
+                |> Menu.disabled
 
-    horizontalExample =
-      Menu.initMenu
-        |> Menu.pushItem menuItem1
-        |> Menu.pushItem menuItem2
-        |> Menu.mode Menu.Horizontal
-        |> Menu.toHtml
-  in
+        horizontalExample =
+            Menu.initMenu
+                |> Menu.pushItem menuItem1
+                |> Menu.pushItem menuItem2
+                |> Menu.mode Menu.Horizontal
+                |> Menu.toHtml
+    in
     div []
-      [ horizontalExample ]
+        [ horizontalExample ]
