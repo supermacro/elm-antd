@@ -1,6 +1,6 @@
 module Ant.Menu exposing
     ( initMenuItem, selected, initMenu, initSubMenu, initItemGroup, pushItem, pushSubMenu, pushItemGroup, pushItemToSubMenu, pushItemGroupToSubMenu, pushSubMenuToSubMenu, pushItemToItemGroup, toHtml, Menu, SubMenu, ItemGroup, MenuMode(..)
-    , disabled, mode
+    , defaultSubMenuState, disabled, mode
     )
 
 {-| Primitives for creating Menus.
@@ -193,9 +193,9 @@ type SubMenu msg
 
 {-| Create an empty nested menu
 -}
-initSubMenu : SubMenu msg
-initSubMenu =
-    SubMenu defaultSubMenuState []
+initSubMenu : SubMenuState -> SubMenu msg
+initSubMenu state =
+    SubMenu state []
 
 
 {-| Push a MenuItem to the end of the SubMenu
@@ -264,6 +264,19 @@ menuItemColor =
     color (rgba r g b a)
 
 
+menuItemStyles : List Style
+menuItemStyles =
+    [ fontFamilies fontList
+    , fontSize (px 14)
+    , paddingLeft (px 40)
+    , paddingRight (px 16)
+    , marginTop (px 4)
+    , marginBottom (px 8)
+    , lineHeight (px 40)
+    , transition [ Css.Transitions.color 250 ]
+    ]
+
+
 viewMenuItem : MenuConfig -> MenuItem msg -> Styled.Html msg
 viewMenuItem menuConfig (MenuItem msg state itemContents) =
     let
@@ -307,17 +320,11 @@ viewMenuItem menuConfig (MenuItem msg state itemContents) =
     Styled.li
         [ onClick msg
         , css
-            [ selectedItemStyles
-            , disabledItemStyles
-            , fontFamilies fontList
-            , fontSize (px 14)
-            , paddingLeft (px 40)
-            , paddingRight (px 16)
-            , marginTop (px 4)
-            , marginBottom (px 8)
-            , lineHeight (px 40)
-            , transition [ Css.Transitions.color 250 ]
-            ]
+            ([ selectedItemStyles
+             , disabledItemStyles
+             ]
+                ++ menuItemStyles
+            )
         ]
         [ fromUnstyled itemContents ]
 
@@ -357,10 +364,30 @@ viewSubMenuContent menuConfig subMenuContent =
 
 
 viewSubMenu : MenuConfig -> SubMenu msg -> Styled.Html msg
-viewSubMenu menuConfig (SubMenu _ subMenuContentList) =
-    Styled.li []
-        [ Styled.ul [] <|
-            List.map (viewSubMenuContent menuConfig) subMenuContentList
+viewSubMenu menuConfig (SubMenu state subMenuContentList) =
+    let
+        items =
+            if state.opened then
+                List.map (viewSubMenuContent menuConfig) subMenuContentList
+
+            else
+                []
+
+        title =
+            Maybe.withDefault "" state.title
+    in
+    Styled.li
+        []
+        [ Styled.li
+            [ css <|
+                menuItemStyles
+                    ++ [ menuItemColor
+                       , hover [ color (hex primaryColor), cursor pointer ]
+                       ]
+            ]
+            [ fromUnstyled <| text title ]
+        , Styled.ul [] <|
+            items
         ]
 
 
