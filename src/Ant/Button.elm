@@ -1,6 +1,6 @@
 module Ant.Button exposing
     ( Button
-    , button, onClick, ButtonType(..), withType, ButtonSize(..), disabled
+    , button, onClick, ButtonType(..), withType, withIcon, ButtonSize(..), disabled
     , toHtml
     )
 
@@ -11,12 +11,13 @@ module Ant.Button exposing
 
 # Customizing the Button
 
-@docs button, onClick, ButtonType, withType, ButtonSize, disabled
+@docs button, onClick, ButtonType, withType, withIcon, ButtonSize, disabled
 
 @docs toHtml
 
 -}
 
+import Ant.Icons as Icon exposing (Icon)
 import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
 import Ant.Internals.Typography exposing (textColorRgba)
 import Css exposing (..)
@@ -24,7 +25,7 @@ import Css.Animations as CA exposing (keyframes)
 import Css.Global as CG
 import Css.Transitions exposing (transition)
 import Html exposing (Html)
-import Html.Styled as H exposing (text, toUnstyled)
+import Html.Styled as H exposing (fromUnstyled, text, toUnstyled)
 import Html.Styled.Attributes as A exposing (css)
 import Html.Styled.Events as Events
 
@@ -54,8 +55,8 @@ type alias Options msg =
     , loading : Bool
     , href : Maybe String
     , onClick : Maybe msg
+    , icon : Maybe (Icon msg)
 
-    -- icon : Icon
     -- size : Size (Small, Medium, Large)
     -- etc etc
     }
@@ -69,6 +70,7 @@ defaultOptions =
     , loading = False
     , href = Nothing
     , onClick = Nothing
+    , icon = Nothing
     }
 
 
@@ -101,6 +103,22 @@ withType buttonType (Button options label) =
     let
         newOptions =
             { options | type_ = buttonType }
+    in
+    Button newOptions label
+
+
+{-| Add an icon to the button
+
+    button "Search"
+        |> withIcon searchOutlined
+        |> toHtml
+
+-}
+withIcon : Icon msg -> Button msg -> Button msg
+withIcon icon (Button options label) =
+    let
+        newOptions =
+            { options | icon = Just icon }
     in
     Button newOptions label
 
@@ -145,6 +163,13 @@ textColor =
             textColorRgba
     in
     rgba r g b a
+
+
+iconToHtml : Icon msg -> H.Html msg
+iconToHtml icon =
+    icon
+        |> Icon.toHtml
+        |> fromUnstyled
 
 
 {-| Turn your Button into Html msg
@@ -197,7 +222,7 @@ toHtml (Button options label) =
             , padding2 (px 4) (px 15)
             , borderWidth (px 1)
             , fontSize (px 14)
-            , height (px 34)
+            , height (px 30)
             , outline none
             ]
 
@@ -349,9 +374,26 @@ toHtml (Button options label) =
 
                 Nothing ->
                     commonAttributes
+
+        iconContent =
+            case options.icon of
+                Nothing ->
+                    H.span [] []
+
+                Just icon ->
+                    H.span
+                        [ css
+                            [ marginRight (px 8)
+                            , position relative
+                            , top (px 2)
+                            ]
+                        ]
+                        [ iconToHtml icon ]
     in
     toUnstyled
         (H.button
             attributes
-            [ H.span [] [ text label ] ]
+            [ iconContent
+            , H.span [] [ text label ]
+            ]
         )

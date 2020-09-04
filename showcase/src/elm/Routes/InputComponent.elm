@@ -100,5 +100,7 @@ view model =
             ]
         , documentationSubheading Typography.WithoutAnchorLink "Examples"
         , div []
-            [ div [ css [ maxWidth (pct 45) ] ] [ basicExample model ], div [] [] ]
+            [ div [ css [ maxWidth (pct 45) ] ] [ basicExample model ]
+            , div [] []
+            ]
         ]

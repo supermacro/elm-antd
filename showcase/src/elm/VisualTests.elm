@@ -12,6 +12,7 @@ Given a `component` query param, render the associated component
 
 import Ant.Button as Btn exposing (ButtonType(..), button)
 import Ant.Divider as Divider
+import Ant.Icons as Icons exposing (Icon, searchOutlined)
 import Ant.Input as Input exposing (InputSize)
 import Ant.Typography as Heading exposing (Level(..), title)
 import Browser
@@ -52,6 +53,7 @@ main =
 type alias ButtonConfig =
     { type_ : ButtonType
     , disabled : Bool
+    , icon : Maybe (Icon Never)
     }
 
 
@@ -88,12 +90,14 @@ type RawComponent
 -}
 registeredComponents : List ( String, Component )
 registeredComponents =
-    [ ( "SimpleButton", Button { type_ = Default, disabled = False } )
-    , ( "PrimaryButton", Button { type_ = Primary, disabled = False } )
-    , ( "DashedButton", Button { type_ = Dashed, disabled = False } )
-    , ( "TextButton", Button { type_ = Text, disabled = False } )
-    , ( "LinkButton", Button { type_ = Link, disabled = False } )
-    , ( "DisabledPrimaryButton", Button { type_ = Primary, disabled = True } )
+    -- Buttons
+    [ ( "SimpleButton", Button { type_ = Default, disabled = False, icon = Nothing } )
+    , ( "PrimaryButton", Button { type_ = Primary, disabled = False, icon = Nothing } )
+    , ( "DashedButton", Button { type_ = Dashed, disabled = False, icon = Nothing } )
+    , ( "TextButton", Button { type_ = Text, disabled = False, icon = Nothing } )
+    , ( "LinkButton", Button { type_ = Link, disabled = False, icon = Nothing } )
+    , ( "DisabledPrimaryButton", Button { type_ = Primary, disabled = True, icon = Nothing } )
+    , ( "PrimaryButtonWithIcon", Button { type_ = Primary, disabled = False, icon = Just searchOutlined } )
 
     -- Inputs
     , ( "SimpleInput", Input { size = Input.Default } )
@@ -116,14 +120,18 @@ getRegisteredComponentFromLabel searchString =
 
 intoComponent : RawComponent -> Component
 intoComponent (RawComponent maybeStr) =
+    let
+        defaultComponent =
+            Button { type_ = Default, disabled = False, icon = Nothing }
+    in
     case maybeStr of
         Just componentQueryParamValue ->
             getRegisteredComponentFromLabel componentQueryParamValue
                 |> Maybe.map (\( _, component ) -> component)
-                |> Maybe.withDefault (Button { type_ = Default, disabled = False })
+                |> Maybe.withDefault defaultComponent
 
         Nothing ->
-            Button { type_ = Default, disabled = False }
+            defaultComponent
 
 
 componentParser : Parser (RawComponent -> a) a
@@ -180,10 +188,21 @@ buildComponent : Component -> Html msg
 buildComponent component =
     case component of
         Button buttonConfig ->
-            button "elm"
-                |> Btn.withType buttonConfig.type_
-                |> Btn.disabled buttonConfig.disabled
-                |> Btn.toHtml
+            let
+                baseButton =
+                    button "elm"
+                        |> Btn.withType buttonConfig.type_
+                        |> Btn.disabled buttonConfig.disabled
+            in
+            case buttonConfig.icon of
+                Nothing ->
+                    Btn.toHtml baseButton
+
+                Just icon ->
+                    baseButton
+                        |> Btn.withIcon icon
+                        |> Btn.toHtml
+                        |> Html.map never
 
         Typography typographyConfig ->
             title "elm"

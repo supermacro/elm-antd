@@ -12,7 +12,7 @@ module UI.Container exposing
     , view
     )
 
-import Ant.Icons as Icons
+import Ant.Icons as Icons exposing (Icon)
 import Ant.Tooltip as Tooltip exposing (tooltip)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
@@ -208,7 +208,7 @@ type alias EllieAppUrl =
 
 
 type alias IconContainerOptions msg =
-    { icon : List ( String, String ) -> Html msg
+    { icon : Icon msg
     , tooltipText : String
     , event : Either msg EllieAppUrl
     , extraStyles : List ( String, String )
@@ -235,7 +235,10 @@ iconContainer { icon, tooltipText, event, extraStyles } =
                 ]
 
         childNode =
-            [ fromUnstyled <| icon (extraStyles ++ commonIconStyles) ]
+            icon
+                |> Icons.withStyles (extraStyles ++ commonIconStyles)
+                |> Icons.toHtml
+                |> fromUnstyled
 
         bareIconContainer =
             case event of
@@ -244,7 +247,7 @@ iconContainer { icon, tooltipText, event, extraStyles } =
                         [ baseAttributes
                         , onClick msg
                         ]
-                        childNode
+                        [ childNode ]
 
                 Right ellieAppUrl ->
                     Styled.a
@@ -252,7 +255,7 @@ iconContainer { icon, tooltipText, event, extraStyles } =
                         , A.target "_blank"
                         , href ellieAppUrl
                         ]
-                        childNode
+                        [ childNode ]
     in
     tooltip tooltipText (toUnstyled bareIconContainer)
         |> Tooltip.toHtml
@@ -291,7 +294,7 @@ view model (Container opts children) =
                                 Icons.ellieLogo
                                 "Open in Ellie"
                                 (Right opts.meta.ellieDemo)
-                                [ ( "width", "12px" ) ]
+                                []
                         , iconContainer <|
                             IconContainerOptions
                                 Icons.copyToClipboard
