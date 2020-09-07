@@ -6,7 +6,7 @@ module Ant.Input exposing (input, InputSize(..), withSize, onInput, withPlacehol
 
 -}
 
-import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
+import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded)
 import Ant.Internals.Typography exposing (commonFontStyles, textColorRgba)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
