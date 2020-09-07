@@ -70,21 +70,17 @@ update msg model =
 basicExample : Model -> Styled.Html Msg
 basicExample model =
     let
-        styledTypeExampleContents =
-            fromUnstyled BasicExample.example
-
         metaInfo =
             { title = "Basic"
             , content = "The simplest usage."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styledTypeExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.basicExample
-        |> Styled.map (DemoBoxMsg Basic)
+    Container.createDemoBox
+        (DemoBoxMsg Basic)
+        model.basicExample
+        BasicExample.example
+        metaInfo
 
 
 view : Model -> Styled.Html Msg

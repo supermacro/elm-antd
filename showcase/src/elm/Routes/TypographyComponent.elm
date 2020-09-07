@@ -6,7 +6,7 @@ import Html.Styled as Styled exposing (br, div, fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Routes.TypographyComponent.BasicExample as BasicExample
 import Routes.TypographyComponent.TextExample as TextExample
-import Routes.TypographyComponent.TitleComponent as TitleComponentExample
+import Routes.TypographyComponent.TitleComponent as TitleExample
 import UI.Container as Container
 import UI.Typography exposing (SubHeadingOptions(..), documentationHeading, documentationSubheading, documentationText, documentationUnorderedList)
 import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
@@ -84,61 +84,49 @@ update msg model =
 basicExample : Model -> Styled.Html Msg
 basicExample model =
     let
-        styledBasicExampleContents =
-            fromUnstyled BasicExample.example
-
         metaInfo =
             { title = "Basic"
             , content = "A document sample"
             , ellieDemo = "https://ellie-app.com/9mHk3JkJXSza1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styledBasicExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.basicExample
-        |> Styled.map (DemoBoxMsg Basic)
+    Container.createDemoBox
+        (DemoBoxMsg Basic)
+        model.basicExample
+        BasicExample.example
+        metaInfo
 
 
 titleComponentExample : Model -> Styled.Html Msg
 titleComponentExample model =
     let
-        styledTitleExampleContents =
-            fromUnstyled TitleComponentExample.example
-
         metaInfo =
             { title = "Title Component"
             , content = "Display the various levels for titles"
             , ellieDemo = "https://ellie-app.com/9mHmQ7FdJsSa1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styledTitleExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.titleExample
-        |> Styled.map (DemoBoxMsg TitleComponent)
+    Container.createDemoBox
+        (DemoBoxMsg TitleComponent)
+        model.titleExample
+        TitleExample.example
+        metaInfo
 
 
 textComponentExample : Model -> Styled.Html Msg
 textComponentExample model =
     let
-        styledTextExampleContents =
-            fromUnstyled TextExample.example
-
         metaInfo =
             { title = "Text and Link Component"
             , content = "Provides multiple types of text and link."
             , ellieDemo = "https://ellie-app.com/9mHyDsVVZk6a1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styledTextExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.textExample
-        |> Styled.map (DemoBoxMsg TextComponent)
+    Container.createDemoBox
+        (DemoBoxMsg TextComponent)
+        model.textExample
+        TextExample.example
+        metaInfo
 
 
 view : Model -> Styled.Html Msg

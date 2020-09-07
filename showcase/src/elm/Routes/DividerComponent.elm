@@ -106,81 +106,65 @@ route =
 horizontalExample : Model -> Styled.Html Msg
 horizontalExample model =
     let
-        styledHorizontalExampleContents =
-            fromUnstyled HorizontalExample.example
-
         metaInfo =
             { title = "Horizontal"
             , content = "Divider is \"horizontal\" by default. You can add text within Divider."
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styledHorizontalExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.horizontalExample
-        |> Styled.map (DemoBoxMsg HorizontalExample)
+    Container.createDemoBox
+        (DemoBoxMsg HorizontalExample)
+        model.horizontalExample
+        HorizontalExample.example
+        metaInfo
 
 
 textWithoutHeadingExample : Model -> Styled.Html Msg
 textWithoutHeadingExample model =
     let
-        styleTextWithoutHeadingExampleContents =
-            fromUnstyled TextWithoutHeadingExample.example
-
         metaInfo =
             { title = "Text without heading style"
             , content = "You can use non-heading style of divider text by setting Plain textStyle"
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styleTextWithoutHeadingExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.textWithoutHeadingExample
-        |> Styled.map (DemoBoxMsg TextWithoutHeadingExample)
+    Container.createDemoBox
+        (DemoBoxMsg TextWithoutHeadingExample)
+        model.textWithoutHeadingExample
+        TextWithoutHeadingExample.example
+        metaInfo
 
 
 withTitleExample : Model -> Styled.Html Msg
 withTitleExample model =
     let
-        styleWithTitleExampleContents =
-            fromUnstyled WithTitleExample.example
-
         metaInfo =
             { title = "Divider with title"
             , content = "Divider with inner title, use \"withOrientation\" to align it."
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styleWithTitleExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.withTitleExample
-        |> Styled.map (DemoBoxMsg WithTitleExample)
+    Container.createDemoBox
+        (DemoBoxMsg WithTitleExample)
+        model.withTitleExample
+        WithTitleExample.example
+        metaInfo
 
 
 verticalExample : Model -> Styled.Html Msg
 verticalExample model =
     let
-        styleVerticalExampleContents =
-            fromUnstyled VerticalExample.example
-
         metaInfo =
             { title = "Vertical"
             , content = "Use \"withType Vertical\" make it vertical."
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styleVerticalExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.verticalExample
-        |> Styled.map (DemoBoxMsg VerticalExample)
+    Container.createDemoBox
+        (DemoBoxMsg VerticalExample)
+        model.verticalExample
+        VerticalExample.example
+        metaInfo
 
 
 view : Model -> Styled.Html Msg

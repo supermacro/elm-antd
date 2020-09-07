@@ -1,12 +1,8 @@
 module UI.Container exposing
     ( Model
     , Msg(..)
-    , demoBox
+    , createDemoBox
     , initModel
-    , paddingBottom
-    , paddingLeft
-    , paddingRight
-    , paddingTop
     , setSourceCode
     , update
     , view
@@ -59,6 +55,26 @@ initModel fileName =
     , sourceCode = Nothing
     , fileName = fileName
     }
+
+
+createDemoBox :
+    (Msg -> msg)
+    -> Model
+    -> Html a
+    -> ContainerMetaSection
+    -> Styled.Html msg
+createDemoBox tagger model demo metaInfo =
+    let
+        styledDemo =
+            fromUnstyled demo
+                |> Styled.map (\_ -> ContentMsg)
+
+        styledDemoContents =
+            div [ css [ displayFlex ] ] [ styledDemo ]
+    in
+    demoBox metaInfo styledDemoContents
+        |> view model
+        |> Styled.map tagger
 
 
 setSourceCode : List SourceCode -> Model -> Model

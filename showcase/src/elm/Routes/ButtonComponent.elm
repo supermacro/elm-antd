@@ -1,6 +1,7 @@
 module Routes.ButtonComponent exposing (Model, Msg, route)
 
 import Css exposing (displayFlex, marginRight, maxWidth, pct, px)
+import Html as H
 import Html.Styled as Styled exposing (div, fromUnstyled, span, text)
 import Html.Styled.Attributes exposing (css)
 import Routes.ButtonComponent.DisabledExample as DisabledExample
@@ -94,63 +95,49 @@ route =
 typeExample : Model -> Styled.Html Msg
 typeExample model =
     let
-        styledTypeExampleContents =
-            fromUnstyled TypeExample.example
-
         metaInfo =
             { title = "Type"
             , content = "There are \"primary\", \"default\", \"dashed\", \"text\" and \"link\" buttons in Elm Antd."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styledTypeExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.typeExample
-        |> Styled.map (DemoBoxMsg ButtonType)
+    Container.createDemoBox
+        (DemoBoxMsg ButtonType)
+        model.typeExample
+        TypeExample.example
+        metaInfo
 
 
 disabledExample : Model -> Styled.Html Msg
 disabledExample model =
     let
-        styledDisabledExampleContents =
-            fromUnstyled DisabledExample.example
-                |> Styled.map (\_ -> Container.ContentMsg)
-
         metaInfo =
             { title = "Disabled"
             , content = "You can disable any button"
             , ellieDemo = "https://ellie-app.com/9mjF8c8DLyTa1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styledDisabledExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.disabledExample
-        |> Styled.map (DemoBoxMsg DisabledButton)
+    Container.createDemoBox
+        (DemoBoxMsg DisabledButton)
+        model.disabledExample
+        DisabledExample.example
+        metaInfo
 
 
 iconExample : Model -> Styled.Html Msg
 iconExample model =
     let
-        styledIconExampleContents =
-            fromUnstyled IconExample.example
-                |> Styled.map (\_ -> Container.ContentMsg)
-
         metaInfo =
             { title = "Icon"
             , content = "Button components can contain an Icon"
             , ellieDemo = "https://ellie-app.com/9mjF8c8DLyTa1"
             }
-
-        styledDemoContents =
-            div [ css [ displayFlex ] ] [ styledIconExampleContents ]
     in
-    Container.demoBox metaInfo styledDemoContents
-        |> Container.view model.iconExample
-        |> Styled.map (DemoBoxMsg IconButton)
+    Container.createDemoBox
+        (DemoBoxMsg IconButton)
+        model.iconExample
+        IconExample.example
+        metaInfo
 
 
 view : Model -> Styled.Html Msg
