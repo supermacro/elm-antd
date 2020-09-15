@@ -1,4 +1,4 @@
-module Routes.ButtonComponent.IconExample exposing (example)
+module Routes.ButtonComponent.IconExample exposing (example, Msg)
 
 import Ant.Button exposing (Button, ButtonType(..), button, onClick, toHtml, withIcon, withType)
 import Ant.Icons as Icon exposing (searchOutlined)

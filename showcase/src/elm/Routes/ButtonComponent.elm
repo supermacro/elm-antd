@@ -2,7 +2,7 @@ module Routes.ButtonComponent exposing (Model, Msg, route)
 
 import Css exposing (displayFlex, marginRight, maxWidth, pct, px)
 import Html as H
-import Html.Styled as Styled exposing (div, fromUnstyled, span, text)
+import Html.Styled as Styled exposing (div, span, text)
 import Html.Styled.Attributes exposing (css)
 import Routes.ButtonComponent.DisabledExample as DisabledExample
 import Routes.ButtonComponent.IconExample as IconExample
@@ -20,52 +20,48 @@ import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 
 type alias Model =
-    { typeExample : Container.Model
-    , disabledExample : Container.Model
-    , iconExample : Container.Model
+    { typeExample : Container.Model () Never
+    , disabledExample : Container.Model () DisabledExample.Msg
+    , iconExample : Container.Model () IconExample.Msg
     }
 
 
 type DemoBox
-    = ButtonType
-    | DisabledButton
-    | IconButton
+    = ButtonType (Container.Msg Never)
+    | DisabledButton (Container.Msg DisabledExample.Msg)
+    | IconButton (Container.Msg IconExample.Msg)
 
 
 type Msg
-    = DemoBoxMsg DemoBox Container.Msg
-    | SourceCopiedToClipboard DemoBox
+    = DemoBoxMsg DemoBox
     | ExampleSourceCodeLoaded (List SourceCode)
 
 
-update : Msg -> Model -> ( Model, Cmd msg )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        DemoBoxMsg demobox demoboxMsg ->
+        DemoBoxMsg demobox ->
             case demobox of
-                ButtonType ->
+                ButtonType demoboxMsg ->
                     let
                         ( typeExampleModel, typeExampleCmd ) =
-                            Container.update demoboxMsg model.typeExample
+                            Container.update ( DemoBoxMsg << ButtonType ) demoboxMsg model.typeExample
                     in
                     ( { model | typeExample = typeExampleModel }, typeExampleCmd )
 
-                DisabledButton ->
+                DisabledButton demoboxMsg ->
                     let
                         ( disabledExampleModel, disabledExampleCmd ) =
-                            Container.update demoboxMsg model.disabledExample
+                            Container.update ( DemoBoxMsg << DisabledButton ) demoboxMsg model.disabledExample
                     in
                     ( { model | disabledExample = disabledExampleModel }, disabledExampleCmd )
 
-                IconButton ->
+                IconButton demoboxMsg ->
                     let
                         ( iconExampleModel, iconExampleCmd ) =
-                            Container.update demoboxMsg model.iconExample
+                            Container.update ( DemoBoxMsg << IconButton ) demoboxMsg model.iconExample
                     in
                     ( { model | iconExample = iconExampleModel }, iconExampleCmd )
-
-        SourceCopiedToClipboard demobox ->
-            ( model, Cmd.none )
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
@@ -86,8 +82,16 @@ route =
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     , initialModel =
         { typeExample = Container.initModel "TypeExample.elm"
-        , disabledExample = Container.initModel "DisabledExample.elm"
-        , iconExample = Container.initModel "IconExample.elm"
+        , iconExample =
+            Container.initStatefulModel
+                "IconExample.elm"
+                ()
+                (\_ _ -> ((), Cmd.none))
+        , disabledExample =
+            Container.initStatefulModel
+                "DisabledExample.elm"
+                ()
+                (\_ _ -> ((), Cmd.none))
         }
     }
 
@@ -102,9 +106,9 @@ typeExample model =
             }
     in
     Container.createDemoBox
-        (DemoBoxMsg ButtonType)
+        (DemoBoxMsg << ButtonType)
         model.typeExample
-        TypeExample.example
+        (\_ -> TypeExample.example)
         metaInfo
 
 
@@ -118,9 +122,9 @@ disabledExample model =
             }
     in
     Container.createDemoBox
-        (DemoBoxMsg DisabledButton)
+        (DemoBoxMsg << DisabledButton)
         model.disabledExample
-        DisabledExample.example
+        (\_ -> DisabledExample.example)
         metaInfo
 
 
@@ -134,9 +138,9 @@ iconExample model =
             }
     in
     Container.createDemoBox
-        (DemoBoxMsg IconButton)
+        (DemoBoxMsg << IconButton)
         model.iconExample
-        IconExample.example
+        (\_ -> IconExample.example)
         metaInfo
 
 

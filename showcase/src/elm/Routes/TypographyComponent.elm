@@ -12,10 +12,12 @@ import UI.Typography exposing (SubHeadingOptions(..), documentationHeading, docu
 import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 
+type alias StatelessDemo = Container.Model () Never
+
 type alias Model =
-    { basicExample : Container.Model
-    , titleExample : Container.Model
-    , textExample : Container.Model
+    { basicExample : StatelessDemo
+    , titleExample : StatelessDemo
+    , textExample : StatelessDemo
     }
 
 
@@ -41,11 +43,11 @@ type DemoBox
 
 
 type Msg
-    = DemoBoxMsg DemoBox Container.Msg
+    = DemoBoxMsg DemoBox ( Container.Msg Never )
     | ExampleSourceCodeLoaded (List SourceCode)
 
 
-update : Msg -> Model -> ( Model, Cmd msg )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         DemoBoxMsg demobox demoboxMsg ->
@@ -53,21 +55,21 @@ update msg model =
                 Basic ->
                     let
                         ( basicExampleModel, basicExampleCmd ) =
-                            Container.update demoboxMsg model.basicExample
+                            Container.update ( DemoBoxMsg Basic ) demoboxMsg model.basicExample
                     in
                     ( { model | basicExample = basicExampleModel }, basicExampleCmd )
 
                 TitleComponent ->
                     let
                         ( titleExampleModel, titleExampleCmd ) =
-                            Container.update demoboxMsg model.titleExample
+                            Container.update ( DemoBoxMsg TitleComponent ) demoboxMsg model.titleExample
                     in
                     ( { model | titleExample = titleExampleModel }, titleExampleCmd )
 
                 TextComponent ->
                     let
                         ( textExampleModel, textExampleCmd ) =
-                            Container.update demoboxMsg model.textExample
+                            Container.update ( DemoBoxMsg TextComponent ) demoboxMsg model.textExample
                     in
                     ( { model | textExample = textExampleModel }, textExampleCmd )
 
@@ -93,7 +95,7 @@ basicExample model =
     Container.createDemoBox
         (DemoBoxMsg Basic)
         model.basicExample
-        BasicExample.example
+        (\_ -> BasicExample.example)
         metaInfo
 
 
@@ -109,7 +111,7 @@ titleComponentExample model =
     Container.createDemoBox
         (DemoBoxMsg TitleComponent)
         model.titleExample
-        TitleExample.example
+        (\_ -> TitleExample.example)
         metaInfo
 
 
@@ -125,7 +127,7 @@ textComponentExample model =
     Container.createDemoBox
         (DemoBoxMsg TextComponent)
         model.textExample
-        TextExample.example
+        (\_ -> TextExample.example)
         metaInfo
 
 

@@ -21,7 +21,7 @@ title =
 
 
 type alias Model =
-    { basicExample : Container.Model
+    { basicExample : Container.Model BasicExample.Model BasicExample.Msg
     }
 
 
@@ -30,7 +30,7 @@ type DemoBox
 
 
 type Msg
-    = DemoBoxMsg DemoBox Container.Msg
+    = DemoBoxMsg DemoBox ( Container.Msg BasicExample.Msg )
     | ExampleSourceCodeLoaded (List SourceCode)
 
 
@@ -41,7 +41,11 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { basicExample = Container.initModel "BasicExample.elm"
+        { basicExample =
+            Container.initStatefulModel
+                "BasicExample.elm"
+                () 
+                (\_ _ -> ((), Cmd.none))
         }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
@@ -55,7 +59,7 @@ update msg model =
                 Basic ->
                     let
                         ( basicModel, basicCmd ) =
-                            Container.update demoboxMsg model.basicExample
+                            Container.update ( DemoBoxMsg Basic ) demoboxMsg model.basicExample
                     in
                     ( { model | basicExample = basicModel }, basicCmd )
 
@@ -79,7 +83,7 @@ basicExample model =
     Container.createDemoBox
         (DemoBoxMsg Basic)
         model.basicExample
-        BasicExample.example
+        (\_ -> BasicExample.example)
         metaInfo
 
 

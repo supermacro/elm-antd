@@ -20,8 +20,11 @@ title =
     "Tooltip"
 
 
+type alias StatelessDemo = Container.Model () Never
+
+
 type alias Model =
-    { basicExample : Container.Model
+    { basicExample : StatelessDemo
     }
 
 
@@ -30,7 +33,7 @@ type DemoBox
 
 
 type Msg
-    = DemoBoxMsg DemoBox Container.Msg
+    = DemoBoxMsg DemoBox ( Container.Msg Never )
     | ExampleSourceCodeLoaded (List SourceCode)
 
 
@@ -55,7 +58,7 @@ update msg model =
                 Basic ->
                     let
                         ( basicModel, basicCmd ) =
-                            Container.update demoboxMsg model.basicExample
+                            Container.update ( DemoBoxMsg Basic ) demoboxMsg model.basicExample
                     in
                     ( { model | basicExample = basicModel }, basicCmd )
 
@@ -79,7 +82,7 @@ basicExample model =
     Container.createDemoBox
         (DemoBoxMsg Basic)
         model.basicExample
-        BasicExample.example
+        (\_ -> BasicExample.example)
         metaInfo
 
 

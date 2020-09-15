@@ -3,6 +3,7 @@ module UI.Container exposing
     , Msg(..)
     , createDemoBox
     , initModel
+    , initStatefulModel
     , setSourceCode
     , update
     , view
@@ -21,63 +22,94 @@ import UI.Typography exposing (commonTextStyles)
 import Utils exposing (SourceCode)
 
 
-type alias Model =
+
+type alias Model m msg =
     { fileName : String
     , sourceCodeVisible : Bool
     , sourceCode : Maybe String
+    -- the model associated with the example
+    , state : DemoState m msg
     }
 
 
-type Msg
+type alias DemoState m msg =
+    { model : m
+    , update : msg -> m -> (m, Cmd msg)
+    }
+    
+
+
+type Msg msg
     = SourceCodeVisibilityToggled
     | CopySourceToClipboardRequested
-      -- ContentMsg represents an opaque message
-      -- emitted by the contents of a demoBox Container
-    | ContentMsg
+    -- represents a message emitted from within a demo / example
+    | ContentMsg msg
 
 
-type alias ContainerOptions =
-    { paddingTop : Style
-    , paddingRight : Style
-    , paddingBottom : Style
-    , paddingLeft : Style
-    , meta : ContainerMetaSection
+type alias DemoBoxMetaInfo =
+    { title : String
+    , content : String
+    , ellieDemo : String
     }
 
 
-type Container
-    = Container ContainerOptions (Styled.Html Msg)
-
-
-initModel : String -> Model
+{-| Create a demo model that has no state
+-}
+initModel : String -> Model () Never
 initModel fileName =
     { sourceCodeVisible = False
     , sourceCode = Nothing
     , fileName = fileName
+    , state =
+        { model = ()
+        , update = \_ _ -> ( (), Cmd.none )
+        }
     }
 
 
+{-| Initialize a demo container that has some state for its example
+-}
+initStatefulModel : String -> m -> (msg -> m -> ( m, Cmd msg )) -> Model m msg
+initStatefulModel fileName initialModel updateFn =
+    { sourceCodeVisible = False
+    , sourceCode = Nothing
+    , fileName = fileName
+    , state =
+        { model = initialModel
+        , update = updateFn
+        }
+    }
+
+
+
+{-
+    Maybe this should be renamed to `view`?
+
+-}
 createDemoBox :
-    (Msg -> msg)
-    -> Model
-    -> Html a
-    -> ContainerMetaSection
+    (Msg a -> msg)
+    -> Model m a
+    -> (m -> Html a)
+    -> DemoBoxMetaInfo
     -> Styled.Html msg
-createDemoBox tagger model demo metaInfo =
+createDemoBox tagger model demoView metaInfo =
     let
+        demo =
+            demoView model.state.model
+
         styledDemo =
             fromUnstyled demo
-                |> Styled.map (\_ -> ContentMsg)
+                |> Styled.map ContentMsg
 
         styledDemoContents =
             div [ css [ displayFlex ] ] [ styledDemo ]
+
     in
-    demoBox metaInfo styledDemoContents
-        |> view model
+    view model metaInfo styledDemo
         |> Styled.map tagger
 
 
-setSourceCode : List SourceCode -> Model -> Model
+setSourceCode : List SourceCode -> Model m msg -> Model m msg
 setSourceCode sourceCodeList model =
     let
         maybeSourceCode =
@@ -89,18 +121,8 @@ setSourceCode sourceCodeList model =
     { model | sourceCode = maybeSourceCode }
 
 
-defaultContainerOptions : ContainerMetaSection -> ContainerOptions
-defaultContainerOptions metaSection =
-    { paddingTop = Css.paddingTop (px 10)
-    , paddingRight = Css.paddingRight (px 10)
-    , paddingBottom = Css.paddingBottom (px 10)
-    , paddingLeft = Css.paddingLeft (px 10)
-    , meta = metaSection
-    }
-
-
-update : Msg -> Model -> ( Model, Cmd msg )
-update msg model =
+update : (Msg a -> msg) -> Msg a -> Model m a -> ( Model m a, Cmd msg )
+update tagger msg model =
     case msg of
         SourceCodeVisibilityToggled ->
             ( { model
@@ -117,77 +139,33 @@ update msg model =
                 Nothing ->
                     ( model, Cmd.none )
 
-        ContentMsg ->
-            ( model, Cmd.none )
+        ContentMsg innerMsg ->
+            let
+                demoModel = model.state.model
+                demoUpdateFn = model.state.update
+
+                ( newDemoModel, demoCmd ) =
+                    demoUpdateFn innerMsg demoModel
+
+            in
+            ( { model | state = DemoState newDemoModel demoUpdateFn }
+            , Cmd.map ( tagger << ContentMsg ) demoCmd
+            )
 
 
 
+
+
+
+-------------------------
 -- View code
-
-
-container : ContainerMetaSection -> Styled.Html Msg -> Container
-container =
-    Container << defaultContainerOptions
-
-
-paddingTop : Float -> Container -> Container
-paddingTop val (Container opts children) =
-    let
-        newOpts =
-            { opts | paddingTop = Css.paddingTop (px val) }
-    in
-    Container newOpts children
-
-
-paddingRight : Float -> Container -> Container
-paddingRight val (Container opts children) =
-    let
-        newOpts =
-            { opts | paddingRight = Css.paddingRight (px val) }
-    in
-    Container newOpts children
-
-
-paddingBottom : Float -> Container -> Container
-paddingBottom val (Container opts children) =
-    let
-        newOpts =
-            { opts | paddingBottom = Css.paddingBottom (px val) }
-    in
-    Container newOpts children
-
-
-paddingLeft : Float -> Container -> Container
-paddingLeft val (Container opts children) =
-    let
-        newOpts =
-            { opts | paddingLeft = Css.paddingLeft (px val) }
-    in
-    Container newOpts children
-
-
-type alias ContainerMetaSection =
-    { title : String
-    , content : String
-    , ellieDemo : String
-    }
-
-
-demoBox : ContainerMetaSection -> Styled.Html Msg -> Container
-demoBox meta content =
-    container meta content
-        |> paddingBottom 50
-        |> paddingTop 30
-        |> paddingRight 24
-        |> paddingLeft 24
-
 
 borderColor : Color
 borderColor =
     hex "#f0f0f0"
 
 
-viewSourceCode : String -> Styled.Html Msg
+viewSourceCode : String -> Styled.Html ( Msg msg )
 viewSourceCode sourceCode =
     let
         unstyledSourceCodeView =
@@ -278,8 +256,8 @@ iconContainer { icon, tooltipText, event, extraStyles } =
         |> fromUnstyled
 
 
-view : Model -> Container -> Styled.Html Msg
-view model (Container opts children) =
+view : Model m msg -> DemoBoxMetaInfo -> Styled.Html (Msg msg) -> Styled.Html (Msg msg)
+view model metaInfo demo =
     let
         metaSectionContent =
             let
@@ -309,7 +287,7 @@ view model (Container opts children) =
                             IconContainerOptions
                                 Icons.ellieLogo
                                 "Open in Ellie"
-                                (Right opts.meta.ellieDemo)
+                                (Right metaInfo.ellieDemo)
                                 []
                         , iconContainer <|
                             IconContainerOptions
@@ -351,28 +329,30 @@ view model (Container opts children) =
                         , left (px 16)
                         ]
                     ]
-                    [ text opts.meta.title ]
+                    [ text metaInfo.title ]
                 , div
                     [ css
                         [ padding4 (px 18) (px 24) (px 12) (px 24) ]
                     ]
-                    [ text opts.meta.content ]
+                    [ text metaInfo.content ]
                 , callToActionIcons
                 , sourceCodeView
                 ]
             ]
 
+
         mainContainerSection =
             div
                 [ css
                     [ border3 (px 1) solid borderColor
-                    , opts.paddingTop
-                    , opts.paddingRight
-                    , opts.paddingBottom
-                    , opts.paddingLeft
+                    , Css.paddingTop (px 30)
+                    , Css.paddingRight (px 24)
+                    , Css.paddingBottom (px 50)
+                    , Css.paddingLeft (px 24)
                     ]
                 ]
-                [ children ]
+                [ demo ]
     in
     div [ css [ marginBottom (em 1) ] ]
         (mainContainerSection :: metaSectionContent)
+
