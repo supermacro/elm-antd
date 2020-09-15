@@ -19,7 +19,7 @@ module Ant.Button exposing
 
 import Ant.Icons as Icon exposing (Icon)
 import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
-import Ant.Internals.Typography exposing (textColorRgba)
+import Ant.Internals.Typography exposing (fontList, textColorRgba)
 import Css exposing (..)
 import Css.Animations as CA exposing (keyframes)
 import Css.Global as CG
@@ -220,6 +220,7 @@ toHtml (Button options label) =
         baseAttributes =
             [ borderRadius (px 2)
             , padding2 (px 4) (px 15)
+            , fontFamilies fontList
             , borderWidth (px 1)
             , fontSize (px 14)
             , height (px 30)

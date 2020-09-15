@@ -13,7 +13,7 @@ import Css exposing (..)
 fontList : List String
 fontList =
     [ "-apple-system"
-    , "BlinkMacSystemFont"
+    , "system-ui"
     , qt "Segoe UI"
     , "Roboto"
     , qt "Helvetica Neue"
