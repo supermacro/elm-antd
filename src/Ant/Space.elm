@@ -1,6 +1,7 @@
 module Ant.Space exposing
     ( space
     , direction, SpaceDirection(..), SpaceSize(..)
+    , withSize
     , toHtml
     )
 
@@ -90,6 +91,20 @@ direction dir (Space config children) =
     Space newConfig children
 
 
+{-| Alter the sizing between elements. By default the size is `Small`
+
+
+    space elements
+        |> withSize Large 
+-}
+withSize : SpaceSize -> Space msg -> Space msg
+withSize size (Space config children) =
+    let
+        newConfig = { config | size = size }
+    in
+    Space newConfig children
+
+
 spaceSizeToPixels : SpaceSize -> Px
 spaceSizeToPixels size =
     case size of
@@ -106,13 +121,23 @@ spaceSizeToPixels size =
             px val
 
 
+spaceSizeToString : SpaceSize -> String
+spaceSizeToString size =
+    case size of
+        Small -> "sm"
+        Medium -> "md"
+        Large -> "lg"
+        Custom val ->
+            "custom-" ++ String.fromFloat val
+
+
 {-| Convert your Space into a `Html msg`
 -}
 toHtml : Space msg -> Html msg
 toHtml (Space config children) =
     let
         spaceClass =
-            "elm-antd__space_container"
+            "elm-antd__space_container-" ++ spaceSizeToString config.size
 
         marginRule =
             case config.direction of
