@@ -23,8 +23,9 @@ Alerts inform your users of relevant information.
 The following functions allow you to simply plop in an alert that never emits `Msg`s. If you want to control their visibility, you would have to do so on your own.
 
 @docs alert
-@docs toHtml
 @docs withType
+@docs withDescription
+@docs toHtml
 
 
 ## Stateful API
@@ -72,7 +73,7 @@ Example:
 
 @docs Msg, CloseableAlertStack
 
-@docs initAlertStack, updateAlertStack, stackToHtml, withDescription
+@docs initAlertStack, updateAlertStack, stackToHtml 
 
 -}
 
