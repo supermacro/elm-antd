@@ -40,8 +40,8 @@ init =
             [ alert "Warning Text Warning Text Warning TextW arning Text Warning Text Warning TextWarning Text"
                 |> withType Warning
             , alert "Normal alertNormal alertNormal alertNormal alertNormal alertNormal alert"
-            , alert "Error Description Error Description Error Description Error Description Error Description Error Description"
-                |> withDescription "Error Text"
+            , alert "Error Text"
+                |> withDescription "Error Description Error Description Error Description Error Description Error Description Error Description"
                 |> withType Error
             ]
     }

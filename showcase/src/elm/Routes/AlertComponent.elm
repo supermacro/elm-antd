@@ -5,6 +5,7 @@ import Html.Styled as Styled exposing (div, text)
 import Html.Styled.Attributes exposing (css)
 import Routes.AlertComponent.BasicExample as BasicExample
 import Routes.AlertComponent.CloseableExample as CloseableExample
+import Routes.AlertComponent.DescriptionExample as DescriptionExample
 import Routes.AlertComponent.TypeExample as TypeExample
 import UI.Container as Container
 import UI.Typography as Typography
@@ -20,6 +21,7 @@ import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 type alias Model =
     { basicExample : Container.Model () Never
+    , descriptionExample : Container.Model () Never
     , typeExample : Container.Model () Never
     , closeableExample : Container.Model CloseableExample.Model CloseableExample.Msg
     }
@@ -28,6 +30,7 @@ type alias Model =
 type DemoBox
     = Basic (Container.Msg Never)
     | Type (Container.Msg Never)
+    | Description (Container.Msg Never)
     | Closeable (Container.Msg CloseableExample.Msg)
 
 
@@ -63,6 +66,13 @@ update msg model =
                     in
                     ( { model | closeableExample = closeableExampleModel }, closeableExampleCmd )
 
+                Description demoboxMsg ->
+                    let
+                        ( descriptionExampleModel, descriptionExampleCmd ) =
+                            Container.update (DemoBoxMsg << Description) demoboxMsg model.descriptionExample
+                    in
+                    ( { model | descriptionExample = descriptionExampleModel }, descriptionExampleCmd )
+
         SourceCopiedToClipboard demobox ->
             ( model, Cmd.none )
 
@@ -71,6 +81,7 @@ update msg model =
                 | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
                 , typeExample = Container.setSourceCode examplesSourceCode model.typeExample
                 , closeableExample = Container.setSourceCode examplesSourceCode model.closeableExample
+                , descriptionExample = Container.setSourceCode examplesSourceCode model.descriptionExample
               }
             , Cmd.none
             )
@@ -86,6 +97,7 @@ route =
     , initialModel =
         { basicExample = Container.initModel "BasicExample.elm"
         , typeExample = Container.initModel "TypeExample.elm"
+        , descriptionExample = Container.initModel "DescriptionExample.elm"
         , closeableExample =
             Container.initStatefulModel "CloseableExample.elm" CloseableExample.init CloseableExample.update
         }
@@ -130,11 +142,30 @@ typeExample model =
     Styled.map DemoBoxMsg demoBox
 
 
+descriptionExample : Model -> Styled.Html Msg
+descriptionExample model =
+    let
+        metaInfo =
+            { title = "Description"
+            , content = "Additional description for alert message."
+            , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
+            }
+
+        demoBox =
+            Container.createDemoBox
+                Description
+                model.typeExample
+                (\_ -> DescriptionExample.example)
+                metaInfo
+    in
+    Styled.map DemoBoxMsg demoBox
+
+
 closeableExample : Model -> Styled.Html Msg
 closeableExample model =
     let
         metaInfo =
-            { title = "Closeable (work in progress)"
+            { title = "Closeable (WIP. Subject to change)"
             , content = "To show close button. Learn more about issues with the animation: https://discourse.elm-lang.org/t/fold-animation-in-elm-css/6284/3"
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
             }
@@ -166,6 +197,8 @@ view model =
                 [ basicExample model
                 , closeableExample model
                 ]
-            , div [ css [ maxWidth (pct 45) ] ] [ typeExample model ]
+            , div
+                [ css [ maxWidth (pct 45) ] ]
+                [ typeExample model, descriptionExample model ]
             ]
         ]

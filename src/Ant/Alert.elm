@@ -3,9 +3,8 @@ module Ant.Alert exposing
     , alert
     , toHtml
     , withType
-    , Msg
-    , initAlertStack
-    , CloseableAlertStack, stackToHtml, updateAlertStack, withDescription
+    , Msg, CloseableAlertStack
+    , initAlertStack, updateAlertStack, stackToHtml, withDescription
     )
 
 {-| Alert component
@@ -69,10 +68,11 @@ Example:
     view : Model -> Html msg
     view { statefulAlertStack } =
         div [] <|
-            List.map toHtml statefulAlertStack
+            stackToHtml statefulAlertStack
 
-@docs Msg
-@docs initAlertStack
+@docs Msg, CloseableAlertStack
+
+@docs initAlertStack, updateAlertStack, stackToHtml, withDescription
 
 -}
 
@@ -359,6 +359,8 @@ renderCloseIcon action state =
     span (css styles :: events) [ styledIconHtml ]
 
 
+{-| Render a stack of closeable alerts into your `view`.
+-}
 stackToHtml : CloseableAlertStack msg -> Html msg
 stackToHtml (CloseableAlertStack _ stack) =
     Html.Keyed.ul [] <|
@@ -380,7 +382,7 @@ toHtml (Alert config alertText) =
         stateAttributeName =
             "is_closing"
 
-        spacingStyle =
+        closingStateStyle =
             global
                 [ selector ("." ++ alertClass ++ "[" ++ stateAttributeName ++ "=true]")
                     [ opacity (int 0)
@@ -402,6 +404,22 @@ toHtml (Alert config alertText) =
 
         alertColors =
             getAlertTypeColors config.type_
+
+        ( alertMessage, alertDescription ) =
+            case config.description of
+                Nothing ->
+                    ( text alertText, text "" )
+
+                Just description ->
+                    ( div
+                        [ css
+                            [ fontSize (px 16)
+                            , marginBottom (px 5)
+                            ]
+                        ]
+                        [ text alertText ]
+                    , text description
+                    )
 
         ( paddingRightStyle, closeIconHtml ) =
             case config.onClose of
@@ -442,9 +460,10 @@ toHtml (Alert config alertText) =
                 , class alertClass
                 , stateAttribute
                 ]
-                [ spacingStyle
+                [ closingStateStyle
                 , closeIconHtml
-                , text alertText
+                , alertMessage
+                , alertDescription
                 ]
     in
     toUnstyled styledAlert
