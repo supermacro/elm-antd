@@ -22,6 +22,7 @@ homePage =
         , documentationSubheading WithoutAnchorLink "Currently Implemented Components"
         , documentationUnorderedList
             [ internalLink "/components/button" "Button"
+            , internalLink "/components/alert" "Alert"
             , internalLink "/components/tooltip" "Tooltip"
             , internalLink "/components/typography" "Typography"
             , internalLink "/components/divider" "Divider"

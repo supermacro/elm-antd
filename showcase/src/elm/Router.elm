@@ -34,6 +34,7 @@ import Html exposing (Html, a, div, header, nav, text)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (alt, css, href, src)
 import Http
+import Routes.AlertComponent as AlertPage
 import Routes.ButtonComponent as ButtonPage
 import Routes.DividerComponent as DividerPage
 import Routes.Home exposing (homePage)
@@ -74,6 +75,7 @@ type alias Model =
     -- You'll need to be running the file-server locally
     , commitHash : CommitHash
     , fileServerUrl : String
+    , alertPageModel : AlertPage.Model
     , buttonPageModel : ButtonPage.Model
     , dividerPageModel : DividerPage.Model
     , typographyPageModel : TypographyPage.Model
@@ -89,6 +91,7 @@ type alias Href =
 type Msg
     = UrlChanged Url
     | MenuItemClicked Href
+    | AlertPageMessage AlertPage.Msg
     | ButtonPageMessage ButtonPage.Msg
     | DividerPageMessage DividerPage.Msg
     | InputPageMessage InputPage.Msg
@@ -158,7 +161,6 @@ unimplementedComponents =
         , ( "Tag", DataDisplay )
         , ( "Tabs", DataDisplay )
         , ( "Table", DataDisplay )
-        , ( "Alert", Feedback )
         , ( "Drawer", Feedback )
         , ( "Modal", Feedback )
         , ( "Message", Feedback )
@@ -189,6 +191,10 @@ triggerSaveExampleSourceCode tagger subMsgTagger examplesSourceCode =
 componentList : List Component
 componentList =
     let
+        alertPageView model =
+            AlertPage.route.view model.alertPageModel
+                |> Styled.map AlertPageMessage
+
         buttonPageView model =
             ButtonPage.route.view model.buttonPageModel
                 |> Styled.map ButtonPageMessage
@@ -214,6 +220,12 @@ componentList =
       , view = buttonPageView
       , saveExampleSourceCode =
             triggerSaveExampleSourceCode ButtonPageMessage ButtonPage.route.saveExampleSourceCodeToModel
+      }
+    , { route = AlertPage.route.title
+      , category = AlertPage.route.category
+      , view = alertPageView
+      , saveExampleSourceCode =
+            triggerSaveExampleSourceCode AlertPageMessage AlertPage.route.saveExampleSourceCodeToModel
       }
     , { route = DividerPage.route.title
       , category = DividerPage.route.category
@@ -321,6 +333,7 @@ init url { commitHash, fileServerUrl } =
             , examplesFetched = []
             , commitHash = commitHash
             , fileServerUrl = fileServerUrl
+            , alertPageModel = AlertPage.route.initialModel
             , buttonPageModel = ButtonPage.route.initialModel
             , dividerPageModel = DividerPage.route.initialModel
             , typographyPageModel = TypographyPage.route.initialModel
@@ -392,6 +405,15 @@ update navKey msg model =
                 -- TODO: do some sort of error logging
                 Err e ->
                     ( model, Cmd.none )
+
+        AlertPageMessage alertPageMsg ->
+            let
+                ( alertPageModel, alertPageCmd ) =
+                    AlertPage.route.update alertPageMsg model.alertPageModel
+            in
+            ( { model | alertPageModel = alertPageModel }
+            , Cmd.map AlertPageMessage alertPageCmd
+            )
 
         ButtonPageMessage buttonPageMsg ->
             let
