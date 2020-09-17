@@ -212,7 +212,10 @@ toHtml (Button options label) =
                 ]
 
         animationStyle =
-            CG.withClass "elm-antd__animated_before" <| [ position relative, animatedBefore (hex primaryColorStrong) ]
+            CG.withClass "elm-antd__animated_before"
+                [ position relative
+                , animatedBefore (hex primaryColorStrong)
+                ]
 
         antButtonBoxShadow =
             Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
