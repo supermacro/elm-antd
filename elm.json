@@ -5,6 +5,7 @@
     "license": "MIT",
     "version": "4.0.0",
     "exposed-modules": [
+        "Ant.Alert",
         "Ant.Button",
         "Ant.Divider",
         "Ant.Icons",
