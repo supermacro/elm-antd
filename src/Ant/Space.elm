@@ -1,8 +1,7 @@
 module Ant.Space exposing
     ( space
-    , direction, SpaceDirection(..), SpaceSize(..)
+    , direction, withSize, SpaceDirection(..), SpaceSize(..)
     , toHtml
-    , withSize
     )
 
 {-| Utilities for setting spacing between components
@@ -17,7 +16,7 @@ Note that by default, a Space value is set to be vertically layed out with a "sm
 
 # Customizing the layout between components
 
-@docs direction, SpaceDirection, SpaceSize
+@docs direction, withSize, SpaceDirection, SpaceSize
 
 
 # Rendering your Space component
