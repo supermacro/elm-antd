@@ -45,21 +45,21 @@ update msg model =
                 ButtonType demoboxMsg ->
                     let
                         ( typeExampleModel, typeExampleCmd ) =
-                            Container.update ( DemoBoxMsg << ButtonType ) demoboxMsg model.typeExample
+                            Container.update (DemoBoxMsg << ButtonType) demoboxMsg model.typeExample
                     in
                     ( { model | typeExample = typeExampleModel }, typeExampleCmd )
 
                 DisabledButton demoboxMsg ->
                     let
                         ( disabledExampleModel, disabledExampleCmd ) =
-                            Container.update ( DemoBoxMsg << DisabledButton ) demoboxMsg model.disabledExample
+                            Container.update (DemoBoxMsg << DisabledButton) demoboxMsg model.disabledExample
                     in
                     ( { model | disabledExample = disabledExampleModel }, disabledExampleCmd )
 
                 IconButton demoboxMsg ->
                     let
                         ( iconExampleModel, iconExampleCmd ) =
-                            Container.update ( DemoBoxMsg << IconButton ) demoboxMsg model.iconExample
+                            Container.update (DemoBoxMsg << IconButton) demoboxMsg model.iconExample
                     in
                     ( { model | iconExample = iconExampleModel }, iconExampleCmd )
 
@@ -86,12 +86,12 @@ route =
             Container.initStatefulModel
                 "IconExample.elm"
                 ()
-                (\_ _ -> ((), Cmd.none))
+                (\_ _ -> ( (), Cmd.none ))
         , disabledExample =
             Container.initStatefulModel
                 "DisabledExample.elm"
                 ()
-                (\_ _ -> ((), Cmd.none))
+                (\_ _ -> ( (), Cmd.none ))
         }
     }
 

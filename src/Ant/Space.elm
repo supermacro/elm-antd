@@ -1,8 +1,8 @@
 module Ant.Space exposing
     ( space
     , direction, SpaceDirection(..), SpaceSize(..)
-    , withSize
     , toHtml
+    , withSize
     )
 
 {-| Utilities for setting spacing between components
@@ -93,14 +93,15 @@ direction dir (Space config children) =
 
 {-| Alter the sizing between elements. By default the size is `Small`
 
-
     space elements
-        |> withSize Large 
+        |> withSize Large
+
 -}
 withSize : SpaceSize -> Space msg -> Space msg
 withSize size (Space config children) =
     let
-        newConfig = { config | size = size }
+        newConfig =
+            { config | size = size }
     in
     Space newConfig children
 
@@ -124,9 +125,15 @@ spaceSizeToPixels size =
 spaceSizeToString : SpaceSize -> String
 spaceSizeToString size =
     case size of
-        Small -> "sm"
-        Medium -> "md"
-        Large -> "lg"
+        Small ->
+            "sm"
+
+        Medium ->
+            "md"
+
+        Large ->
+            "lg"
+
         Custom val ->
             "custom-" ++ String.fromFloat val
 

@@ -19,7 +19,9 @@ import UI.Typography as Typography
 import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 
-type alias StatelessDemo = Container.Model () Never
+type alias StatelessDemo =
+    Container.Model () Never
+
 
 type alias Model =
     { horizontalExample : StatelessDemo
@@ -37,7 +39,7 @@ type DemoBox
 
 
 type Msg
-    = DemoBoxMsg DemoBox ( Container.Msg Never )
+    = DemoBoxMsg DemoBox (Container.Msg Never)
     | SourceCopiedToClipboard DemoBox
     | ExampleSourceCodeLoaded (List SourceCode)
 
@@ -50,28 +52,28 @@ update msg model =
                 HorizontalExample ->
                     let
                         ( horizontalExampleModel, horizontalExampleCmd ) =
-                            Container.update ( DemoBoxMsg HorizontalExample ) demoboxMsg model.horizontalExample
+                            Container.update (DemoBoxMsg HorizontalExample) demoboxMsg model.horizontalExample
                     in
                     ( { model | horizontalExample = horizontalExampleModel }, horizontalExampleCmd )
 
                 TextWithoutHeadingExample ->
                     let
                         ( textWithoutHeadingExampleModel, textWithoutHeadingExampleCmd ) =
-                            Container.update ( DemoBoxMsg TextWithoutHeadingExample ) demoboxMsg model.textWithoutHeadingExample
+                            Container.update (DemoBoxMsg TextWithoutHeadingExample) demoboxMsg model.textWithoutHeadingExample
                     in
                     ( { model | textWithoutHeadingExample = textWithoutHeadingExampleModel }, textWithoutHeadingExampleCmd )
 
                 WithTitleExample ->
                     let
                         ( withTitleExampleModel, withTitleExampleCmd ) =
-                            Container.update ( DemoBoxMsg WithTitleExample ) demoboxMsg model.withTitleExample
+                            Container.update (DemoBoxMsg WithTitleExample) demoboxMsg model.withTitleExample
                     in
                     ( { model | withTitleExample = withTitleExampleModel }, withTitleExampleCmd )
 
                 VerticalExample ->
                     let
                         ( verticalExampleModel, verticalExampleCmd ) =
-                            Container.update ( DemoBoxMsg VerticalExample ) demoboxMsg model.verticalExample
+                            Container.update (DemoBoxMsg VerticalExample) demoboxMsg model.verticalExample
                     in
                     ( { model | verticalExample = verticalExampleModel }, verticalExampleCmd )
 

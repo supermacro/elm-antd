@@ -22,11 +22,11 @@ import UI.Typography exposing (commonTextStyles)
 import Utils exposing (SourceCode)
 
 
-
 type alias Model m msg =
     { fileName : String
     , sourceCodeVisible : Bool
     , sourceCode : Maybe String
+
     -- the model associated with the example
     , state : DemoState m msg
     }
@@ -34,15 +34,14 @@ type alias Model m msg =
 
 type alias DemoState m msg =
     { model : m
-    , update : msg -> m -> (m, Cmd msg)
+    , update : msg -> m -> ( m, Cmd msg )
     }
-    
 
 
 type Msg msg
     = SourceCodeVisibilityToggled
     | CopySourceToClipboardRequested
-    -- represents a message emitted from within a demo / example
+      -- represents a message emitted from within a demo / example
     | ContentMsg msg
 
 
@@ -83,9 +82,11 @@ initStatefulModel fileName initialModel updateFn =
 
 
 {-
-    Maybe this should be renamed to `view`?
+   Maybe this should be renamed to `view`?
 
 -}
+
+
 createDemoBox :
     (Msg a -> msg)
     -> Model m a
@@ -103,7 +104,6 @@ createDemoBox tagger model demoView metaInfo =
 
         styledDemoContents =
             div [ css [ displayFlex ] ] [ styledDemo ]
-
     in
     view model metaInfo styledDemo
         |> Styled.map tagger
@@ -141,31 +141,31 @@ update tagger msg model =
 
         ContentMsg innerMsg ->
             let
-                demoModel = model.state.model
-                demoUpdateFn = model.state.update
+                demoModel =
+                    model.state.model
+
+                demoUpdateFn =
+                    model.state.update
 
                 ( newDemoModel, demoCmd ) =
                     demoUpdateFn innerMsg demoModel
-
             in
             ( { model | state = DemoState newDemoModel demoUpdateFn }
-            , Cmd.map ( tagger << ContentMsg ) demoCmd
+            , Cmd.map (tagger << ContentMsg) demoCmd
             )
-
-
-
 
 
 
 -------------------------
 -- View code
 
+
 borderColor : Color
 borderColor =
     hex "#f0f0f0"
 
 
-viewSourceCode : String -> Styled.Html ( Msg msg )
+viewSourceCode : String -> Styled.Html (Msg msg)
 viewSourceCode sourceCode =
     let
         unstyledSourceCodeView =
@@ -340,7 +340,6 @@ view model metaInfo demo =
                 ]
             ]
 
-
         mainContainerSection =
             div
                 [ css
@@ -355,4 +354,3 @@ view model metaInfo demo =
     in
     div [ css [ marginBottom (em 1) ] ]
         (mainContainerSection :: metaSectionContent)
-

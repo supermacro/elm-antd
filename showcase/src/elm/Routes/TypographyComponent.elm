@@ -12,7 +12,9 @@ import UI.Typography exposing (SubHeadingOptions(..), documentationHeading, docu
 import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 
-type alias StatelessDemo = Container.Model () Never
+type alias StatelessDemo =
+    Container.Model () Never
+
 
 type alias Model =
     { basicExample : StatelessDemo
@@ -43,7 +45,7 @@ type DemoBox
 
 
 type Msg
-    = DemoBoxMsg DemoBox ( Container.Msg Never )
+    = DemoBoxMsg DemoBox (Container.Msg Never)
     | ExampleSourceCodeLoaded (List SourceCode)
 
 
@@ -55,21 +57,21 @@ update msg model =
                 Basic ->
                     let
                         ( basicExampleModel, basicExampleCmd ) =
-                            Container.update ( DemoBoxMsg Basic ) demoboxMsg model.basicExample
+                            Container.update (DemoBoxMsg Basic) demoboxMsg model.basicExample
                     in
                     ( { model | basicExample = basicExampleModel }, basicExampleCmd )
 
                 TitleComponent ->
                     let
                         ( titleExampleModel, titleExampleCmd ) =
-                            Container.update ( DemoBoxMsg TitleComponent ) demoboxMsg model.titleExample
+                            Container.update (DemoBoxMsg TitleComponent) demoboxMsg model.titleExample
                     in
                     ( { model | titleExample = titleExampleModel }, titleExampleCmd )
 
                 TextComponent ->
                     let
                         ( textExampleModel, textExampleCmd ) =
-                            Container.update ( DemoBoxMsg TextComponent ) demoboxMsg model.textExample
+                            Container.update (DemoBoxMsg TextComponent) demoboxMsg model.textExample
                     in
                     ( { model | textExample = textExampleModel }, textExampleCmd )
 

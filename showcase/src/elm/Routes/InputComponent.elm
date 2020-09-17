@@ -30,7 +30,7 @@ type DemoBox
 
 
 type Msg
-    = DemoBoxMsg DemoBox ( Container.Msg BasicExample.Msg )
+    = DemoBoxMsg DemoBox (Container.Msg BasicExample.Msg)
     | ExampleSourceCodeLoaded (List SourceCode)
 
 
@@ -44,8 +44,8 @@ route =
         { basicExample =
             Container.initStatefulModel
                 "BasicExample.elm"
-                () 
-                (\_ _ -> ((), Cmd.none))
+                ()
+                (\_ _ -> ( (), Cmd.none ))
         }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
@@ -59,7 +59,7 @@ update msg model =
                 Basic ->
                     let
                         ( basicModel, basicCmd ) =
-                            Container.update ( DemoBoxMsg Basic ) demoboxMsg model.basicExample
+                            Container.update (DemoBoxMsg Basic) demoboxMsg model.basicExample
                     in
                     ( { model | basicExample = basicModel }, basicCmd )
 
