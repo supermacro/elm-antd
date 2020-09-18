@@ -15,7 +15,7 @@
             "elm/svg": "1.0.1",
             "elm/url": "1.0.0",
             "pablohirafuji/elm-syntax-highlight": "3.3.0",
-            "rtfeldman/elm-css": "16.0.1",
+            "rtfeldman/elm-css": "16.1.0",
             "truqu/elm-base64": "2.0.4"
         },
         "indirect": {
