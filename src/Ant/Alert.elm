@@ -1,10 +1,11 @@
 module Ant.Alert exposing
     ( Alert, AlertType(..)
     , alert
-    , toHtml
     , withType
+    , withDescription
+    , toHtml
     , Msg, CloseableAlertStack
-    , initAlertStack, updateAlertStack, stackToHtml, withDescription
+    , initAlertStack, updateAlertStack, stackToHtml
     )
 
 {-| Alert component
@@ -42,7 +43,6 @@ A alert stack is nothing more than just a `List (Alert msg)` (with some internal
 
 Example:
 
-
     type Msg
         = AlertMsg Alert.Msg
 
@@ -73,7 +73,7 @@ Example:
 
 @docs Msg, CloseableAlertStack
 
-@docs initAlertStack, updateAlertStack, stackToHtml 
+@docs initAlertStack, updateAlertStack, stackToHtml
 
 -}
 
