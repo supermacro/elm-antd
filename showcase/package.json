@@ -29,6 +29,6 @@
     "yarn": "please-use-npm"
   },
   "dependencies": {
-    "pouchdb-browser": "^7.2.1"
+    "pouchdb-browser": "^7.2.2"
   }
 }
