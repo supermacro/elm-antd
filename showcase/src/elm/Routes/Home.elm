@@ -18,7 +18,7 @@ homePage =
         , documentationSubheading WithoutAnchorLink "Getting Started"
         , documentationText <| codeText "elm install supermacro/elm-antd"
         , documentationSubheading WithoutAnchorLink "API Docs"
-        , link "https://package.elm-lang.org/packages/supermacro/elm-antd/latest/" "package.elm-lange.org"
+        , link "https://package.elm-lang.org/packages/supermacro/elm-antd/latest/" "package.elm-lang.org"
         , documentationSubheading WithoutAnchorLink "Currently Implemented Components"
         , documentationUnorderedList
             [ internalLink "/components/button" "Button"
