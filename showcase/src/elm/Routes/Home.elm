@@ -3,7 +3,7 @@ module Routes.Home exposing (homePage)
 {-| This module represents the Home / Landing page content when a user visits the root path of the URL
 -}
 
-import Html.Styled exposing (Html, div, span, text)
+import Html.Styled exposing (Html, div, p, span, text)
 import UI.Footer exposing (pushDown)
 import UI.Typography exposing (SubHeadingOptions(..), codeText, documentationHeading, documentationSubheading, documentationText, documentationUnorderedList, internalLink, link)
 
@@ -32,6 +32,11 @@ homePage =
             , link "https://github.com/supermacro/elm-antd/issues/25" "Menu"
             , link "https://github.com/supermacro/elm-antd/issues/24" "Space"
             ]
+        , documentationSubheading WithoutAnchorLink "Theming"
+        , documentationText <|
+            div []
+                [ p [] [ text "Elm Antd has recently released a theming api." ]
+                ]
         , documentationSubheading WithoutAnchorLink "Early Development Notice"
         , documentationText <| text "Currently Elm Antd is in very early development with only a few components implemented, and bare-bones documentation."
         , documentationText <| text "Do you want to help out and make Elm Ant Design the most comprehensive and feature-full UI library in the universe?"
@@ -42,3 +47,4 @@ homePage =
                 ]
         , pushDown
         ]
+

@@ -6,8 +6,8 @@ module Ant.Input exposing (input, InputSize(..), withSize, onInput, withPlacehol
 
 -}
 
-import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded)
 import Ant.Internals.Typography exposing (commonFontStyles, textColorRgba)
+import Ant.Theme exposing (Theme, defaultTheme)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
 import Html exposing (Html)
@@ -32,6 +32,7 @@ type alias InputOpts msg =
     { size : InputSize
     , placeholder : Maybe String
     , onInput : Maybe (String -> msg)
+    , theme : Theme
     }
 
 
@@ -40,6 +41,7 @@ defaultInputOpts =
     { size = Default
     , placeholder = Nothing
     , onInput = Nothing
+    , theme = defaultTheme
     }
 
 
@@ -117,14 +119,14 @@ toHtml (Input inputOpts) =
                    , property "caret-color" "#000"
                    , padding2 (px 4) (px 11)
                    , focus
-                        [ borderColor (hex primaryColorFaded)
+                        [ borderColor (hex inputOpts.theme.primaryFaded)
                         , boxShadow5 zero zero zero (px 2) (rgba 24 144 255 0.2)
                         ]
                    , hover
-                        [ borderColor (hex primaryColorFaded)
+                        [ borderColor (hex inputOpts.theme.primaryFaded)
                         ]
                    , active
-                        [ borderColor (hex primaryColor)
+                        [ borderColor (hex inputOpts.theme.primary)
                         ]
                    , focus
                         [ outline none ]

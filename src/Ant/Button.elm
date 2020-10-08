@@ -1,6 +1,6 @@
 module Ant.Button exposing
     ( Button
-    , button, onClick, ButtonType(..), withType, withIcon, ButtonSize(..), disabled
+    , button, onClick, ButtonType(..), withTheme, withType, withIcon, ButtonSize(..), disabled
     , toHtml
     )
 
@@ -18,8 +18,8 @@ module Ant.Button exposing
 -}
 
 import Ant.Icons as Icon exposing (Icon)
-import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
 import Ant.Internals.Typography exposing (fontList, textColorRgba)
+import Ant.Theme exposing (defaultTheme, Theme)
 import Css exposing (..)
 import Css.Animations as CA exposing (keyframes)
 import Css.Global as CG
@@ -56,6 +56,7 @@ type alias Options msg =
     , href : Maybe String
     , onClick : Maybe msg
     , icon : Maybe (Icon msg)
+    , theme : Theme
 
     -- size : Size (Small, Medium, Large)
     -- etc etc
@@ -71,6 +72,7 @@ defaultOptions =
     , href = Nothing
     , onClick = Nothing
     , icon = Nothing
+    , theme = defaultTheme
     }
 
 
@@ -89,6 +91,15 @@ type Button msg
 button : String -> Button msg
 button label =
     Button defaultOptions label
+
+
+withTheme : Theme -> Button msg -> Button msg
+withTheme theme (Button options label) =
+    let
+        newOptions =
+            { options | theme = theme }
+    in
+    Button newOptions label
 
 
 {-| Change the default type of the Button
@@ -182,8 +193,8 @@ toHtml (Button options label) =
 
         waveEffect =
             keyframes
-                [ ( 100, [ CA.property "box-shadow" <| "0 0 0 " ++ primaryColorStrong ] )
-                , ( 100, [ CA.property "box-shadow" <| "0 0 0 8px " ++ primaryColorStrong ] )
+                [ ( 100, [ CA.property "box-shadow" <| "0 0 0 " ++ options.theme.primaryStrong ] )
+                , ( 100, [ CA.property "box-shadow" <| "0 0 0 8px " ++ options.theme.primaryStrong ] )
                 , ( 100, [ CA.property "opacity" "0" ] )
                 ]
 
@@ -201,7 +212,7 @@ toHtml (Button options label) =
                 , bottom (px 0)
                 , borderRadius (px 2)
                 , backgroundColor color
-                , boxShadow4 (px 0) (px 0) (px 0) (hex primaryColor)
+                , boxShadow4 (px 0) (px 0) (px 0) (hex options.theme.primary)
                 , opacity (num 0.2)
                 , zIndex (int -1)
                 , animationName waveEffect
@@ -214,7 +225,7 @@ toHtml (Button options label) =
         animationStyle =
             CG.withClass "elm-antd__animated_before"
                 [ position relative
-                , animatedBefore (hex primaryColorStrong)
+                , animatedBefore (hex options.theme.primaryStrong)
                 ]
 
         antButtonBoxShadow =
@@ -238,16 +249,16 @@ toHtml (Button options label) =
             , antButtonBoxShadow
             , animationStyle
             , focus
-                [ borderColor (hex primaryColorFaded)
-                , color (hex primaryColorFaded)
+                [ borderColor (hex options.theme.primaryFaded)
+                , color (hex options.theme.primaryFaded)
                 ]
             , hover
-                [ borderColor (hex primaryColorFaded)
-                , color (hex primaryColorFaded)
+                [ borderColor (hex options.theme.primaryFaded)
+                , color (hex options.theme.primaryFaded)
                 ]
             , active
-                [ borderColor (hex primaryColor)
-                , color (hex primaryColor)
+                [ borderColor (hex options.theme.primary)
+                , color (hex options.theme.primary)
                 ]
             , transition
                 [ Css.Transitions.borderColor transitionDuration
@@ -258,21 +269,21 @@ toHtml (Button options label) =
         primaryButtonAttributes =
             [ color (hex "#fff")
             , borderStyle solid
-            , backgroundColor (hex primaryColor)
-            , borderColor (hex primaryColor)
+            , backgroundColor (hex options.theme.primary)
+            , borderColor (hex options.theme.primary)
             , antButtonBoxShadow
             , animationStyle
             , focus
-                [ backgroundColor (hex primaryColorFaded)
-                , borderColor (hex primaryColorFaded)
+                [ backgroundColor (hex options.theme.primaryFaded)
+                , borderColor (hex options.theme.primaryFaded)
                 ]
             , hover
-                [ backgroundColor (hex primaryColorFaded)
-                , borderColor (hex primaryColorFaded)
+                [ backgroundColor (hex options.theme.primaryFaded)
+                , borderColor (hex options.theme.primaryFaded)
                 ]
             , active
-                [ backgroundColor (hex primaryColorStrong)
-                , borderColor (hex primaryColorStrong)
+                [ backgroundColor (hex options.theme.primaryStrong)
+                , borderColor (hex options.theme.primaryStrong)
                 ]
             , transition
                 [ Css.Transitions.backgroundColor transitionDuration
@@ -298,11 +309,11 @@ toHtml (Button options label) =
             ]
 
         linkButtonAttributes =
-            [ color (hex primaryColor)
+            [ color (hex options.theme.primary)
             , border zero
             , backgroundColor (hex "#fff")
             , hover
-                [ color (hex primaryColorFaded) ]
+                [ color (hex options.theme.primaryFaded) ]
             , transition
                 [ Css.Transitions.color transitionDuration ]
             ]

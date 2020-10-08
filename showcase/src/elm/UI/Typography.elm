@@ -11,8 +11,8 @@ module UI.Typography exposing
     , logoText
     )
 
-import Ant.Internals.Palette as Palette exposing (primaryColor)
 import Ant.Internals.Typography exposing (fontList, headingColorRgba)
+import Ant.Theme exposing (defaultTheme)
 import Ant.Typography.Text as Text
 import Css exposing (..)
 import Css.Global exposing (global, selector)
@@ -26,7 +26,7 @@ link url label =
     let
         styles =
             commonTextStyles
-                ++ [ hover [ color (hex primaryColor) ]
+                ++ [ hover [ color (hex defaultTheme.primary) ]
                    ]
     in
     Styled.a
@@ -39,7 +39,7 @@ internalLink url label =
     let
         styles =
             commonTextStyles
-                ++ [ hover [ color (hex primaryColor) ]
+                ++ [ hover [ color (hex defaultTheme.primary) ]
                    ]
     in
     Styled.a
@@ -59,7 +59,7 @@ commonStyles : List Style
 commonStyles =
     [ color (rgba headingColorRgba.r headingColorRgba.g headingColorRgba.b headingColorRgba.a)
     , selection
-        [ backgroundColor (hex primaryColor)
+        [ backgroundColor (hex defaultTheme.primary)
         , color (hex "#fff")
         ]
     ]
@@ -123,10 +123,10 @@ documentationSubheading opts value =
                 [ href ("#" ++ subheadingLink)
                 , css
                     [ textDecoration none
-                    , color (hex Palette.primaryColor)
+                    , color (hex defaultTheme.primary)
                     , marginLeft (px 8)
                     , hover
-                        [ color (hex Palette.primaryColorFaded)
+                        [ color (hex defaultTheme.primaryFaded)
                         ]
                     ]
                 ]
