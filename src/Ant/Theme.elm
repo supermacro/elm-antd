@@ -28,18 +28,34 @@ type alias Theme =
     , primaryStrong : String
     }
 
+
+-- produces 6-digit CSS hex values
+-- to ensure that CSS engines can properly interpret the
+-- hexadecimal as a RGB color
+toCssColorValue : Int -> String
+toCssColorValue val =
+    let
+        -- this value is going to be between 6 and 1 digits
+        rawString = Hex.toString val
+
+        length = String.length rawString
+        
+        missingZeroes = String.repeat (6 - length) "0"
+    in
+    "#" ++ missingZeroes ++ rawString
+
+
 createTheme : Int -> Theme
 createTheme primaryColor =
     let
-        primary = Hex.toString primaryColor
+        primary = toCssColorValue primaryColor
 
-        faded = Hex.toString <| primaryColor - fadedOffset
+        faded = toCssColorValue <| primaryColor - fadedOffset
 
-        strong = Hex.toString <| primaryColor - strongOffset
-
+        strong = toCssColorValue <| primaryColor - strongOffset
     in
-    { primary = "#" ++ primary
-    , primaryFaded = "#" ++ faded
-    , primaryStrong = "#" ++ strong
+    { primary = primary
+    , primaryFaded = faded
+    , primaryStrong = strong
     }
 

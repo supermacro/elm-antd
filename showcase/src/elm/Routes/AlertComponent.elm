@@ -161,25 +161,6 @@ descriptionExample model =
     Styled.map DemoBoxMsg demoBox
 
 
-closeableExample : Model -> Styled.Html Msg
-closeableExample model =
-    let
-        metaInfo =
-            { title = "Closeable (WIP. Subject to change)"
-            , content = "To show close button. Learn more about issues with the animation: https://discourse.elm-lang.org/t/fold-animation-in-elm-css/6284/3"
-            , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
-            }
-
-        demoBox =
-            Container.createDemoBox
-                Closeable
-                model.closeableExample
-                CloseableExample.view
-                metaInfo
-    in
-    Styled.map DemoBoxMsg demoBox
-
-
 view : Model -> Styled.Html Msg
 view model =
     div []
@@ -195,7 +176,6 @@ view model =
             [ div
                 [ css [ width (pct 45), marginRight (px 13) ] ]
                 [ basicExample model
-                , closeableExample model
                 ]
             , div
                 [ css [ maxWidth (pct 45) ] ]
