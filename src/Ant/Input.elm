@@ -1,19 +1,25 @@
 module Ant.Input exposing (input, InputSize(..), withSize, onInput, withPlaceholder, toHtml)
 
+{-
+    A NOTE TO DEVELOPERS.
+
+    This component is themable.
+
+    See styles at src/Ant/Input/Css.elm
+-}
+
+
 {-| Input widget for data entry
 
 @docs input, InputSize, withSize, onInput, withPlaceholder, toHtml
 
 -}
 
-import Ant.Internals.Typography exposing (commonFontStyles, textColorRgba)
-import Ant.Theme exposing (Theme, defaultTheme)
+import Ant.Css.Common exposing (inputClass)
 import Css exposing (..)
-import Css.Transitions exposing (transition)
-import Html exposing (Html)
-import Html.Styled as H exposing (toUnstyled)
-import Html.Styled.Attributes exposing (css, placeholder)
-import Html.Styled.Events as E
+import Html as H exposing (Html)
+import Html.Attributes exposing (class, placeholder)
+import Html.Events as E
 
 
 type Input msg
@@ -32,7 +38,6 @@ type alias InputOpts msg =
     { size : InputSize
     , placeholder : Maybe String
     , onInput : Maybe (String -> msg)
-    , theme : Theme
     }
 
 
@@ -41,7 +46,6 @@ defaultInputOpts =
     { size = Default
     , placeholder = Nothing
     , onInput = Nothing
-    , theme = defaultTheme
     }
 
 
@@ -86,56 +90,11 @@ onInput tagger (Input inputOpts) =
 
 
 
---- UI Code
-
-
-textColor : Color
-textColor =
-    let
-        { r, g, b, a } =
-            textColorRgba
-    in
-    rgba r g b a
-
-
 {-| Convert the input into a `Html msg`
 -}
 toHtml : Input msg -> Html msg
 toHtml (Input inputOpts) =
     let
-        transitionDuration =
-            350
-
-        inputStyles =
-            commonFontStyles
-                ++ [ color textColor
-                   , borderWidth (px 1)
-                   , borderRadius (px 2)
-                   , width (pct 100)
-                   , height (px 30)
-                   , borderStyle solid
-                   , backgroundColor (hex "#fff")
-                   , borderColor <| rgb 217 217 217
-                   , property "caret-color" "#000"
-                   , padding2 (px 4) (px 11)
-                   , focus
-                        [ borderColor (hex inputOpts.theme.primaryFaded)
-                        , boxShadow5 zero zero zero (px 2) (rgba 24 144 255 0.2)
-                        ]
-                   , hover
-                        [ borderColor (hex inputOpts.theme.primaryFaded)
-                        ]
-                   , active
-                        [ borderColor (hex inputOpts.theme.primary)
-                        ]
-                   , focus
-                        [ outline none ]
-                   , transition
-                        [ Css.Transitions.borderColor transitionDuration
-                        , Css.Transitions.boxShadow transitionDuration
-                        ]
-                   ]
-
         placeholderValue =
             Maybe.withDefault "" inputOpts.placeholder
 
@@ -147,5 +106,5 @@ toHtml (Input inputOpts) =
                 Nothing ->
                     []
     in
-    toUnstyled <|
-        H.input ([ css inputStyles, placeholder placeholderValue ] ++ optionalAttributes) []
+    H.input ([ class inputClass, placeholder placeholderValue ] ++ optionalAttributes) []
+
