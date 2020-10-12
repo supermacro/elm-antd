@@ -77,9 +77,9 @@ Example:
 
 -}
 
+import Ant.Css.Common exposing (alertClass, alertErrorClass, alertInfoClass, alertStateAttributeName, alertSuccessClass, alertWarningClass)
 import Ant.Icons as Icons exposing (closeOutlined)
 import Ant.Internals.Typography exposing (commonFontStyles)
-import Ant.Css.Common exposing (alertClass, alertInfoClass, alertSuccessClass, alertWarningClass, alertErrorClass, alertStateAttributeName)
 import Css exposing (..)
 import Css.Global exposing (global, selector)
 import Html exposing (Html)
@@ -146,9 +146,10 @@ type alias CloseableInfo msg =
     , onClose : msg
     }
 
+
 type alias AlertConfig msg =
     { type_ : AlertType
-    , closeableInfo : Maybe ( CloseableInfo msg )
+    , closeableInfo : Maybe (CloseableInfo msg)
     , description : Maybe String
     }
 
@@ -166,14 +167,17 @@ close_transition_duration_ms =
     1000
 
 
+
 {- THIS FUNCTION SHOULD NEVER BE EXPOSED.
 
-It is used internally to set a stateful alert to the Closing state.
+   It is used internally to set a stateful alert to the Closing state.
 -}
+
+
 withClosingState : Alert msg -> Alert msg
 withClosingState (Alert config alertText) =
     let
-        newCloseableInfo = 
+        newCloseableInfo =
             Maybe.map
                 (\closeableInfo -> { closeableInfo | state = Closing })
                 config.closeableInfo
@@ -261,23 +265,27 @@ withDescription alertDescription (Alert config alertText) =
     Alert newConfig alertText
 
 
+
 {- THIS FUNCTION SHOULD NEVER BE EXPOSED.
 
-Show a closing icon on the `Alert`. Note that you must wire up the Alert with your Model.
+   Show a closing icon on the `Alert`. Note that you must wire up the Alert with your Model.
 -}
+
+
 withOnClose : (Msg -> msg) -> AlertId -> Alert msg -> Alert msg
 withOnClose tagger alertId (Alert config alertText) =
     let
         msg =
             tagger <| CloseIconClicked alertId
-        
+
         closeableInfo =
             { state = Visible
             , onClose = msg
             }
 
         newConfig =
-            { config | closeableInfo = Just closeableInfo
+            { config
+                | closeableInfo = Just closeableInfo
             }
     in
     Alert newConfig alertText
@@ -327,7 +335,8 @@ initAlertStack tagger alerts =
 renderCloseIcon : CloseableInfo msg -> Styled.Html msg
 renderCloseIcon { state, onClose } =
     let
-        msg = onClose
+        msg =
+            onClose
 
         ( styles, events ) =
             case state of
@@ -381,12 +390,9 @@ toHtml (Alert config alertText) =
 
                         Closing ->
                             attribute alertStateAttributeName "true"
-                
+
                 Nothing ->
                     attribute "noop" "noop"
-
-
-
 
         ( alertMessage, alertDescription ) =
             case config.description of
@@ -426,7 +432,6 @@ toHtml (Alert config alertText) =
                 Error ->
                     alertErrorClass
 
-
         styledAlert =
             div
                 [ class alertClass
@@ -439,4 +444,3 @@ toHtml (Alert config alertText) =
                 ]
     in
     toUnstyled styledAlert
-

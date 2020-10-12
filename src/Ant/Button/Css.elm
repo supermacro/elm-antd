@@ -1,7 +1,6 @@
 module Ant.Button.Css exposing (styles)
 
-{- Themable styles for Button component
--}
+{- Themable styles for Button component -}
 
 import Ant.Css.Common exposing (..)
 import Ant.Internals.Typography exposing (fontList, textColorRgba)
@@ -27,6 +26,7 @@ cursorHoverEnabled enabled =
         rule =
             if enabled then
                 pointer
+
             else
                 notAllowed
     in
@@ -36,6 +36,7 @@ cursorHoverEnabled enabled =
 disabledBorderColor : Style
 disabledBorderColor =
     borderColor <| rgb 217 217 217
+
 
 simpleDisabledRules : List Style
 simpleDisabledRules =
@@ -85,13 +86,11 @@ styles theme =
                 , pointerEvents none
                 ]
 
-
         animationStyle =
             CG.withClass "elm-antd__animated_before"
                 [ position relative
                 , animatedBefore (hex theme.primaryStrong)
                 ]
-
 
         baseAttributes =
             [ borderRadius (px 2)
@@ -163,7 +162,6 @@ styles theme =
                 [ Css.Transitions.backgroundColor transitionDuration ]
             ]
 
-
         dashedButtonAttributes =
             defaultButtonStyles
                 ++ [ borderStyle dashed
@@ -178,44 +176,42 @@ styles theme =
             , transition
                 [ Css.Transitions.color transitionDuration ]
             ]
-
     in
     [ CG.class btnClass baseAttributes
-        
+
     -- default button styles
-    , makeSelector ( btnDefaultClass ++ ":not([disabled])" )
-        ( cursorHoverEnabled True :: defaultButtonStyles )
-    , makeSelector ( btnDefaultClass ++ ":disabled")
+    , makeSelector (btnDefaultClass ++ ":not([disabled])")
+        (cursorHoverEnabled True :: defaultButtonStyles)
+    , makeSelector (btnDefaultClass ++ ":disabled")
         simpleDisabledRules
 
     -- primary button styles
-    , makeSelector ( btnPrimaryClass ++ ":not([disabled])" ) 
-        ( cursorHoverEnabled True :: primaryButtonStyles )
-    , makeSelector ( btnPrimaryClass ++ ":disabled" ) 
+    , makeSelector (btnPrimaryClass ++ ":not([disabled])")
+        (cursorHoverEnabled True :: primaryButtonStyles)
+    , makeSelector (btnPrimaryClass ++ ":disabled")
         simpleDisabledRules
 
     -- dashed button styles
-    , makeSelector ( btnDashedClass ++ ":not([disabled])")
-        ( cursorHoverEnabled True :: dashedButtonAttributes )
-    , makeSelector ( btnDashedClass ++ ":disabled" ) 
+    , makeSelector (btnDashedClass ++ ":not([disabled])")
+        (cursorHoverEnabled True :: dashedButtonAttributes)
+    , makeSelector (btnDashedClass ++ ":disabled")
         [ disabledBorderColor
         , borderStyle dashed
-        , cursorHoverEnabled False 
+        , cursorHoverEnabled False
         ]
 
     -- text button styles
-    , makeSelector ( btnTextClass ++ ":not([disabled])" )
-        ( cursorHoverEnabled True :: textButtonStyles )
-    , makeSelector ( btnTextClass ++ ":disabled" ) 
+    , makeSelector (btnTextClass ++ ":not([disabled])")
+        (cursorHoverEnabled True :: textButtonStyles)
+    , makeSelector (btnTextClass ++ ":disabled")
         [ border zero
         , backgroundColor transparent
         , cursorHoverEnabled False
         ]
 
     -- link button styles
-    , makeSelector ( btnLinkClass ++ ":not([disabled])" )
-        ( cursorHoverEnabled True :: linkButtonAttributes )
-    , makeSelector ( btnLinkClass ++ ":disabled" ) 
-        baseAttributes 
+    , makeSelector (btnLinkClass ++ ":not([disabled])")
+        (cursorHoverEnabled True :: linkButtonAttributes)
+    , makeSelector (btnLinkClass ++ ":disabled")
+        baseAttributes
     ]
-

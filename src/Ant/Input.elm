@@ -1,18 +1,17 @@
 module Ant.Input exposing (input, InputSize(..), withSize, onInput, withPlaceholder, toHtml)
 
-{-
-    A NOTE TO DEVELOPERS.
-
-    This component is themable.
-
-    See styles at src/Ant/Input/Css.elm
--}
-
-
 {-| Input widget for data entry
 
 @docs input, InputSize, withSize, onInput, withPlaceholder, toHtml
 
+-}
+
+{-
+   A NOTE TO DEVELOPERS.
+
+   This component is themable.
+
+   See styles at src/Ant/Input/Css.elm
 -}
 
 import Ant.Css.Common exposing (inputClass)
@@ -89,7 +88,6 @@ onInput tagger (Input inputOpts) =
     Input newOpts
 
 
-
 {-| Convert the input into a `Html msg`
 -}
 toHtml : Input msg -> Html msg
@@ -107,4 +105,3 @@ toHtml (Input inputOpts) =
                     []
     in
     H.input ([ class inputClass, placeholder placeholderValue ] ++ optionalAttributes) []
-

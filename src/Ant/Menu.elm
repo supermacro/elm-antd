@@ -18,7 +18,7 @@ A good example can be found in this project's [showcase](https://github.com/supe
 -}
 
 import Ant.Internals.Typography exposing (fontList, textColorRgba)
-import Ant.Theme exposing (defaultTheme, Theme)
+import Ant.Theme exposing (Theme, defaultTheme)
 import Ant.Typography.Text as Text
 import Css exposing (..)
 import Css.Transitions exposing (transition)
@@ -294,7 +294,7 @@ viewItemGroup theme (ItemGroup title menuItems) =
             ]
             [ itemGroupLabel ]
         , Styled.ul [] <|
-            List.map ( viewMenuItem theme ) menuItems
+            List.map (viewMenuItem theme) menuItems
         ]
 
 
@@ -315,7 +315,7 @@ viewSubMenu : Theme -> SubMenu msg -> Styled.Html msg
 viewSubMenu theme (SubMenu _ subMenuContentList) =
     Styled.li []
         [ Styled.ul [] <|
-            List.map ( viewSubMenuContent theme ) subMenuContentList
+            List.map (viewSubMenuContent theme) subMenuContentList
         ]
 
 
@@ -340,4 +340,3 @@ toHtml (Menu config menuContents) =
         [ style "border-right" "1px solid #f0f0f0"
         ]
         (List.map (toUnstyled << viewMenuContent config.theme) menuContents)
-

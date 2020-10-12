@@ -1,4 +1,4 @@
-module Ant.Theme exposing (createTheme, defaultTheme, Theme)
+module Ant.Theme exposing (Theme, createTheme, defaultTheme)
 
 import Hex
 
@@ -8,39 +8,53 @@ import Hex
 defaultTheme : Theme
 defaultTheme =
     let
-        antdDefaultPrimaryColor = 0x1890ff
+        antdDefaultPrimaryColor =
+            0x001890FF
     in
     createTheme antdDefaultPrimaryColor
+
 
 
 -- These offset values determine what the "faded" and "strong" versions of a primary color are
 --
 -- They were calculated by comparing the hexadecimal values of the default Ant theme primary colors
+
+
 fadedOffset : Int
-fadedOffset = -2627840
+fadedOffset =
+    -2627840
+
 
 strongOffset : Int
-strongOffset = 992038
+strongOffset =
+    992038
 
-type alias Theme = 
+
+type alias Theme =
     { primary : String
     , primaryFaded : String
     , primaryStrong : String
     }
 
 
+
 -- produces 6-digit CSS hex values
 -- to ensure that CSS engines can properly interpret the
 -- hexadecimal as a RGB color
+
+
 toCssColorValue : Int -> String
 toCssColorValue val =
     let
         -- this value is going to be between 6 and 1 digits
-        rawString = Hex.toString val
+        rawString =
+            Hex.toString val
 
-        length = String.length rawString
-        
-        missingZeroes = String.repeat (6 - length) "0"
+        length =
+            String.length rawString
+
+        missingZeroes =
+            String.repeat (6 - length) "0"
     in
     "#" ++ missingZeroes ++ rawString
 
@@ -48,14 +62,16 @@ toCssColorValue val =
 createTheme : Int -> Theme
 createTheme primaryColor =
     let
-        primary = toCssColorValue primaryColor
+        primary =
+            toCssColorValue primaryColor
 
-        faded = toCssColorValue <| primaryColor - fadedOffset
+        faded =
+            toCssColorValue <| primaryColor - fadedOffset
 
-        strong = toCssColorValue <| primaryColor - strongOffset
+        strong =
+            toCssColorValue <| primaryColor - strongOffset
     in
     { primary = primary
     , primaryFaded = faded
     , primaryStrong = strong
     }
-

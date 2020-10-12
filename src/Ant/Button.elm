@@ -1,16 +1,9 @@
 module Ant.Button exposing
     ( Button
-    , button, onClick, ButtonType(..), withTheme, withType, withIcon, ButtonSize(..), disabled
+    , button, onClick, ButtonType(..), withType, withIcon, ButtonSize(..), disabled
     , toHtml
+    , withTheme
     )
-
-{-
-    A NOTE TO DEVELOPERS.
-
-    This component is themable.
-
-    See styles at src/Ant/Button/Css.elm
--}
 
 {-| Button component
 
@@ -25,9 +18,17 @@ module Ant.Button exposing
 
 -}
 
-import Ant.Icons as Icon exposing (Icon)
-import Ant.Theme exposing (defaultTheme, Theme)
+{-
+   A NOTE TO DEVELOPERS.
+
+   This component is themable.
+
+   See styles at src/Ant/Button/Css.elm
+-}
+
 import Ant.Css.Common exposing (..)
+import Ant.Icons as Icon exposing (Icon)
+import Ant.Theme exposing (Theme, defaultTheme)
 import Css exposing (..)
 import Html exposing (Html)
 import Html.Styled as H exposing (fromUnstyled, text, toUnstyled)
@@ -172,7 +173,6 @@ disabled disabled_ (Button opts label) =
     Button newOpts label
 
 
-
 iconToHtml : Icon msg -> H.Html msg
 iconToHtml icon =
     icon
@@ -192,27 +192,36 @@ toHtml (Button options label) =
             ]
 
         animationAttribute =
-            if List.member options.type_ animatedButtonTypes
-            then
+            if List.member options.type_ animatedButtonTypes then
                 [ A.class "elm-antd__animated_btn" ]
+
             else
                 []
 
         onClickAttribute =
             case options.onClick of
                 Just msg ->
-                    [ Events.onClick msg ] 
+                    [ Events.onClick msg ]
 
                 Nothing ->
                     []
 
         buttonTypeClassName =
             case options.type_ of
-                Default -> btnDefaultClass
-                Primary -> btnPrimaryClass
-                Dashed -> btnDashedClass
-                Text -> btnTextClass
-                Link -> btnLinkClass
+                Default ->
+                    btnDefaultClass
+
+                Primary ->
+                    btnPrimaryClass
+
+                Dashed ->
+                    btnDashedClass
+
+                Text ->
+                    btnTextClass
+
+                Link ->
+                    btnLinkClass
 
         commonAttributes =
             [ A.class btnClass
@@ -245,4 +254,3 @@ toHtml (Button options label) =
             , H.span [] [ text label ]
             ]
         )
-

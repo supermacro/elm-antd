@@ -1,8 +1,8 @@
 module Ant.Input.Css exposing (styles)
 
 import Ant.Css.Common exposing (inputClass)
-import Ant.Theme exposing (Theme)
 import Ant.Internals.Typography exposing (commonFontStyles, textColorRgba)
+import Ant.Theme exposing (Theme)
 import Css exposing (..)
 import Css.Global as CG exposing (Snippet)
 import Css.Transitions exposing (transition)
@@ -15,6 +15,7 @@ textColor =
             textColorRgba
     in
     rgba r g b a
+
 
 styles : Theme -> List Snippet
 styles theme =
@@ -53,4 +54,3 @@ styles theme =
                    ]
     in
     [ CG.class inputClass inputStyles ]
-

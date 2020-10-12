@@ -6,9 +6,9 @@ module Router exposing
     , view
     )
 
+import Ant.Css
 import Ant.Layout as Layout exposing (LayoutTree)
 import Ant.Menu as Menu exposing (Menu)
-import Ant.Css
 import Base64
 import Browser
 import Browser.Navigation as Nav
@@ -638,6 +638,6 @@ view toMsg model =
     { title = label ++ " - Elm Ant Design"
     , body =
         [ Ant.Css.defaultStyles
-        , Html.map toMsg <| Layout.toHtml layout ]
+        , Html.map toMsg <| Layout.toHtml layout
+        ]
     }
-

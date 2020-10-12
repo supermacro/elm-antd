@@ -3,6 +3,7 @@ module Ant.Internals.Theme exposing
     , warningColor
     )
 
+
 warningColor : String
 warningColor =
     "#faad14"
@@ -11,4 +12,3 @@ warningColor =
 dangerColor : String
 dangerColor =
     "#ff4d4f"
-

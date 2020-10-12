@@ -25,6 +25,7 @@ successAlertColors =
     , border = rgb 183 235 143
     }
 
+
 warningAlertColors : TypeColors
 warningAlertColors =
     { background = rgb 255 251 230
@@ -45,32 +46,32 @@ getInfoAlertColors theme =
     -- that allows you to change the Alpha value of a color
     -- just like the rgba function
     -- https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
-    { background = hex ( theme.primaryFaded ++ "20" )
-    , border = hex ( theme.primaryFaded ++ "80" )
+    { background = hex (theme.primaryFaded ++ "20")
+    , border = hex (theme.primaryFaded ++ "80")
     }
-
 
 
 styles : Theme -> List Snippet
 styles theme =
     let
-        baseStyles = commonFontStyles ++
-            [ fontSize (px 14)
-            , lineHeight (px 22)
-            , borderRadius (px 2)
-            , paddingTop (px 8)
-            , paddingBottom (px 8)
-            , paddingLeft (px 15)
-            , paddingRight (px 15)
-            , width (pct 100)
-            , transition
-                [ Css.Transitions.opacity close_transition_duration_ms
-                , Css.Transitions.height close_transition_duration_ms
-                , Css.Transitions.padding close_transition_duration_ms
-                , Css.Transitions.border close_transition_duration_ms
-                , Css.Transitions.margin close_transition_duration_ms
-                ]
-            ]
+        baseStyles =
+            commonFontStyles
+                ++ [ fontSize (px 14)
+                   , lineHeight (px 22)
+                   , borderRadius (px 2)
+                   , paddingTop (px 8)
+                   , paddingBottom (px 8)
+                   , paddingLeft (px 15)
+                   , paddingRight (px 15)
+                   , width (pct 100)
+                   , transition
+                        [ Css.Transitions.opacity close_transition_duration_ms
+                        , Css.Transitions.height close_transition_duration_ms
+                        , Css.Transitions.padding close_transition_duration_ms
+                        , Css.Transitions.border close_transition_duration_ms
+                        , Css.Transitions.margin close_transition_duration_ms
+                        ]
+                   ]
 
         infoAlertColors =
             getInfoAlertColors theme
@@ -94,15 +95,13 @@ styles theme =
             [ backgroundColor errorAlertColors.background
             , border3 (px 1) solid errorAlertColors.border
             ]
-
     in
     [ CG.class alertClass baseStyles
 
     -- styles for closeable alert
-    , makeSelector ( alertClass ++ "[" ++ alertStateAttributeName ++ "]" )
-        [ paddingRight (px 15) ]      
-
-    , makeSelector ( alertClass ++ "[" ++ alertStateAttributeName ++ "=true]" )
+    , makeSelector (alertClass ++ "[" ++ alertStateAttributeName ++ "]")
+        [ paddingRight (px 15) ]
+    , makeSelector (alertClass ++ "[" ++ alertStateAttributeName ++ "=true]")
         [ opacity (int 0)
         , overflow hidden
         , height zero
@@ -110,7 +109,7 @@ styles theme =
         , border zero
         , marginBottom zero
         ]
-    
+
     -- success alert styles
     , makeSelector alertSuccessClass
         successStyles
@@ -127,4 +126,3 @@ styles theme =
     , makeSelector alertErrorClass
         errorStyles
     ]
-
