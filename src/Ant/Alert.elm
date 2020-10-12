@@ -324,13 +324,6 @@ initAlertStack tagger alerts =
 -- View Code
 
 
-type alias TypeColors =
-    { background : Color
-    , border : Color
-    }
-
-
-
 renderCloseIcon : CloseableInfo msg -> Styled.Html msg
 renderCloseIcon { state, onClose } =
     let
