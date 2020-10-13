@@ -27,10 +27,10 @@ homePage =
             , internalLink "/components/typography" "Typography"
             , internalLink "/components/divider" "Divider"
             , internalLink "/components/input" "Input"
+            , internalLink "/components/space" "Space"
             , link "https://github.com/supermacro/elm-antd/issues/26" "Icon"
             , link "https://github.com/supermacro/elm-antd/issues/23" "Layout"
             , link "https://github.com/supermacro/elm-antd/issues/25" "Menu"
-            , link "https://github.com/supermacro/elm-antd/issues/24" "Space"
             ]
         , documentationSubheading WithoutAnchorLink "Early Development Notice"
         , documentationText <| text "Currently Elm Antd is in very early development with only a few components implemented, and bare-bones documentation."
