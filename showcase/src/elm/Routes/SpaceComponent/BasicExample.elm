@@ -1,18 +1,11 @@
-module Routes.SpaceComponent.BasicExample exposing (Model, Msg, example)
+module Routes.SpaceComponent.BasicExample exposing (example)
 
 import Html exposing (Html)
 import Ant.Space as Space exposing (space)
 import Ant.Button as Button exposing (button)
 
-type alias Model =
-    ()
 
-
-type Msg
-    = InputTyped String
-
-
-example : Html Msg
+example : Html msg
 example =
     let 
         button1 = 
@@ -31,4 +24,5 @@ example =
                 |> Button.toHtml
     in
     space [ button1, button2, button3 ]
+        |> Space.direction Space.Horizontal
         |> Space.toHtml
