@@ -35,7 +35,14 @@ homePage =
         , documentationSubheading WithoutAnchorLink "Theming"
         , documentationText <|
             div []
-                [ p [] [ text "Elm Antd has recently released a theming api." ]
+                [ p []
+                    [ text "Elm Antd has recently released a theming api! "
+                    , text "Visit the "
+                    , internalLink "/components/button" "Button"
+                    , text " or the "
+                    , internalLink "/components/alert" "Alert"
+                    , text " pages to play around with the theming color picker that is available at the footer of every page."
+                    ]
                 ]
         , documentationSubheading WithoutAnchorLink "Early Development Notice"
         , documentationText <| text "Currently Elm Antd is in very early development with only a few components implemented, and bare-bones documentation."
