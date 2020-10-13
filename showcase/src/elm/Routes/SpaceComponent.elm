@@ -91,7 +91,7 @@ basicExample model =
     let
         metaInfo =
             { title = "Basic"
-            , content = "Basic usage example."
+            , content = "Basic usage example. Default direction is horizontal."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
             }
     in
@@ -107,7 +107,7 @@ verticalAndSpacingExample model =
     let
         metaInfo =
             { title = "Vertical and Spacing"
-            , content = "Using vertical direction and a mixture of spacing."
+            , content = "Using vertical direction and a mixture of medium and large spacing."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
             }
     in
