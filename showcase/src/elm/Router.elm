@@ -78,7 +78,6 @@ type alias Model =
     -- You'll need to be running the file-server locally
     , commitHash : CommitHash
     , fileServerUrl : String
-
     , footer : Footer.Model
 
     -- sub models for each page
@@ -384,7 +383,6 @@ update navKey msg model =
             , Cmd.none
             )
 
-
         ComponentPageReceivedExamples routeName fetchResult ->
             let
                 decodeFileContents : List RawSourceCode -> Result String (List SourceCode)
@@ -620,8 +618,11 @@ getPageTitleAndContentView activeRoute =
 view : (Msg -> msg) -> Model -> Browser.Document msg
 view toMsg model =
     let
-        themePrimaryColor = colorToInt model.footer.color
-        theme = createTheme themePrimaryColor
+        currentThemePrimaryColor =
+            model.footer.color
+
+        theme =
+            createTheme currentThemePrimaryColor
 
         ( label, componentContentView ) =
             getPageTitleAndContentView model.activeRoute
@@ -658,4 +659,3 @@ view toMsg model =
         , Html.map toMsg <| Layout.toHtml layout
         ]
     }
-

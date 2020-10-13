@@ -247,16 +247,16 @@ viewMenuItem theme (MenuItem msg state itemContents) =
         selectedItemStyles =
             if state.selected then
                 batch
-                    [ color (hex theme.primary)
+                    [ color (hex theme.colors.primary)
                     , backgroundColor (hex "#e6f7ff")
-                    , borderRight3 (px 3) solid (hex theme.primary)
+                    , borderRight3 (px 3) solid (hex theme.colors.primary)
                     ]
 
             else
                 batch
                     [ menuItemColor
                     , hover
-                        [ color (hex theme.primary) ]
+                        [ color (hex theme.colors.primary) ]
                     ]
     in
     Styled.li

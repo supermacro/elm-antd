@@ -13,11 +13,14 @@ createThemedStyles : Theme -> Html msg
 createThemedStyles theme =
     let
         allStyles =
-            AlertCss.styles theme
-                ++ ButtonCss.styles theme
-                ++ InputCss.styles theme
+            List.map (\styles -> styles theme)
+                [ AlertCss.styles
+                , ButtonCss.styles
+                , InputCss.styles
+                ]
     in
     allStyles
+        |> List.concat
         |> CG.global
         |> toUnstyled
 

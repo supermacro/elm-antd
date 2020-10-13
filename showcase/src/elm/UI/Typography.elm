@@ -26,7 +26,7 @@ link url label =
     let
         styles =
             commonTextStyles
-                ++ [ hover [ color (hex defaultTheme.primary) ]
+                ++ [ hover [ color (hex defaultTheme.colors.primary) ]
                    ]
     in
     Styled.a
@@ -39,7 +39,7 @@ internalLink url label =
     let
         styles =
             commonTextStyles
-                ++ [ hover [ color (hex defaultTheme.primary) ]
+                ++ [ hover [ color (hex defaultTheme.colors.primary) ]
                    ]
     in
     Styled.a
@@ -59,7 +59,7 @@ commonStyles : List Style
 commonStyles =
     [ color (rgba headingColorRgba.r headingColorRgba.g headingColorRgba.b headingColorRgba.a)
     , selection
-        [ backgroundColor (hex defaultTheme.primary)
+        [ backgroundColor (hex defaultTheme.colors.primary)
         , color (hex "#fff")
         ]
     ]
@@ -123,10 +123,10 @@ documentationSubheading opts value =
                 [ href ("#" ++ subheadingLink)
                 , css
                     [ textDecoration none
-                    , color (hex defaultTheme.primary)
+                    , color (hex defaultTheme.colors.primary)
                     , marginLeft (px 8)
                     , hover
-                        [ color (hex defaultTheme.primaryFaded)
+                        [ color (hex defaultTheme.colors.primaryFaded)
                         ]
                     ]
                 ]

@@ -30,7 +30,7 @@ fontList =
 textSelectionStyles : Style
 textSelectionStyles =
     selection
-        [ backgroundColor (hex defaultTheme.primary)
+        [ backgroundColor (hex defaultTheme.colors.primary)
         , color (hex "#fff")
         ]
 

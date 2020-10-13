@@ -46,8 +46,8 @@ getInfoAlertColors theme =
     -- that allows you to change the Alpha value of a color
     -- just like the rgba function
     -- https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
-    { background = hex (theme.primaryFaded ++ "20")
-    , border = hex (theme.primaryFaded ++ "80")
+    { background = hex (theme.colors.primaryFaded ++ "20")
+    , border = hex (theme.colors.primaryFaded ++ "80")
     }
 
 

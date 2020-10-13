@@ -1,22 +1,22 @@
-module UI.Footer exposing (footer, initialModel, Model, Msg, pushDown, update)
+module UI.Footer exposing (Model, Msg, footer, initialModel, pushDown, update)
 
 import Ant.Theme exposing (defaultTheme)
+import Color
+import ColorPicker
 import Css exposing (..)
 import Css.Global as CG
-import Color exposing (Color)
-import ColorPicker
 import Html
 import Html.Styled as Styled exposing (div, fromUnstyled, text)
 import Html.Styled.Attributes as A exposing (css, href)
 import Html.Styled.Events exposing (onClick)
 import UI.Typography exposing (commonTextStyles)
-import UI.Utils exposing (cssColorValueToColor, colorToHexCssString)
+import UI.Utils exposing (colorToHexCssString, cssColorValueToColor)
 
 
 type alias Model =
     { colorPickerVisible : Bool
     , colorPicker : ColorPicker.State
-    , color : Color
+    , color : Color.Color
     }
 
 
@@ -29,9 +29,8 @@ initialModel : Model
 initialModel =
     { colorPickerVisible = False
     , colorPicker = ColorPicker.empty
-    , color = cssColorValueToColor defaultTheme.primary
+    , color = cssColorValueToColor defaultTheme.colors.primary
     }
-
 
 
 update : Msg -> Model -> Model
@@ -44,13 +43,13 @@ update msg model =
             in
             { model
                 | colorPicker = newColorPickerState
-                , color = color
-                    |> Maybe.withDefault model.color
+                , color =
+                    color
+                        |> Maybe.withDefault model.color
             }
 
         ColorPickerToggleClicked ->
             { model | colorPickerVisible = not model.colorPickerVisible }
-
 
 
 {-| Hack to push down the footer in pages where there isn't enough content
@@ -65,12 +64,13 @@ viewColorPicker { color, colorPicker, colorPickerVisible } =
     let
         colorPickerUi =
             ColorPicker.view color colorPicker
-            |> Html.map ColorPickerMsg
-            |> fromUnstyled
+                |> Html.map ColorPickerMsg
+                |> fromUnstyled
 
         displayProperty =
             if colorPickerVisible then
                 display inlineBlock
+
             else
                 display none |> important
 
@@ -86,7 +86,7 @@ viewColorPicker { color, colorPicker, colorPickerVisible } =
         currentColorBox =
             div
                 [ onClick ColorPickerToggleClicked
-                , css 
+                , css
                     [ backgroundColor (hex "#fff")
                     , padding (px 4)
                     , borderRadius (px 2)
@@ -96,7 +96,7 @@ viewColorPicker { color, colorPicker, colorPickerVisible } =
                     ]
                 ]
                 [ div
-                    [ css 
+                    [ css
                         [ backgroundColor (hex <| colorToHexCssString color)
                         , height (px 17)
                         , width (px 80)
@@ -105,7 +105,6 @@ viewColorPicker { color, colorPicker, colorPickerVisible } =
                     ]
                     []
                 ]
-
     in
     div [ css [ position relative ] ]
         [ customColorPickerStyles
@@ -114,12 +113,11 @@ viewColorPicker { color, colorPicker, colorPickerVisible } =
         ]
 
 
-
 madeByMessage : Styled.Html msg
 madeByMessage =
     let
         styles =
-            [ borderTop3 (px 1) solid (rgba 255 255 255 0.25 )
+            [ borderTop3 (px 1) solid (rgba 255 255 255 0.25)
             , paddingTop (em 1.6)
             ]
     in
@@ -136,6 +134,7 @@ madeByMessage =
             ]
             [ text "and you?" ]
         ]
+
 
 footer : Model -> Styled.Html Msg
 footer model =
@@ -156,4 +155,3 @@ footer model =
         [ viewColorPicker model
         , madeByMessage
         ]
-

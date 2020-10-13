@@ -57,8 +57,8 @@ styles theme =
 
         waveEffect =
             keyframes
-                [ ( 100, [ CA.property "box-shadow" <| "0 0 0 " ++ theme.primaryStrong ] )
-                , ( 100, [ CA.property "box-shadow" <| "0 0 0 8px " ++ theme.primaryStrong ] )
+                [ ( 100, [ CA.property "box-shadow" <| "0 0 0 " ++ theme.colors.primaryStrong ] )
+                , ( 100, [ CA.property "box-shadow" <| "0 0 0 8px " ++ theme.colors.primaryStrong ] )
                 , ( 100, [ CA.property "opacity" "0" ] )
                 ]
 
@@ -76,7 +76,7 @@ styles theme =
                 , bottom (px 0)
                 , borderRadius (px 2)
                 , backgroundColor color
-                , boxShadow4 (px 0) (px 0) (px 0) (hex theme.primary)
+                , boxShadow4 (px 0) (px 0) (px 0) (hex theme.colors.primary)
                 , opacity (num 0.2)
                 , zIndex (int -1)
                 , animationName waveEffect
@@ -89,7 +89,7 @@ styles theme =
         animationStyle =
             CG.withClass "elm-antd__animated_before"
                 [ position relative
-                , animatedBefore (hex theme.primaryStrong)
+                , animatedBefore (hex theme.colors.primaryStrong)
                 ]
 
         baseAttributes =
@@ -110,16 +110,16 @@ styles theme =
             , antButtonBoxShadow
             , animationStyle
             , focus
-                [ borderColor (hex theme.primaryFaded)
-                , color (hex theme.primaryFaded)
+                [ borderColor (hex theme.colors.primaryFaded)
+                , color (hex theme.colors.primaryFaded)
                 ]
             , hover
-                [ borderColor (hex theme.primaryFaded)
-                , color (hex theme.primaryFaded)
+                [ borderColor (hex theme.colors.primaryFaded)
+                , color (hex theme.colors.primaryFaded)
                 ]
             , active
-                [ borderColor (hex theme.primary)
-                , color (hex theme.primary)
+                [ borderColor (hex theme.colors.primary)
+                , color (hex theme.colors.primary)
                 ]
             , transition
                 [ Css.Transitions.borderColor transitionDuration
@@ -130,21 +130,21 @@ styles theme =
         primaryButtonStyles =
             [ color (hex "#fff")
             , borderStyle solid
-            , backgroundColor (hex theme.primary)
-            , borderColor (hex theme.primary)
+            , backgroundColor (hex theme.colors.primary)
+            , borderColor (hex theme.colors.primary)
             , antButtonBoxShadow
             , animationStyle
             , focus
-                [ backgroundColor (hex theme.primaryFaded)
-                , borderColor (hex theme.primaryFaded)
+                [ backgroundColor (hex theme.colors.primaryFaded)
+                , borderColor (hex theme.colors.primaryFaded)
                 ]
             , hover
-                [ backgroundColor (hex theme.primaryFaded)
-                , borderColor (hex theme.primaryFaded)
+                [ backgroundColor (hex theme.colors.primaryFaded)
+                , borderColor (hex theme.colors.primaryFaded)
                 ]
             , active
-                [ backgroundColor (hex theme.primaryStrong)
-                , borderColor (hex theme.primaryStrong)
+                [ backgroundColor (hex theme.colors.primaryStrong)
+                , borderColor (hex theme.colors.primaryStrong)
                 ]
             , transition
                 [ Css.Transitions.backgroundColor transitionDuration
@@ -168,11 +168,11 @@ styles theme =
                    ]
 
         linkButtonAttributes =
-            [ color (hex theme.primary)
+            [ color (hex theme.colors.primary)
             , border zero
             , backgroundColor (hex "#fff")
             , hover
-                [ color (hex theme.primaryFaded) ]
+                [ color (hex theme.colors.primaryFaded) ]
             , transition
                 [ Css.Transitions.color transitionDuration ]
             ]

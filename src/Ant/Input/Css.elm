@@ -36,14 +36,14 @@ styles theme =
                    , property "caret-color" "#000"
                    , padding2 (px 4) (px 11)
                    , focus
-                        [ borderColor (hex theme.primaryFaded)
+                        [ borderColor (hex theme.colors.primaryFaded)
                         , boxShadow5 zero zero zero (px 2) (rgba 24 144 255 0.2)
                         ]
                    , hover
-                        [ borderColor (hex theme.primaryFaded)
+                        [ borderColor (hex theme.colors.primaryFaded)
                         ]
                    , active
-                        [ borderColor (hex theme.primary)
+                        [ borderColor (hex theme.colors.primary)
                         ]
                    , focus
                         [ outline none ]
