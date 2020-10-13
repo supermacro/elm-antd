@@ -9,6 +9,7 @@ module Router exposing
 import Ant.Css
 import Ant.Layout as Layout exposing (LayoutTree)
 import Ant.Menu as Menu exposing (Menu)
+import Ant.Theme exposing (createTheme)
 import Base64
 import Browser
 import Browser.Navigation as Nav
@@ -45,9 +46,10 @@ import Routes.NotImplemented exposing (notImplemented)
 import Routes.TooltipComponent as TooltipPage
 import Routes.TypographyComponent as TypographyPage
 import Task
-import UI.Footer exposing (footer)
+import UI.Footer as Footer exposing (footer)
 import UI.Icons
 import UI.Typography exposing (logoText)
+import UI.Utils exposing (colorToInt)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 import Utils exposing (ComponentCategory(..), Flags, RawSourceCode, SourceCode)
@@ -76,6 +78,10 @@ type alias Model =
     -- You'll need to be running the file-server locally
     , commitHash : CommitHash
     , fileServerUrl : String
+
+    , footer : Footer.Model
+
+    -- sub models for each page
     , alertPageModel : AlertPage.Model
     , buttonPageModel : ButtonPage.Model
     , dividerPageModel : DividerPage.Model
@@ -101,6 +107,7 @@ type Msg
       -- represents the outcome of having asynchronously fetched
       -- the source code of the examples for a particular component page
     | ComponentPageReceivedExamples Route (Result Http.Error (List RawSourceCode))
+    | FooterMessage Footer.Msg
 
 
 type alias Component =
@@ -334,6 +341,7 @@ init url { commitHash, fileServerUrl } =
             , examplesFetched = []
             , commitHash = commitHash
             , fileServerUrl = fileServerUrl
+            , footer = Footer.initialModel
             , alertPageModel = AlertPage.route.initialModel
             , buttonPageModel = ButtonPage.route.initialModel
             , dividerPageModel = DividerPage.route.initialModel
@@ -370,6 +378,12 @@ update navKey msg model =
 
         MenuItemClicked hrefString ->
             ( model, Nav.pushUrl navKey hrefString )
+
+        FooterMessage footerMsg ->
+            ( { model | footer = Footer.update footerMsg model.footer }
+            , Cmd.none
+            )
+
 
         ComponentPageReceivedExamples routeName fetchResult ->
             let
@@ -606,6 +620,9 @@ getPageTitleAndContentView activeRoute =
 view : (Msg -> msg) -> Model -> Browser.Document msg
 view toMsg model =
     let
+        themePrimaryColor = colorToInt model.footer.color
+        theme = createTheme themePrimaryColor
+
         ( label, componentContentView ) =
             getPageTitleAndContentView model.activeRoute
 
@@ -631,13 +648,14 @@ view toMsg model =
                     sidebar
                     (Layout.layout2
                         (Layout.content <| toUnstyled componentPageShell)
-                        (Layout.footer <| toUnstyled footer)
+                        (Layout.footer <| toUnstyled <| Styled.map FooterMessage <| footer model.footer)
                     )
                 )
     in
     { title = label ++ " - Elm Ant Design"
     , body =
-        [ Ant.Css.defaultStyles
+        [ Ant.Css.createThemedStyles theme
         , Html.map toMsg <| Layout.toHtml layout
         ]
     }
+

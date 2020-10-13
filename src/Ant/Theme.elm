@@ -41,8 +41,6 @@ type alias Theme =
 -- produces 6-digit CSS hex values
 -- to ensure that CSS engines can properly interpret the
 -- hexadecimal as a RGB color
-
-
 toCssColorValue : Int -> String
 toCssColorValue val =
     let
@@ -75,3 +73,4 @@ createTheme primaryColor =
     , primaryFaded = faded
     , primaryStrong = strong
     }
+
