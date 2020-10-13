@@ -64,11 +64,11 @@ createTheme primaryColor =
             { primary = colorToHexWithAlpha primaryColor
             , primaryFaded =
                 primaryColor
-                    |> lighten 0.3
+                    |> lighten 0.1
                     |> colorToHexWithAlpha
             , primaryStrong =
                 primaryColor
-                    |> darken 0.3
+                    |> darken 0.1
                     |> colorToHexWithAlpha
             }
     in
