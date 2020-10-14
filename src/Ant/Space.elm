@@ -56,7 +56,7 @@ type alias SpaceConfig =
 
 defaultSpaceConfig : SpaceConfig
 defaultSpaceConfig =
-    { direction = Horizontal
+    { direction = Vertical
     , size = Small
     }
 
