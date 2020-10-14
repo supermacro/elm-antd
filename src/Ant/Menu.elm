@@ -20,6 +20,7 @@ A good example can be found in this project's [showcase](https://github.com/supe
 import Ant.Internals.Typography exposing (fontList, textColorRgba)
 import Ant.Theme exposing (Theme, defaultTheme)
 import Ant.Typography.Text as Text
+import Color.Convert exposing (colorToHexWithAlpha)
 import Css exposing (..)
 import Css.Transitions exposing (transition)
 import Html exposing (Html, div, li, text, ul)
@@ -244,19 +245,24 @@ menuItemColor =
 viewMenuItem : Theme -> MenuItem msg -> Styled.Html msg
 viewMenuItem theme (MenuItem msg state itemContents) =
     let
+        primaryColor =
+            theme.colors.primary
+                |> colorToHexWithAlpha
+                |> hex
+
         selectedItemStyles =
             if state.selected then
                 batch
-                    [ color (hex theme.colors.primary)
+                    [ color primaryColor
                     , backgroundColor (hex "#e6f7ff")
-                    , borderRight3 (px 3) solid (hex theme.colors.primary)
+                    , borderRight3 (px 3) solid primaryColor
                     ]
 
             else
                 batch
                     [ menuItemColor
                     , hover
-                        [ color (hex theme.colors.primary) ]
+                        [ color primaryColor ]
                     ]
     in
     Styled.li

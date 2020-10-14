@@ -7,6 +7,7 @@ module Ant.Internals.Typography exposing
     )
 
 import Ant.Theme exposing (defaultTheme)
+import Color.Convert exposing (colorToHexWithAlpha)
 import Css exposing (..)
 
 
@@ -30,7 +31,7 @@ fontList =
 textSelectionStyles : Style
 textSelectionStyles =
     selection
-        [ backgroundColor (hex defaultTheme.colors.primary)
+        [ backgroundColor <| hex <| colorToHexWithAlpha defaultTheme.colors.primary
         , color (hex "#fff")
         ]
 

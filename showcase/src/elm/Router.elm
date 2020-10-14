@@ -49,7 +49,6 @@ import Task
 import UI.Footer as Footer exposing (footer)
 import UI.Icons
 import UI.Typography exposing (logoText)
-import UI.Utils exposing (colorToInt)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 import Utils exposing (ComponentCategory(..), Flags, RawSourceCode, SourceCode)
