@@ -17,8 +17,8 @@ A good example can be found in this project's [showcase](https://github.com/supe
 
 -}
 
-import Ant.Internals.Palette exposing (primaryColor)
 import Ant.Internals.Typography exposing (fontList, textColorRgba)
+import Ant.Theme exposing (Theme, defaultTheme)
 import Ant.Typography.Text as Text
 import Css exposing (..)
 import Css.Transitions exposing (transition)
@@ -77,6 +77,7 @@ type MenuMode
 type alias MenuConfig =
     { mode : MenuMode
     , verticalOrInlineCollapsed : Bool
+    , theme : Theme
     }
 
 
@@ -84,6 +85,7 @@ defaultMenuConfig : MenuConfig
 defaultMenuConfig =
     { mode = Vertical
     , verticalOrInlineCollapsed = False
+    , theme = defaultTheme
     }
 
 
@@ -239,22 +241,22 @@ menuItemColor =
     color (rgba r g b a)
 
 
-viewMenuItem : MenuItem msg -> Styled.Html msg
-viewMenuItem (MenuItem msg state itemContents) =
+viewMenuItem : Theme -> MenuItem msg -> Styled.Html msg
+viewMenuItem theme (MenuItem msg state itemContents) =
     let
         selectedItemStyles =
             if state.selected then
                 batch
-                    [ color (hex primaryColor)
+                    [ color (hex theme.colors.primary)
                     , backgroundColor (hex "#e6f7ff")
-                    , borderRight3 (px 3) solid (hex primaryColor)
+                    , borderRight3 (px 3) solid (hex theme.colors.primary)
                     ]
 
             else
                 batch
                     [ menuItemColor
                     , hover
-                        [ color (hex primaryColor) ]
+                        [ color (hex theme.colors.primary) ]
                     ]
     in
     Styled.li
@@ -275,8 +277,8 @@ viewMenuItem (MenuItem msg state itemContents) =
         [ fromUnstyled itemContents ]
 
 
-viewItemGroup : ItemGroup msg -> Styled.Html msg
-viewItemGroup (ItemGroup title menuItems) =
+viewItemGroup : Theme -> ItemGroup msg -> Styled.Html msg
+viewItemGroup theme (ItemGroup title menuItems) =
     let
         itemGroupLabel =
             fromUnstyled
@@ -292,49 +294,49 @@ viewItemGroup (ItemGroup title menuItems) =
             ]
             [ itemGroupLabel ]
         , Styled.ul [] <|
-            List.map viewMenuItem menuItems
+            List.map (viewMenuItem theme) menuItems
         ]
 
 
-viewSubMenuContent : SubMenuContent msg -> Styled.Html msg
-viewSubMenuContent subMenuContent =
+viewSubMenuContent : Theme -> SubMenuContent msg -> Styled.Html msg
+viewSubMenuContent theme subMenuContent =
     case subMenuContent of
         SubMenuItem menuItem ->
-            viewMenuItem menuItem
+            viewMenuItem theme menuItem
 
         SubMenuGroup itemGroup ->
-            viewItemGroup itemGroup
+            viewItemGroup theme itemGroup
 
         NestedSubMenu subMenu ->
-            viewSubMenu subMenu
+            viewSubMenu theme subMenu
 
 
-viewSubMenu : SubMenu msg -> Styled.Html msg
-viewSubMenu (SubMenu _ subMenuContentList) =
+viewSubMenu : Theme -> SubMenu msg -> Styled.Html msg
+viewSubMenu theme (SubMenu _ subMenuContentList) =
     Styled.li []
         [ Styled.ul [] <|
-            List.map viewSubMenuContent subMenuContentList
+            List.map (viewSubMenuContent theme) subMenuContentList
         ]
 
 
-viewMenuContent : MenuContent msg -> Styled.Html msg
-viewMenuContent menuContent =
+viewMenuContent : Theme -> MenuContent msg -> Styled.Html msg
+viewMenuContent theme menuContent =
     case menuContent of
         Item menuItem ->
-            viewMenuItem menuItem
+            viewMenuItem theme menuItem
 
         Sub subMenu ->
-            viewSubMenu subMenu
+            viewSubMenu theme subMenu
 
         Group itemGroup ->
-            viewItemGroup itemGroup
+            viewItemGroup theme itemGroup
 
 
 {-| Turn your Menu into a `Html msg`
 -}
 toHtml : Menu msg -> Html msg
-toHtml (Menu _ menuContents) =
+toHtml (Menu config menuContents) =
     ul
         [ style "border-right" "1px solid #f0f0f0"
         ]
-        (List.map (toUnstyled << viewMenuContent) menuContents)
+        (List.map (toUnstyled << viewMenuContent config.theme) menuContents)
