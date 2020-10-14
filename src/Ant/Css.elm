@@ -3,6 +3,7 @@ module Ant.Css exposing (createThemedStyles, defaultStyles)
 {-| Global styles that are responsible for the visualas / aesthetic of the elm-antd components. You **must** call `defaultStyles` or `createThemedStyles` at the root of your Elm project.
 
 @docs createThemedStyles, defaultStyles
+
 -}
 
 import Ant.Alert.Css as AlertCss
@@ -24,6 +25,7 @@ You must call `createThemedStyles` at the root of your Elm project!
         -- This button will now be themed according to the primaryColor color you chose!
         , Btn.toHtml <| button "Hello, elm-antd!"
         ]
+
 -}
 createThemedStyles : Theme -> Html msg
 createThemedStyles theme =
@@ -51,6 +53,7 @@ You must call `defaultStyles` at the root of your Elm project!
         -- This button will now be themed according to the primaryColor color you chose!
         , Btn.toHtml <| button "Hello, elm-antd!"
         ]
+
 -}
 defaultStyles : Html msg
 defaultStyles =

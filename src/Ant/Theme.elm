@@ -1,4 +1,8 @@
-module Ant.Theme exposing (Theme, createTheme, defaultTheme)
+module Ant.Theme exposing
+    ( Theme
+    , createTheme
+    , defaultTheme
+    )
 
 {-| This module allows you to create custom themes for your components.
 
@@ -6,9 +10,11 @@ module Ant.Theme exposing (Theme, createTheme, defaultTheme)
 
 @docs createTheme
 
+
 ### Leaked Internals. Do Not Use :)
 
-@docs defaultTheme 
+@docs defaultTheme
+
 -}
 
 import Color exposing (Color)
@@ -25,7 +31,6 @@ defaultTheme =
             Color.rgb255 24 144 255
     in
     createTheme antdDefaultPrimaryColor
-
 
 
 {-| all colors stored as CSS-compatible hexadecimal strings
