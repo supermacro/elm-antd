@@ -41,9 +41,9 @@ import Routes.Home exposing (homePage)
 import Routes.InputComponent as InputPage
 import Routes.NotFound exposing (notFound)
 import Routes.NotImplemented exposing (notImplemented)
+import Routes.SpaceComponent as SpacePage
 import Routes.TooltipComponent as TooltipPage
 import Routes.TypographyComponent as TypographyPage
-import Routes.SpaceComponent as SpacePage
 import Task
 import UI.Footer exposing (footer)
 import UI.Icons
@@ -221,7 +221,6 @@ componentList =
         tooltipPageView model =
             TooltipPage.route.view model.tooltipPageModel
                 |> Styled.map TooltipPageMessage
-        
     in
     [ { route = ButtonPage.route.title
       , category = ButtonPage.route.category
@@ -473,7 +472,6 @@ update navKey msg model =
               }
             , Cmd.map SpacePageMessage spacePageCmd
             )
-
 
         TooltipPageMessage tooltipPageMessage ->
             let

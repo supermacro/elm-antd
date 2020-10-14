@@ -68,14 +68,13 @@ update msg model =
                             Container.update (DemoBoxMsg Basic) demoboxMsg model.basicExample
                     in
                     ( { model | basicExample = basicModel }, basicCmd )
-                
+
                 VertWithSpacing ->
                     let
                         ( verticalAndSpacingModel, verticalAndSpacingCmd ) =
                             Container.update (DemoBoxMsg VertWithSpacing) demoboxMsg model.verticalAndSpacingExample
                     in
                     ( { model | verticalAndSpacingExample = verticalAndSpacingModel }, verticalAndSpacingCmd )
-
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model

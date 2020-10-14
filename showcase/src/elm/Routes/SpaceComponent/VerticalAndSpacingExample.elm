@@ -1,33 +1,34 @@
 module Routes.SpaceComponent.VerticalAndSpacingExample exposing (example)
 
-import Html exposing (Html)
-import Ant.Space as Space exposing (space)
-import Ant.Button as Button exposing (button)
 import Ant.Alert as Alert exposing (alert)
+import Ant.Button as Button exposing (button)
+import Ant.Space as Space exposing (space)
+import Html exposing (Html)
+
 
 example : Html msg
 example =
-    let 
-        spacingTop =  
+    let
+        spacingTop =
             List.map Alert.toHtml
                 [ alert "Alerts"
                 , alert "With Spacing"
-                    |> Alert.withType Alert.Warning 
+                    |> Alert.withType Alert.Warning
                 , alert "Set to Large"
-                    |> Alert.withType Alert.Error 
+                    |> Alert.withType Alert.Error
                 ]
                 |> space
                 |> Space.direction Space.Horizontal
                 |> Space.withSize Space.Large
                 |> Space.toHtml
 
-        button2 = 
+        button2 =
             List.map Alert.toHtml
                 [ alert "Alerts"
                 , alert "With Spacing"
-                    |> Alert.withType Alert.Warning 
+                    |> Alert.withType Alert.Warning
                 , alert "Set to Medium"
-                    |> Alert.withType Alert.Error 
+                    |> Alert.withType Alert.Error
                 ]
                 |> space
                 |> Space.direction Space.Horizontal
