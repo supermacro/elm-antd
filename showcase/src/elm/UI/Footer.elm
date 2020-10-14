@@ -2,6 +2,7 @@ module UI.Footer exposing (Model, Msg, footer, initialModel, pushDown, update)
 
 import Ant.Theme exposing (defaultTheme)
 import Color
+import Color.Convert exposing (colorToHexWithAlpha)
 import ColorPicker
 import Css exposing (..)
 import Css.Global as CG
@@ -10,7 +11,6 @@ import Html.Styled as Styled exposing (div, fromUnstyled, text)
 import Html.Styled.Attributes as A exposing (css, href)
 import Html.Styled.Events exposing (onClick)
 import UI.Typography exposing (commonTextStyles)
-import UI.Utils exposing (colorToHexCssString, cssColorValueToColor)
 
 
 type alias Model =
@@ -29,7 +29,7 @@ initialModel : Model
 initialModel =
     { colorPickerVisible = False
     , colorPicker = ColorPicker.empty
-    , color = cssColorValueToColor defaultTheme.colors.primary
+    , color = defaultTheme.colors.primary
     }
 
 
@@ -97,7 +97,7 @@ viewColorPicker { color, colorPicker, colorPickerVisible } =
                 ]
                 [ div
                     [ css
-                        [ backgroundColor (hex <| colorToHexCssString color)
+                        [ backgroundColor (hex <| colorToHexWithAlpha color)
                         , height (px 17)
                         , width (px 80)
                         , borderRadius (px 2)
