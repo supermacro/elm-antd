@@ -47,13 +47,13 @@ getInfoAlertColors theme =
     let
         backgroundColor =
             theme.colors.primaryFaded
-                |> Color.Manipulate.lighten 0.2
+                |> Color.Manipulate.lighten 0.313
                 |> colorToHexWithAlpha
                 |> hex
 
         borderColor =
             theme.colors.primaryFaded
-                |> Color.Manipulate.lighten 0.4
+                |> Color.Manipulate.lighten 0.15
                 |> colorToHexWithAlpha
                 |> hex
     in
