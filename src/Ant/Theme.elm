@@ -1,11 +1,20 @@
 module Ant.Theme exposing (Theme, createTheme, defaultTheme)
 
+{-| This module allows you to create custom themes for your components.
+
+@docs createTheme
+
+### Leaked Internals. Do Not Use :)
+
+@docs defaultTheme 
+-}
+
 import Color exposing (Color)
 import Color.Convert exposing (colorToHexWithAlpha)
 import Color.Manipulate exposing (darken, lighten)
 
 
-{-| The default antd theme. You shouldn't ever need to import or use the function since all components already use it under the hood.
+{-| The default antd theme. You shouldn't ever use the function since all components already use it under the hood. It is currently exposed as I transition other components over to the themable API. This function **will** be removed / hidden in the future.
 -}
 defaultTheme : Theme
 defaultTheme =
@@ -17,9 +26,8 @@ defaultTheme =
 
 
 
--- all colors stored as CSS-compatible hexadecimal strings
-
-
+{-| all colors stored as CSS-compatible hexadecimal strings
+-}
 type alias Colors =
     { primary : String
     , primaryFaded : String
@@ -27,6 +35,8 @@ type alias Colors =
     }
 
 
+{-| elm-antd theme info used to generate custom themes
+-}
 type alias Theme =
     { colors : Colors
     }
