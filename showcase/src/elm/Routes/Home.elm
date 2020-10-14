@@ -41,7 +41,10 @@ homePage =
                     , internalLink "/components/button" "Button"
                     , text " or the "
                     , internalLink "/components/alert" "Alert"
-                    , text " pages to play around with the theming color picker that is available at the footer of every page."
+                    , text " pages to play around with the theming color picker that is available at the footer of every page. "
+                    , text "Visit the "
+                    , link "https://package.elm-lang.org/packages/supermacro/elm-antd/latest/Ant-Theme" "Ant.Theme"
+                    , text " docs to learn about the theming api."
                     ]
                 ]
         , documentationSubheading WithoutAnchorLink "Early Development Notice"
