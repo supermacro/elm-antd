@@ -5,14 +5,9 @@ import Ant.Typography.Text as Text exposing (TextType(..), text)
 import Html exposing (Html)
 
 
-verticalAlign : List (Html msg) -> Html msg
-verticalAlign =
-    Space.toHtml << space
-
 
 example : Html msg
 example =
-    verticalAlign <|
         List.map Text.toHtml
             [ text "Ant Design"
             , text "Ant Design"
@@ -36,3 +31,6 @@ example =
             , text "Ant Design"
                 |> Text.strong
             ]
+            |> space
+            |> Space.direction Space.Vertical 
+            |> Space.toHtml
