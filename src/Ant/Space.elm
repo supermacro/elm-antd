@@ -11,7 +11,7 @@ module Ant.Space exposing
 
 @docs space
 
-Note that by default, a Space value is set to be vertically layed out with a "small" space between elements
+Note that by default, a Space value is set to be horizontally layed out with a "small" space between elements
 
 
 # Customizing the layout between components
@@ -75,10 +75,10 @@ space =
     Space defaultSpaceConfig
 
 
-{-| Set the direction of your Space value\\
+{-| Set the direction of your Space value
 
     space myElementList
-        |> direction Horizontal
+        |> direction Vertical
 
 -}
 direction : SpaceDirection -> Space msg -> Space msg
