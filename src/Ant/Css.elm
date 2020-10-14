@@ -1,6 +1,8 @@
 module Ant.Css exposing (createThemedStyles, defaultStyles)
 
 {-| Global styles that are responsible for the visualas / aesthetic of the elm-antd components. You **must** call `defaultStyles` or `createThemedStyles` at the root of your Elm project.
+
+@docs createThemedStyles, defaultStyles
 -}
 
 import Ant.Alert.Css as AlertCss

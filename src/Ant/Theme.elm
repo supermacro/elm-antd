@@ -2,6 +2,8 @@ module Ant.Theme exposing (Theme, createTheme, defaultTheme)
 
 {-| This module allows you to create custom themes for your components.
 
+@docs Theme
+
 @docs createTheme
 
 ### Leaked Internals. Do Not Use :)
