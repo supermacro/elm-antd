@@ -17,13 +17,18 @@ module Ant.Button exposing
 
 -}
 
+{-
+   A NOTE TO DEVELOPERS.
+
+   This component is themable.
+
+   See styles at src/Ant/Button/Css.elm
+-}
+
+import Ant.Css.Common exposing (..)
 import Ant.Icons as Icon exposing (Icon)
-import Ant.Internals.Palette exposing (primaryColor, primaryColorFaded, primaryColorStrong)
-import Ant.Internals.Typography exposing (fontList, textColorRgba)
+import Ant.Theme exposing (Theme, defaultTheme)
 import Css exposing (..)
-import Css.Animations as CA exposing (keyframes)
-import Css.Global as CG
-import Css.Transitions exposing (transition)
 import Html exposing (Html)
 import Html.Styled as H exposing (fromUnstyled, text, toUnstyled)
 import Html.Styled.Attributes as A exposing (css)
@@ -56,6 +61,7 @@ type alias Options msg =
     , href : Maybe String
     , onClick : Maybe msg
     , icon : Maybe (Icon msg)
+    , theme : Theme
 
     -- size : Size (Small, Medium, Large)
     -- etc etc
@@ -71,6 +77,7 @@ defaultOptions =
     , href = Nothing
     , onClick = Nothing
     , icon = Nothing
+    , theme = defaultTheme
     }
 
 
@@ -156,15 +163,6 @@ disabled disabled_ (Button opts label) =
     Button newOpts label
 
 
-textColor : Color
-textColor =
-    let
-        { r, g, b, a } =
-            textColorRgba
-    in
-    rgba r g b a
-
-
 iconToHtml : Icon msg -> H.Html msg
 iconToHtml icon =
     icon
@@ -177,207 +175,52 @@ iconToHtml icon =
 toHtml : Button msg -> Html msg
 toHtml (Button options label) =
     let
-        transitionDuration =
-            350
-
-        waveEffect =
-            keyframes
-                [ ( 100, [ CA.property "box-shadow" <| "0 0 0 " ++ primaryColorStrong ] )
-                , ( 100, [ CA.property "box-shadow" <| "0 0 0 8px " ++ primaryColorStrong ] )
-                , ( 100, [ CA.property "opacity" "0" ] )
-                ]
-
-        animatedBefore : ColorValue compatible -> Style
-        animatedBefore color =
-            before
-                [ property "content" "\" \""
-                , display block
-                , position absolute
-                , width (pct 100)
-                , height (pct 100)
-                , right (px 0)
-                , left (px 0)
-                , top (px 0)
-                , bottom (px 0)
-                , borderRadius (px 2)
-                , backgroundColor color
-                , boxShadow4 (px 0) (px 0) (px 0) (hex primaryColor)
-                , opacity (num 0.2)
-                , zIndex (int -1)
-                , animationName waveEffect
-                , animationDuration (sec 1.5)
-                , property "animation-timing-function" "cubic-bezier(0.08, 0.82, 0.17, 1)"
-                , property "animation-fill-mode" "forwards"
-                , pointerEvents none
-                ]
-
-        animationStyle =
-            CG.withClass "elm-antd__animated_before"
-                [ position relative
-                , animatedBefore (hex primaryColorStrong)
-                ]
-
-        antButtonBoxShadow =
-            Css.boxShadow5 (px 0) (px 2) (px 0) (px 0) (Css.rgba 0 0 0 0.016)
-
-        baseAttributes =
-            [ borderRadius (px 2)
-            , padding2 (px 4) (px 15)
-            , fontFamilies fontList
-            , borderWidth (px 1)
-            , fontSize (px 14)
-            , height (px 30)
-            , outline none
+        animatedButtonTypes =
+            [ Default
+            , Primary
+            , Dashed
             ]
 
-        defaultButtonAttributes =
-            [ color textColor
-            , borderStyle solid
-            , backgroundColor (hex "#fff")
-            , borderColor <| rgb 217 217 217
-            , antButtonBoxShadow
-            , animationStyle
-            , focus
-                [ borderColor (hex primaryColorFaded)
-                , color (hex primaryColorFaded)
-                ]
-            , hover
-                [ borderColor (hex primaryColorFaded)
-                , color (hex primaryColorFaded)
-                ]
-            , active
-                [ borderColor (hex primaryColor)
-                , color (hex primaryColor)
-                ]
-            , transition
-                [ Css.Transitions.borderColor transitionDuration
-                , Css.Transitions.color transitionDuration
-                ]
-            ]
-
-        primaryButtonAttributes =
-            [ color (hex "#fff")
-            , borderStyle solid
-            , backgroundColor (hex primaryColor)
-            , borderColor (hex primaryColor)
-            , antButtonBoxShadow
-            , animationStyle
-            , focus
-                [ backgroundColor (hex primaryColorFaded)
-                , borderColor (hex primaryColorFaded)
-                ]
-            , hover
-                [ backgroundColor (hex primaryColorFaded)
-                , borderColor (hex primaryColorFaded)
-                ]
-            , active
-                [ backgroundColor (hex primaryColorStrong)
-                , borderColor (hex primaryColorStrong)
-                ]
-            , transition
-                [ Css.Transitions.backgroundColor transitionDuration
-                , Css.Transitions.borderColor transitionDuration
-                ]
-            ]
-
-        dashedButtonAttributes =
-            defaultButtonAttributes
-                ++ [ borderStyle dashed
-                   , antButtonBoxShadow
-                   , animationStyle
-                   ]
-
-        textButtonAttributes =
-            [ color textColor
-            , border zero
-            , backgroundColor (hex "#fff")
-            , hover
-                [ backgroundColor (rgba 0 0 0 0.018) ]
-            , transition
-                [ Css.Transitions.backgroundColor transitionDuration ]
-            ]
-
-        linkButtonAttributes =
-            [ color (hex primaryColor)
-            , border zero
-            , backgroundColor (hex "#fff")
-            , hover
-                [ color (hex primaryColorFaded) ]
-            , transition
-                [ Css.Transitions.color transitionDuration ]
-            ]
-
-        buttonTypeAttributes =
-            case options.type_ of
-                Default ->
-                    defaultButtonAttributes
-
-                Primary ->
-                    primaryButtonAttributes
-
-                Dashed ->
-                    dashedButtonAttributes
-
-                Text ->
-                    textButtonAttributes
-
-                Link ->
-                    linkButtonAttributes
-
-        combinedButtonStyles =
-            if options.disabled then
-                case options.type_ of
-                    Default ->
-                        baseAttributes
-                            ++ [ borderColor <| rgb 217 217 217
-                               , borderStyle solid
-                               ]
-
-                    Primary ->
-                        baseAttributes
-                            ++ [ borderColor <| rgb 217 217 217
-                               , borderStyle solid
-                               ]
-
-                    Dashed ->
-                        baseAttributes
-                            ++ [ borderColor <| rgb 217 217 217
-                               , borderStyle dashed
-                               ]
-
-                    Text ->
-                        baseAttributes
-                            ++ [ border zero
-                               , backgroundColor transparent
-                               ]
-
-                    _ ->
-                        baseAttributes
+        animationAttribute =
+            if List.member options.type_ animatedButtonTypes then
+                [ A.class "elm-antd__animated_btn" ]
 
             else
-                baseAttributes ++ buttonTypeAttributes
+                []
 
-        cursorHoverStyles =
-            if options.disabled then
-                hover [ cursor notAllowed ]
-
-            else
-                hover [ cursor pointer ]
-
-        attributes =
-            let
-                commonAttributes =
-                    [ A.class "elm-antd__animated_btn"
-                    , A.disabled options.disabled
-                    , css <| cursorHoverStyles :: combinedButtonStyles
-                    ]
-            in
+        onClickAttribute =
             case options.onClick of
                 Just msg ->
-                    Events.onClick msg :: commonAttributes
+                    [ Events.onClick msg ]
 
                 Nothing ->
-                    commonAttributes
+                    []
+
+        buttonTypeClassName =
+            case options.type_ of
+                Default ->
+                    btnDefaultClass
+
+                Primary ->
+                    btnPrimaryClass
+
+                Dashed ->
+                    btnDashedClass
+
+                Text ->
+                    btnTextClass
+
+                Link ->
+                    btnLinkClass
+
+        commonAttributes =
+            [ A.class btnClass
+            , A.class buttonTypeClassName
+            , A.disabled options.disabled
+            ]
+
+        attributes =
+            commonAttributes ++ onClickAttribute ++ animationAttribute
 
         iconContent =
             case options.icon of

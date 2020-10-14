@@ -23,6 +23,24 @@ Styled entirely using `elm-css`! No external stylesheet needed. Just `elm instal
 elm install supermacro/elm-antd
 ```
 
+## Usage
+
+#### Render stylesheet at the root of your Elm project
+
+Elm Antd has a stylesheet implemented in Elm that you must hook up at the root of your elm project. You must use one of `Ant.Css.defaultStyles` or `Ant.Css.createThemedStyles customTheme` (see [official docs](https://package.elm-lang.org/packages/supermacro/elm-antd/latest/) to learn about theming). 
+
+
+```elm
+import Ant.Css
+
+view : Model -> Html Msg
+view model =
+    div []
+      [ Ant.Css.defaultStyles
+      , viewApp model
+      ]
+```
+
 #### [Optional] - Add Extra animations
 
 There are additional animations you can add to your `elm-antd` project by adding JS event handlers to your app.

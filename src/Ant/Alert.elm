@@ -77,11 +77,11 @@ Example:
 
 -}
 
+import Ant.Css.Common exposing (alertClass, alertErrorClass, alertInfoClass, alertStateAttributeName, alertSuccessClass, alertWarningClass)
 import Ant.Icons as Icons exposing (closeOutlined)
 import Ant.Internals.Typography exposing (commonFontStyles)
 import Css exposing (..)
 import Css.Global exposing (global, selector)
-import Css.Transitions exposing (transition)
 import Html exposing (Html)
 import Html.Keyed
 import Html.Styled as Styled exposing (div, fromUnstyled, span, text, toUnstyled)
@@ -136,15 +136,20 @@ type AlertType
     | Error
 
 
-type AlertState
+type CloseableAlertState
     = Visible
     | Closing
 
 
+type alias CloseableInfo msg =
+    { state : CloseableAlertState
+    , onClose : msg
+    }
+
+
 type alias AlertConfig msg =
     { type_ : AlertType
-    , state : AlertState
-    , onClose : Maybe msg
+    , closeableInfo : Maybe (CloseableInfo msg)
     , description : Maybe String
     }
 
@@ -152,8 +157,7 @@ type alias AlertConfig msg =
 defaultAlertConfig : AlertConfig msg
 defaultAlertConfig =
     { type_ = Success
-    , state = Visible
-    , onClose = Nothing
+    , closeableInfo = Nothing
     , description = Nothing
     }
 
@@ -163,11 +167,23 @@ close_transition_duration_ms =
     1000
 
 
+
+{- THIS FUNCTION SHOULD NEVER BE EXPOSED.
+
+   It is used internally to set a stateful alert to the Closing state.
+-}
+
+
 withClosingState : Alert msg -> Alert msg
 withClosingState (Alert config alertText) =
     let
+        newCloseableInfo =
+            Maybe.map
+                (\closeableInfo -> { closeableInfo | state = Closing })
+                config.closeableInfo
+
         newConfig =
-            { config | state = Closing }
+            { config | closeableInfo = newCloseableInfo }
     in
     Alert newConfig alertText
 
@@ -249,16 +265,28 @@ withDescription alertDescription (Alert config alertText) =
     Alert newConfig alertText
 
 
-{-| Show a closing icon on the `Alert`. Note that you must wire up the Alert with your Model.
+
+{- THIS FUNCTION SHOULD NEVER BE EXPOSED.
+
+   Show a closing icon on the `Alert`. Note that you must wire up the Alert with your Model.
 -}
+
+
 withOnClose : (Msg -> msg) -> AlertId -> Alert msg -> Alert msg
 withOnClose tagger alertId (Alert config alertText) =
     let
         msg =
             tagger <| CloseIconClicked alertId
 
+        closeableInfo =
+            { state = Visible
+            , onClose = msg
+            }
+
         newConfig =
-            { config | onClose = Just msg }
+            { config
+                | closeableInfo = Just closeableInfo
+            }
     in
     Alert newConfig alertText
 
@@ -270,7 +298,9 @@ createAlertId pushRound idx =
     String.fromInt pushRound ++ "-" ++ String.fromInt idx
 
 
-{-| Takes a set of stateless alerts that don't ever emit messages and turns them into Alerts that a user can interact with (i.e. close them).
+{-| THIS API IS UNSTABLE AND ALSO VISUALLY UNAPPEALING. DO NOT USE STATEFUL ALERTS YET.
+
+Takes a set of stateless alerts that don't ever emit messages and turns them into Alerts that a user can interact with (i.e. close them).
 
 See the example above to see the usage of `initAlertStack`.
 
@@ -282,6 +312,7 @@ Every time a user clicks on the close icon, the alert will emit a `msg`.
 initAlertStack : (Msg -> msg) -> List (Alert msg) -> CloseableAlertStack msg
 initAlertStack tagger alerts =
     let
+        -- push rounds are used to generate unique identifiers for each stateful alert
         pushRound =
             0
 
@@ -301,39 +332,12 @@ initAlertStack tagger alerts =
 -- View Code
 
 
-type alias TypeColors =
-    { background : Color
-    , border : Color
-    }
-
-
-getAlertTypeColors : AlertType -> TypeColors
-getAlertTypeColors type_ =
-    case type_ of
-        Success ->
-            { background = rgb 246 255 237
-            , border = rgb 183 235 143
-            }
-
-        Info ->
-            { background = rgb 230 247 255
-            , border = rgb 145 213 255
-            }
-
-        Warning ->
-            { background = rgb 255 251 230
-            , border = rgb 255 229 143
-            }
-
-        Error ->
-            { background = rgb 255 242 240
-            , border = rgb 255 204 199
-            }
-
-
-renderCloseIcon : msg -> AlertState -> Styled.Html msg
-renderCloseIcon action state =
+renderCloseIcon : CloseableInfo msg -> Styled.Html msg
+renderCloseIcon { state, onClose } =
     let
+        msg =
+            onClose
+
         ( styles, events ) =
             case state of
                 Visible ->
@@ -343,7 +347,7 @@ renderCloseIcon action state =
                       , hover
                             [ cursor pointer ]
                       ]
-                    , [ onClick action ]
+                    , [ onClick msg ]
                     )
 
                 Closing ->
@@ -377,34 +381,18 @@ stackToHtml (CloseableAlertStack _ stack) =
 toHtml : Alert msg -> Html msg
 toHtml (Alert config alertText) =
     let
-        alertClass =
-            "elm-antd__alert"
-
-        stateAttributeName =
-            "is_closing"
-
-        closingStateStyle =
-            global
-                [ selector ("." ++ alertClass ++ "[" ++ stateAttributeName ++ "=true]")
-                    [ opacity (int 0)
-                    , overflow hidden
-                    , height zero
-                    , padding zero
-                    , border zero
-                    , marginBottom zero
-                    ]
-                ]
-
         stateAttribute =
-            case config.state of
-                Visible ->
-                    attribute stateAttributeName "false"
+            case config.closeableInfo of
+                Just { state } ->
+                    case state of
+                        Visible ->
+                            attribute alertStateAttributeName "false"
 
-                Closing ->
-                    attribute stateAttributeName "true"
+                        Closing ->
+                            attribute alertStateAttributeName "true"
 
-        alertColors =
-            getAlertTypeColors config.type_
+                Nothing ->
+                    attribute "noop" "noop"
 
         ( alertMessage, alertDescription ) =
             case config.description of
@@ -422,47 +410,35 @@ toHtml (Alert config alertText) =
                     , text description
                     )
 
-        ( paddingRightStyle, closeIconHtml ) =
-            case config.onClose of
+        closeIconHtml =
+            case config.closeableInfo of
                 Nothing ->
-                    ( paddingRight (px 15)
-                    , span [] []
-                    )
+                    span [] []
 
-                Just msg ->
-                    ( paddingRight (px 30)
-                    , renderCloseIcon msg config.state
-                    )
+                Just closeableInfo ->
+                    renderCloseIcon closeableInfo
 
-        baseStyles =
-            [ fontSize (px 14)
-            , backgroundColor alertColors.background
-            , lineHeight (px 22)
-            , border3 (px 1) solid alertColors.border
-            , borderRadius (px 2)
-            , paddingTop (px 8)
-            , paddingBottom (px 8)
-            , paddingLeft (px 15)
-            , paddingRightStyle
-            , width (pct 100)
-            , transition
-                [ Css.Transitions.opacity close_transition_duration_ms
-                , Css.Transitions.height close_transition_duration_ms
-                , Css.Transitions.padding close_transition_duration_ms
-                , Css.Transitions.border close_transition_duration_ms
-                , Css.Transitions.margin close_transition_duration_ms
-                ]
-            ]
-                ++ commonFontStyles
+        alertTypeClassName =
+            case config.type_ of
+                Success ->
+                    alertSuccessClass
+
+                Info ->
+                    alertInfoClass
+
+                Warning ->
+                    alertWarningClass
+
+                Error ->
+                    alertErrorClass
 
         styledAlert =
             div
-                [ css baseStyles
-                , class alertClass
+                [ class alertClass
+                , class alertTypeClassName
                 , stateAttribute
                 ]
-                [ closingStateStyle
-                , closeIconHtml
+                [ closeIconHtml
                 , alertMessage
                 , alertDescription
                 ]

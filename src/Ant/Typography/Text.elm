@@ -6,7 +6,7 @@ module Ant.Typography.Text exposing (TextType(..), Text, text, code, keyboard, t
 
 -}
 
-import Ant.Internals.Palette exposing (dangerColor, warningColor)
+import Ant.Internals.Theme exposing (dangerColor, warningColor)
 import Ant.Internals.Typography exposing (fontList, textColorRgba, textSelectionStyles)
 import Css exposing (..)
 import Html exposing (Html)
