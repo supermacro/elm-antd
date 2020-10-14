@@ -2,7 +2,6 @@ module Ant.Button exposing
     ( Button
     , button, onClick, ButtonType(..), withType, withIcon, ButtonSize(..), disabled
     , toHtml
-    , withTheme
     )
 
 {-| Button component
@@ -98,14 +97,6 @@ button : String -> Button msg
 button label =
     Button defaultOptions label
 
-
-withTheme : Theme -> Button msg -> Button msg
-withTheme theme (Button options label) =
-    let
-        newOptions =
-            { options | theme = theme }
-    in
-    Button newOptions label
 
 
 {-| Change the default type of the Button
