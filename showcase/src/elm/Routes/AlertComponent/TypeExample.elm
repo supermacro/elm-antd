@@ -1,7 +1,7 @@
 module Routes.AlertComponent.TypeExample exposing (example)
 
 import Ant.Alert exposing (Alert, AlertType(..), alert, toHtml, withType)
-import Ant.Space as Space exposing (space, withSize)
+import Ant.Space as Space exposing (space)
 import Html exposing (Html, div)
 import Html.Attributes exposing (style)
 
@@ -22,7 +22,8 @@ spacedOutAlerts : Html msg
 spacedOutAlerts =
     List.map toHtml alerts
         |> space
-        |> withSize Space.Medium
+        |> Space.direction Space.Vertical
+        |> Space.withSize Space.Medium
         |> Space.toHtml
 
 
