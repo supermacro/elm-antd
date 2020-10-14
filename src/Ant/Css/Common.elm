@@ -114,4 +114,3 @@ btnLinkClass =
 inputClass : String
 inputClass =
     elmAntdPrefix ++ "__input"
-

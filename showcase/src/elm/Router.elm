@@ -659,4 +659,3 @@ view toMsg model =
         , Html.map toMsg <| Layout.toHtml layout
         ]
     }
-
