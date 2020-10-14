@@ -13,7 +13,6 @@ row : List (Button msg) -> Html msg
 row buttons =
     List.map toHtml buttons
         |> space
-        |> Space.direction Space.Horizontal
         |> Space.toHtml
 
 
@@ -76,4 +75,5 @@ example =
             ]
     in
     space examples
+        |> Space.direction Space.Vertical
         |> Space.toHtml
