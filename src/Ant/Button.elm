@@ -98,7 +98,6 @@ button label =
     Button defaultOptions label
 
 
-
 {-| Change the default type of the Button
 
     button "submit"
