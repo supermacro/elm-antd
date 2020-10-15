@@ -9,7 +9,7 @@
 ## Action Items
 
 - [ ] I have read the [CONTRIBUTING](../CONTRIBUTING.md) doc
-- [ ] This PR is as small as it can be, and only implements on thing (not many)
+- [ ] This PR is as small as it can be, and only implements one thing (not many)
 - [ ] I have manually tested my feature
 - [ ] I have written a "good" amount of tests (including visual and unit tests)
 
