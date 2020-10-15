@@ -64,4 +64,5 @@ example =
             ]
     in
     space examples
+        |> Space.direction Space.Vertical
         |> Space.toHtml

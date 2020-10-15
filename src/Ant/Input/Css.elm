@@ -3,6 +3,8 @@ module Ant.Input.Css exposing (styles)
 import Ant.Css.Common exposing (inputClass)
 import Ant.Internals.Typography exposing (commonFontStyles, textColorRgba)
 import Ant.Theme exposing (Theme)
+import Color.Convert exposing (colorToHexWithAlpha)
+import Color.Manipulate exposing (lighten)
 import Css exposing (..)
 import Css.Global as CG exposing (Snippet)
 import Css.Transitions exposing (transition)
@@ -23,6 +25,12 @@ styles theme =
         transitionDuration =
             350
 
+        focusBoxShadowColor =
+            theme.colors.primaryFaded
+                |> Color.Manipulate.lighten 0.2
+                |> colorToHexWithAlpha
+                |> hex
+
         inputStyles =
             commonFontStyles
                 ++ [ color textColor
@@ -36,17 +44,16 @@ styles theme =
                    , property "caret-color" "#000"
                    , padding2 (px 4) (px 11)
                    , focus
-                        [ borderColor (hex theme.colors.primaryFaded)
-                        , boxShadow5 zero zero zero (px 2) (rgba 24 144 255 0.2)
+                        [ borderColor <| hex <| colorToHexWithAlpha theme.colors.primaryFaded
+                        , boxShadow5 zero zero zero (px 2) focusBoxShadowColor
+                        , outline none
                         ]
                    , hover
-                        [ borderColor (hex theme.colors.primaryFaded)
+                        [ borderColor <| hex <| colorToHexWithAlpha theme.colors.primaryFaded
                         ]
                    , active
-                        [ borderColor (hex theme.colors.primary)
+                        [ borderColor <| hex <| colorToHexWithAlpha theme.colors.primary
                         ]
-                   , focus
-                        [ outline none ]
                    , transition
                         [ Css.Transitions.borderColor transitionDuration
                         , Css.Transitions.boxShadow transitionDuration

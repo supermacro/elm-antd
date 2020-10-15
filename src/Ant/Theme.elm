@@ -18,7 +18,6 @@ module Ant.Theme exposing
 -}
 
 import Color exposing (Color)
-import Color.Convert exposing (colorToHexWithAlpha)
 import Color.Manipulate exposing (darken, lighten)
 
 
@@ -33,12 +32,10 @@ defaultTheme =
     createTheme antdDefaultPrimaryColor
 
 
-{-| all colors stored as CSS-compatible hexadecimal strings
--}
 type alias Colors =
-    { primary : String
-    , primaryFaded : String
-    , primaryStrong : String
+    { primary : Color
+    , primaryFaded : Color
+    , primaryStrong : Color
     }
 
 
@@ -78,15 +75,13 @@ createTheme : Color -> Theme
 createTheme primaryColor =
     let
         colors =
-            { primary = colorToHexWithAlpha primaryColor
+            { primary = primaryColor
             , primaryFaded =
                 primaryColor
                     |> lighten 0.1
-                    |> colorToHexWithAlpha
             , primaryStrong =
                 primaryColor
                     |> darken 0.1
-                    |> colorToHexWithAlpha
             }
     in
     { colors = colors }

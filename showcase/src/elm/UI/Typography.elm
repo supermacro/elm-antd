@@ -14,6 +14,7 @@ module UI.Typography exposing
 import Ant.Internals.Typography exposing (fontList, headingColorRgba)
 import Ant.Theme exposing (defaultTheme)
 import Ant.Typography.Text as Text
+import Color.Convert exposing (colorToHexWithAlpha)
 import Css exposing (..)
 import Css.Global exposing (global, selector)
 import Css.Transitions exposing (transition)
@@ -21,12 +22,17 @@ import Html.Styled as Styled exposing (fromUnstyled, text)
 import Html.Styled.Attributes as A exposing (class, css, href)
 
 
+primaryColor : Css.Color
+primaryColor =
+    hex <| colorToHexWithAlpha defaultTheme.colors.primary
+
+
 link : String -> String -> Styled.Html msg
 link url label =
     let
         styles =
             commonTextStyles
-                ++ [ hover [ color (hex defaultTheme.colors.primary) ]
+                ++ [ hover [ color primaryColor ]
                    ]
     in
     Styled.a
@@ -39,7 +45,7 @@ internalLink url label =
     let
         styles =
             commonTextStyles
-                ++ [ hover [ color (hex defaultTheme.colors.primary) ]
+                ++ [ hover [ color primaryColor ]
                    ]
     in
     Styled.a
@@ -59,7 +65,7 @@ commonStyles : List Style
 commonStyles =
     [ color (rgba headingColorRgba.r headingColorRgba.g headingColorRgba.b headingColorRgba.a)
     , selection
-        [ backgroundColor (hex defaultTheme.colors.primary)
+        [ backgroundColor primaryColor
         , color (hex "#fff")
         ]
     ]
@@ -123,10 +129,10 @@ documentationSubheading opts value =
                 [ href ("#" ++ subheadingLink)
                 , css
                     [ textDecoration none
-                    , color (hex defaultTheme.colors.primary)
+                    , color primaryColor
                     , marginLeft (px 8)
                     , hover
-                        [ color (hex defaultTheme.colors.primaryFaded)
+                        [ color <| hex <| colorToHexWithAlpha defaultTheme.colors.primaryFaded
                         ]
                     ]
                 ]

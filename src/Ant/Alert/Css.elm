@@ -3,6 +3,8 @@ module Ant.Alert.Css exposing (styles)
 import Ant.Css.Common exposing (..)
 import Ant.Internals.Typography exposing (commonFontStyles)
 import Ant.Theme exposing (Theme)
+import Color.Convert exposing (colorToHexWithAlpha)
+import Color.Manipulate
 import Css exposing (..)
 import Css.Global as CG exposing (Snippet)
 import Css.Transitions exposing (transition)
@@ -42,12 +44,21 @@ errorAlertColors =
 
 getInfoAlertColors : Theme -> TypeColors
 getInfoAlertColors theme =
-    -- there's an 8 digit hexadecimal color notation
-    -- that allows you to change the Alpha value of a color
-    -- just like the rgba function
-    -- https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
-    { background = hex (theme.colors.primaryFaded ++ "20")
-    , border = hex (theme.colors.primaryFaded ++ "80")
+    let
+        backgroundColor =
+            theme.colors.primaryFaded
+                |> Color.Manipulate.lighten 0.313
+                |> colorToHexWithAlpha
+                |> hex
+
+        borderColor =
+            theme.colors.primaryFaded
+                |> Color.Manipulate.lighten 0.15
+                |> colorToHexWithAlpha
+                |> hex
+    in
+    { background = backgroundColor
+    , border = borderColor
     }
 
 
