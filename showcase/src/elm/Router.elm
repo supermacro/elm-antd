@@ -43,6 +43,7 @@ import Routes.Home exposing (homePage)
 import Routes.InputComponent as InputPage
 import Routes.NotFound exposing (notFound)
 import Routes.NotImplemented exposing (notImplemented)
+import Routes.SpaceComponent as SpacePage
 import Routes.TooltipComponent as TooltipPage
 import Routes.TypographyComponent as TypographyPage
 import Task
@@ -83,9 +84,10 @@ type alias Model =
     , alertPageModel : AlertPage.Model
     , buttonPageModel : ButtonPage.Model
     , dividerPageModel : DividerPage.Model
+    , inputPageModel : InputPage.Model
+    , spacePageModel : SpacePage.Model
     , typographyPageModel : TypographyPage.Model
     , tooltipPageModel : TooltipPage.Model
-    , inputPageModel : InputPage.Model
     }
 
 
@@ -100,6 +102,7 @@ type Msg
     | ButtonPageMessage ButtonPage.Msg
     | DividerPageMessage DividerPage.Msg
     | InputPageMessage InputPage.Msg
+    | SpacePageMessage SpacePage.Msg
     | TooltipPageMessage TooltipPage.Msg
     | TypographyPageMessage TypographyPage.Msg
       -- represents the outcome of having asynchronously fetched
@@ -209,6 +212,14 @@ componentList =
             DividerPage.route.view model.dividerPageModel
                 |> Styled.map DividerPageMessage
 
+        inputPageView model =
+            InputPage.route.view model.inputPageModel
+                |> Styled.map InputPageMessage
+
+        spacePageView model =
+            SpacePage.route.view model.spacePageModel
+                |> Styled.map SpacePageMessage
+
         typographyPageView model =
             TypographyPage.route.view model.typographyPageModel
                 |> Styled.map TypographyPageMessage
@@ -216,10 +227,6 @@ componentList =
         tooltipPageView model =
             TooltipPage.route.view model.tooltipPageModel
                 |> Styled.map TooltipPageMessage
-
-        inputPageView model =
-            InputPage.route.view model.inputPageModel
-                |> Styled.map InputPageMessage
     in
     [ { route = ButtonPage.route.title
       , category = ButtonPage.route.category
@@ -244,6 +251,12 @@ componentList =
       , view = inputPageView
       , saveExampleSourceCode =
             triggerSaveExampleSourceCode InputPageMessage InputPage.route.saveExampleSourceCodeToModel
+      }
+    , { route = SpacePage.route.title
+      , category = SpacePage.route.category
+      , view = spacePageView
+      , saveExampleSourceCode =
+            triggerSaveExampleSourceCode SpacePageMessage SpacePage.route.saveExampleSourceCodeToModel
       }
     , { route = TypographyPage.route.title
       , category = TypographyPage.route.category
@@ -343,9 +356,10 @@ init url { commitHash, fileServerUrl } =
             , alertPageModel = AlertPage.route.initialModel
             , buttonPageModel = ButtonPage.route.initialModel
             , dividerPageModel = DividerPage.route.initialModel
+            , inputPageModel = InputPage.route.initialModel
+            , spacePageModel = SpacePage.route.initialModel
             , typographyPageModel = TypographyPage.route.initialModel
             , tooltipPageModel = TooltipPage.route.initialModel
-            , inputPageModel = InputPage.route.initialModel
             }
     in
     ( model
@@ -458,6 +472,17 @@ update navKey msg model =
                 | inputPageModel = inputPageModel
               }
             , Cmd.map InputPageMessage inputPageCmd
+            )
+
+        SpacePageMessage spacePageMsg ->
+            let
+                ( spacePageModel, spacePageCmd ) =
+                    SpacePage.route.update spacePageMsg model.spacePageModel
+            in
+            ( { model
+                | spacePageModel = spacePageModel
+              }
+            , Cmd.map SpacePageMessage spacePageCmd
             )
 
         TooltipPageMessage tooltipPageMessage ->
