@@ -24,5 +24,4 @@ example =
                 |> Button.toHtml
     in
     space [ button1, button2, button3 ]
-        |> Space.direction Space.Horizontal
         |> Space.toHtml

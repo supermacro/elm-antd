@@ -18,7 +18,6 @@ example =
                     |> Alert.withType Alert.Error
                 ]
                 |> space
-                |> Space.direction Space.Horizontal
                 |> Space.withSize Space.Large
                 |> Space.toHtml
 
@@ -31,7 +30,6 @@ example =
                     |> Alert.withType Alert.Error
                 ]
                 |> space
-                |> Space.direction Space.Horizontal
                 |> Space.withSize Space.Medium
                 |> Space.toHtml
     in
