@@ -8,6 +8,7 @@ module Ant.Css exposing (createThemedStyles, defaultStyles)
 
 import Ant.Alert.Css as AlertCss
 import Ant.Button.Css as ButtonCss
+import Ant.Checkbox.Css as CheckboxCss
 import Ant.Input.Css as InputCss
 import Ant.Theme exposing (Theme, defaultTheme)
 import Css.Global as CG
@@ -34,6 +35,7 @@ createThemedStyles theme =
             List.map (\styles -> styles theme)
                 [ AlertCss.styles
                 , ButtonCss.styles
+                , CheckboxCss.styles
                 , InputCss.styles
                 ]
     in
