@@ -1,4 +1,4 @@
-module Ant.Checkbox exposing (checkbox, toHtml, withLabel)
+module Ant.Checkbox exposing (Checkbox, checkbox, toHtml, withDisabled, withLabel, withOnCheck)
 
 {-| Themable checkbox component
 -}
@@ -14,53 +14,82 @@ import Html.Attributes as Attr
 import Html.Events as Events
 
 
-type alias CheckboxConfig =
+type alias CheckboxConfig msg =
     { disabled : Bool
     , label : Maybe String
     , checked : Bool
+    , tagger : Maybe msg
     }
 
 
 type Checkbox msg
-    = Checkbox CheckboxConfig msg
+    = Checkbox ( CheckboxConfig msg ) 
 
 
-defaultCheckboxConfig : Bool -> CheckboxConfig
+defaultCheckboxConfig : Bool -> CheckboxConfig msg
 defaultCheckboxConfig checked =
     { disabled = False
     , label = Nothing
     , checked = checked
+    , tagger = Nothing
     }
 
 
-checkbox : msg -> Bool -> Checkbox msg
-checkbox tagger checked =
-    Checkbox (defaultCheckboxConfig checked) tagger
+checkbox : Bool -> Checkbox msg 
+checkbox checked =
+    Checkbox (defaultCheckboxConfig checked)
+
+
+withOnCheck : msg -> Checkbox msg -> Checkbox msg
+withOnCheck tagger (Checkbox config) =
+    let
+        newConfig =
+            { config | tagger = Just tagger }
+    in
+    Checkbox newConfig 
+
 
 
 withLabel : String -> Checkbox msg -> Checkbox msg
-withLabel labelText (Checkbox config tagger) =
+withLabel labelText (Checkbox config) =
     let
         newConfig =
             { config
                 | label = Just labelText
             }
     in
-    Checkbox newConfig tagger
+    Checkbox newConfig 
+
+
+withDisabled : Bool -> Checkbox msg -> Checkbox msg
+withDisabled disabled (Checkbox config) =
+    let
+        newConfig =
+            { config
+                | disabled = disabled
+            }
+    in
+    Checkbox newConfig 
 
 
 toHtml : Checkbox msg -> Html msg
-toHtml (Checkbox config tagger) =
+toHtml (Checkbox config) =
     let
-        _ =
-            Debug.log "1" "1"
+        optionalOnCheckEvent =
+            case config.tagger of
+                Just tagger ->
+                    Events.onCheck (\_ -> tagger)
+
+                Nothing ->
+                    Attr.attribute "no-oncheck" "no-oncheck"
     in
     H.label [ Attr.class checkboxLabelClass ]
         [ H.text <| Maybe.withDefault "" config.label
         , H.input
             [ Attr.type_ "checkbox"
             , Attr.checked config.checked
-            , Events.onCheck (\_ -> tagger)
+            , optionalOnCheckEvent
+            , Attr.disabled config.disabled
             ]
             []
         , H.span [ Attr.class checkboxCustomCheckmarkClass ] []

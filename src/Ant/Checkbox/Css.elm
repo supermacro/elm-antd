@@ -36,6 +36,7 @@ styles theme =
     [ CG.class checkboxLabelClass
         (commonFontStyles
             ++ [ display block
+               , height (px 22)
                , color textColor
                , position relative
                , paddingLeft (px 22)
@@ -77,13 +78,20 @@ styles theme =
         [ borderColor primaryColor
         ]
 
+    , makeSelector (checkboxLabelClass ++ "> input[type=\"checkbox\"]:disabled ~ " ++ "." ++ checkboxCustomCheckmarkClass)
+        [ borderColor (hex "#d9d9d9")
+        , backgroundColor (hex "#f5f5f5")
+        , cursor notAllowed
+        ]
+
+
     -- checkmark styles
     , makeSelector (checkboxLabelClass ++ "> " ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
         [ emptyContent
         , position absolute
         , display block
         , visibility hidden
-        , left (px 3.5)
+        , left (px 4)
         , top (px 1.33)
         , width (px 5.5)
         , height (px 9)
@@ -91,6 +99,10 @@ styles theme =
         , borderColor (hex "#fff")
         , borderWidth4 zero (px 2.5) (px 2.5) zero
         , transform <| rotate (deg 45)
+        ]
+
+    , makeSelector (checkboxLabelClass ++ "> input[type=\"checkbox\"]:disabled ~" ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
+        [ borderColor (hex "#b8b8b8")
         ]
 
     -- show checkmark when checkbox is checked

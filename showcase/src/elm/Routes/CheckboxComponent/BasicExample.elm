@@ -1,6 +1,6 @@
 module Routes.CheckboxComponent.BasicExample exposing (Model, Msg, example, init, update)
 
-import Ant.Checkbox as Checkbox exposing (checkbox, toHtml, withLabel)
+import Ant.Checkbox as Checkbox exposing (checkbox, toHtml, withLabel, withOnCheck)
 import Html exposing (Html)
 
 
@@ -28,6 +28,8 @@ update _ { checked } =
 
 example : Model -> Html Msg
 example model =
-    checkbox CheckboxToggled model.checked
+    checkbox model.checked
+        |> withOnCheck CheckboxToggled
         |> withLabel "Checkbox"
         |> toHtml
+

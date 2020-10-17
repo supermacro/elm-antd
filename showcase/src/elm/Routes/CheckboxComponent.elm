@@ -4,6 +4,7 @@ import Css exposing (displayFlex, marginRight, maxWidth, pct, px)
 import Html.Styled as Styled exposing (div, text)
 import Html.Styled.Attributes exposing (css)
 import Routes.CheckboxComponent.BasicExample as BasicExample
+import Routes.CheckboxComponent.DisabledExample as DisabledExample
 import UI.Container as Container
 import UI.Typography as Typography
     exposing
@@ -18,11 +19,13 @@ import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
+    , disabledExample : Container.Model () Never
     }
 
 
 type DemoBox
     = BasicExample (Container.Msg BasicExample.Msg)
+    | DisabledExample (Container.Msg Never)
 
 
 type Msg
@@ -33,16 +36,26 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        DemoBoxMsg (BasicExample demoBoxMsg) ->
-            let
-                ( newSimpleExampleModel, simpleExampleCmd ) =
-                    Container.update (DemoBoxMsg << BasicExample) demoBoxMsg model.basicExample
-            in
-            ( { model | basicExample = newSimpleExampleModel }, simpleExampleCmd )
+        DemoBoxMsg demoboxMsg ->
+            case demoboxMsg of
+                BasicExample basicExampleMsg ->
+                    let
+                        ( newSimpleExampleModel, simpleExampleCmd ) =
+                            Container.update (DemoBoxMsg << BasicExample) basicExampleMsg model.basicExample
+                    in
+                    ( { model | basicExample = newSimpleExampleModel }, simpleExampleCmd )
+
+                DisabledExample disabledExampleMsg ->
+                    let
+                        ( newDisabledExampleModel, disabledExampleCmd ) =
+                            Container.update (DemoBoxMsg << DisabledExample) disabledExampleMsg model.disabledExample
+                    in
+                    ( { model | disabledExample = newDisabledExampleModel }, disabledExampleCmd )
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
                 | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
+                , disabledExample = Container.setSourceCode examplesSourceCode model.disabledExample
               }
             , Cmd.none
             )
@@ -58,6 +71,8 @@ route =
     , initialModel =
         { basicExample =
             Container.initStatefulModel "BasicExample.elm" BasicExample.init BasicExample.update
+        , disabledExample =
+            Container.initModel "DisabledExample.elm"
         }
     }
 
@@ -77,6 +92,21 @@ basicExample model =
         BasicExample.example
         metaInfo
 
+disabledExample : Model -> Styled.Html Msg
+disabledExample model =
+    let
+        metaInfo =
+            { title = "Disabled"
+            , content = "Disabled checkbox."
+            , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
+            }
+    in
+    Container.createDemoBox
+        (DemoBoxMsg << DisabledExample)
+        model.disabledExample
+        (\_ -> DisabledExample.example)
+        metaInfo
+
 
 view : Model -> Styled.Html Msg
 view model =
@@ -92,6 +122,6 @@ view model =
         , div [ css [ displayFlex ] ]
             [ div [ css [ maxWidth (pct 45), marginRight (px 13) ] ] [ basicExample model ]
             , div [ css [ maxWidth (pct 45) ] ]
-                []
+                [ disabledExample model ]
             ]
         ]
