@@ -1,6 +1,34 @@
-module Ant.Checkbox exposing (Checkbox, checkbox, toHtml, withDisabled, withLabel, withOnCheck)
+module Ant.Checkbox exposing
+    ( Checkbox
+    , checkbox
+    , withOnCheck, withDisabled, withLabel
+    , toHtml
+    )
 
 {-| Themable checkbox component
+
+
+## Types
+
+@docs Checkbox
+
+Note that by default a checkbox does not emit a message. You need to call `withOnCheck` for your checkbox to emit a message.
+
+
+## Creating a Checkbox
+
+@docs checkbox
+
+
+## Customizing a Checkbox
+
+@docs withOnCheck, withDisabled, withLabel
+
+
+## Rendering the Checkbox
+
+@docs toHtml
+
 -}
 
 {- NOTE TO DEVELOPERS:
@@ -22,6 +50,8 @@ type alias CheckboxConfig msg =
     }
 
 
+{-| Represents a customizeable and themable checkbox
+-}
 type Checkbox msg
     = Checkbox (CheckboxConfig msg)
 
@@ -35,11 +65,22 @@ defaultCheckboxConfig checked =
     }
 
 
+{-| Create a checkbox
+
+    checkbox model.checked
+
+-}
 checkbox : Bool -> Checkbox msg
 checkbox checked =
     Checkbox (defaultCheckboxConfig checked)
 
 
+{-| Emit messages from your checkbox.
+
+    checkbox model.checked
+        |> withOnCheck RememberMeCheckboxToggled
+
+-}
 withOnCheck : msg -> Checkbox msg -> Checkbox msg
 withOnCheck tagger (Checkbox config) =
     let
@@ -49,6 +90,12 @@ withOnCheck tagger (Checkbox config) =
     Checkbox newConfig
 
 
+{-| Add a clickable label to your checkbox.
+
+    checkbox model.checked
+        |> withLabel "remember me"
+
+-}
 withLabel : String -> Checkbox msg -> Checkbox msg
 withLabel labelText (Checkbox config) =
     let
@@ -60,6 +107,12 @@ withLabel labelText (Checkbox config) =
     Checkbox newConfig
 
 
+{-| Disable the checkbox. This prevents emitting messages.
+
+    checkbox model.checked
+        |> withDisabled model.disabled
+
+-}
 withDisabled : Bool -> Checkbox msg -> Checkbox msg
 withDisabled disabled (Checkbox config) =
     let
@@ -71,6 +124,14 @@ withDisabled disabled (Checkbox config) =
     Checkbox newConfig
 
 
+{-| Render your checkbox.
+
+    checkbox model.checked
+        |> withOnCheck RememberMeCheckboxToggled
+        |> withLabel "remember me"
+        |> toHtml
+
+-}
 toHtml : Checkbox msg -> Html msg
 toHtml (Checkbox config) =
     let
