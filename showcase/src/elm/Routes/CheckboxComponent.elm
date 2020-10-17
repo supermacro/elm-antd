@@ -92,6 +92,7 @@ basicExample model =
         BasicExample.example
         metaInfo
 
+
 disabledExample : Model -> Styled.Html Msg
 disabledExample model =
     let

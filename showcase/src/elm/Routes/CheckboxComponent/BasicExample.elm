@@ -32,4 +32,3 @@ example model =
         |> withOnCheck CheckboxToggled
         |> withLabel "Checkbox"
         |> toHtml
-

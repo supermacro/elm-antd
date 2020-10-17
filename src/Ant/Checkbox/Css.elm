@@ -77,13 +77,11 @@ styles theme =
     , makeSelector (checkboxLabelClass ++ "> input[type=\"checkbox\"]:hover ~ " ++ "." ++ checkboxCustomCheckmarkClass)
         [ borderColor primaryColor
         ]
-
     , makeSelector (checkboxLabelClass ++ "> input[type=\"checkbox\"]:disabled ~ " ++ "." ++ checkboxCustomCheckmarkClass)
         [ borderColor (hex "#d9d9d9")
         , backgroundColor (hex "#f5f5f5")
         , cursor notAllowed
         ]
-
 
     -- checkmark styles
     , makeSelector (checkboxLabelClass ++ "> " ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
@@ -100,7 +98,6 @@ styles theme =
         , borderWidth4 zero (px 2.5) (px 2.5) zero
         , transform <| rotate (deg 45)
         ]
-
     , makeSelector (checkboxLabelClass ++ "> input[type=\"checkbox\"]:disabled ~" ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
         [ borderColor (hex "#b8b8b8")
         ]

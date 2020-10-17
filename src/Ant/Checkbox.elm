@@ -23,7 +23,7 @@ type alias CheckboxConfig msg =
 
 
 type Checkbox msg
-    = Checkbox ( CheckboxConfig msg ) 
+    = Checkbox (CheckboxConfig msg)
 
 
 defaultCheckboxConfig : Bool -> CheckboxConfig msg
@@ -35,7 +35,7 @@ defaultCheckboxConfig checked =
     }
 
 
-checkbox : Bool -> Checkbox msg 
+checkbox : Bool -> Checkbox msg
 checkbox checked =
     Checkbox (defaultCheckboxConfig checked)
 
@@ -46,8 +46,7 @@ withOnCheck tagger (Checkbox config) =
         newConfig =
             { config | tagger = Just tagger }
     in
-    Checkbox newConfig 
-
+    Checkbox newConfig
 
 
 withLabel : String -> Checkbox msg -> Checkbox msg
@@ -58,7 +57,7 @@ withLabel labelText (Checkbox config) =
                 | label = Just labelText
             }
     in
-    Checkbox newConfig 
+    Checkbox newConfig
 
 
 withDisabled : Bool -> Checkbox msg -> Checkbox msg
@@ -69,7 +68,7 @@ withDisabled disabled (Checkbox config) =
                 | disabled = disabled
             }
     in
-    Checkbox newConfig 
+    Checkbox newConfig
 
 
 toHtml : Checkbox msg -> Html msg

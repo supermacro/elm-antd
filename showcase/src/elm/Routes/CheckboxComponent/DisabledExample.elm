@@ -8,13 +8,17 @@ type CheckedState
     = Checked
     | NotChecked
 
+
 disabledCheckbox : CheckedState -> Html msg
 disabledCheckbox checked =
     let
         isChecked =
             case checked of
-                Checked -> True
-                NotChecked -> False
+                Checked ->
+                    True
+
+                NotChecked ->
+                    False
     in
     checkbox isChecked
         |> withDisabled True
@@ -28,4 +32,3 @@ example =
         , br [] []
         , disabledCheckbox Checked
         ]
-
