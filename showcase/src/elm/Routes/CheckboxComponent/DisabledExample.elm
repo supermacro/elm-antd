@@ -1,7 +1,7 @@
 module Routes.CheckboxComponent.DisabledExample exposing (example)
 
 import Ant.Checkbox as Checkbox exposing (Checkbox, checkbox, toHtml, withDisabled)
-import Html exposing (Html, div)
+import Html exposing (Html, br, div)
 
 
 type CheckedState
@@ -25,6 +25,7 @@ example : Html msg
 example =
     div []
         [ disabledCheckbox NotChecked
+        , br [] []
         , disabledCheckbox Checked
         ]
 

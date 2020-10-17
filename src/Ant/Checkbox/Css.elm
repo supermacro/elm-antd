@@ -35,7 +35,7 @@ styles theme =
     in
     [ CG.class checkboxLabelClass
         (commonFontStyles
-            ++ [ display block
+            ++ [ display inlineBlock
                , height (px 22)
                , color textColor
                , position relative
