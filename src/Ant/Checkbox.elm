@@ -81,8 +81,15 @@ toHtml (Checkbox config) =
 
                 Nothing ->
                     Attr.attribute "no-oncheck" "no-oncheck"
+
+        labelEnabledClass =
+            if config.disabled then
+                checkboxLabelClass ++ "--disabled"
+
+            else
+                checkboxLabelClass ++ "--enabled"
     in
-    H.label [ Attr.class checkboxLabelClass ]
+    H.label [ Attr.class checkboxLabelClass, Attr.class labelEnabledClass ]
         [ H.text <| Maybe.withDefault "" config.label
         , H.input
             [ Attr.type_ "checkbox"

@@ -46,6 +46,8 @@ styles theme =
                , userSelectNone
                ]
         )
+    , CG.class (checkboxLabelClass ++ "--disabled")
+        [ cursor notAllowed ]
 
     -- hide the default browser checkbox
     , makeSelector (checkboxLabelClass ++ "> input[type=\"checkbox\"]")
