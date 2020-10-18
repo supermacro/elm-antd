@@ -11,9 +11,11 @@ Given a `component` query param, render the associated component
 -}
 
 import Ant.Button as Btn exposing (ButtonType(..), button)
+import Ant.Css exposing (createThemedStyles)
 import Ant.Divider as Divider
 import Ant.Icons as Icons exposing (Icon, searchOutlined)
 import Ant.Input as Input exposing (InputSize)
+import Ant.Theme exposing (defaultTheme)
 import Ant.Typography as Heading exposing (Level(..), title)
 import Browser
 import Browser.Navigation as Nav
@@ -242,6 +244,9 @@ buildComponent component =
 view : Model -> { title : String, body : List (Html msg) }
 view { component, label } =
     let
+        antdGlobalStyles =
+            createThemedStyles defaultTheme
+
         content =
             buildComponent component
 
@@ -252,5 +257,9 @@ view { component, label } =
                 ]
     in
     { title = "Visual Tests - " ++ label
-    , body = [ toUnstyled appStyles, centerContents content ]
+    , body =
+        [ antdGlobalStyles
+        , toUnstyled appStyles
+        , centerContents content
+        ]
     }

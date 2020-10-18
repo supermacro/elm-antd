@@ -38,6 +38,7 @@ import Html.Styled.Attributes exposing (alt, css, href, src)
 import Http
 import Routes.AlertComponent as AlertPage
 import Routes.ButtonComponent as ButtonPage
+import Routes.CheckboxComponent as CheckboxPage
 import Routes.DividerComponent as DividerPage
 import Routes.Home exposing (homePage)
 import Routes.InputComponent as InputPage
@@ -83,6 +84,7 @@ type alias Model =
     -- sub models for each page
     , alertPageModel : AlertPage.Model
     , buttonPageModel : ButtonPage.Model
+    , checkboxPageModel : CheckboxPage.Model
     , dividerPageModel : DividerPage.Model
     , inputPageModel : InputPage.Model
     , spacePageModel : SpacePage.Model
@@ -100,6 +102,7 @@ type Msg
     | MenuItemClicked Href
     | AlertPageMessage AlertPage.Msg
     | ButtonPageMessage ButtonPage.Msg
+    | CheckboxPageMessage CheckboxPage.Msg
     | DividerPageMessage DividerPage.Msg
     | InputPageMessage InputPage.Msg
     | SpacePageMessage SpacePage.Msg
@@ -138,7 +141,6 @@ unimplementedComponents =
         , ( "PageHeader", Navigation )
         , ( "Steps", Navigation )
         , ( "AutoComplete", DataEntry )
-        , ( "Checkbox", DataEntry )
         , ( "Cascader", DataEntry )
         , ( "DatePicker", DataEntry )
         , ( "Form", DataEntry )
@@ -208,6 +210,10 @@ componentList =
             ButtonPage.route.view model.buttonPageModel
                 |> Styled.map ButtonPageMessage
 
+        checkboxView model =
+            CheckboxPage.route.view model.checkboxPageModel
+                |> Styled.map CheckboxPageMessage
+
         dividerPageView model =
             DividerPage.route.view model.dividerPageModel
                 |> Styled.map DividerPageMessage
@@ -228,50 +234,56 @@ componentList =
             TooltipPage.route.view model.tooltipPageModel
                 |> Styled.map TooltipPageMessage
     in
-    [ { route = ButtonPage.route.title
-      , category = ButtonPage.route.category
-      , view = buttonPageView
-      , saveExampleSourceCode =
-            triggerSaveExampleSourceCode ButtonPageMessage ButtonPage.route.saveExampleSourceCodeToModel
-      }
-    , { route = AlertPage.route.title
-      , category = AlertPage.route.category
-      , view = alertPageView
-      , saveExampleSourceCode =
-            triggerSaveExampleSourceCode AlertPageMessage AlertPage.route.saveExampleSourceCodeToModel
-      }
-    , { route = DividerPage.route.title
-      , category = DividerPage.route.category
-      , view = dividerPageView
-      , saveExampleSourceCode =
-            triggerSaveExampleSourceCode DividerPageMessage DividerPage.route.saveExampleSourceCodeToModel
-      }
-    , { route = InputPage.route.title
-      , category = InputPage.route.category
-      , view = inputPageView
-      , saveExampleSourceCode =
-            triggerSaveExampleSourceCode InputPageMessage InputPage.route.saveExampleSourceCodeToModel
-      }
-    , { route = SpacePage.route.title
-      , category = SpacePage.route.category
-      , view = spacePageView
-      , saveExampleSourceCode =
-            triggerSaveExampleSourceCode SpacePageMessage SpacePage.route.saveExampleSourceCodeToModel
-      }
-    , { route = TypographyPage.route.title
-      , category = TypographyPage.route.category
-      , view = typographyPageView
-      , saveExampleSourceCode =
-            triggerSaveExampleSourceCode TypographyPageMessage TypographyPage.route.saveExampleSourceCodeToModel
-      }
-    , { route = TooltipPage.route.title
-      , category = TooltipPage.route.category
-      , view = tooltipPageView
-      , saveExampleSourceCode =
-            triggerSaveExampleSourceCode TooltipPageMessage TooltipPage.route.saveExampleSourceCodeToModel
-      }
-    ]
-        ++ unimplementedComponents
+    unimplementedComponents
+        ++ [ { route = ButtonPage.route.title
+             , category = ButtonPage.route.category
+             , view = buttonPageView
+             , saveExampleSourceCode =
+                triggerSaveExampleSourceCode ButtonPageMessage ButtonPage.route.saveExampleSourceCodeToModel
+             }
+           , { route = AlertPage.route.title
+             , category = AlertPage.route.category
+             , view = alertPageView
+             , saveExampleSourceCode =
+                triggerSaveExampleSourceCode AlertPageMessage AlertPage.route.saveExampleSourceCodeToModel
+             }
+           , { route = CheckboxPage.route.title
+             , category = CheckboxPage.route.category
+             , view = checkboxView
+             , saveExampleSourceCode =
+                triggerSaveExampleSourceCode CheckboxPageMessage CheckboxPage.route.saveExampleSourceCodeToModel
+             }
+           , { route = DividerPage.route.title
+             , category = DividerPage.route.category
+             , view = dividerPageView
+             , saveExampleSourceCode =
+                triggerSaveExampleSourceCode DividerPageMessage DividerPage.route.saveExampleSourceCodeToModel
+             }
+           , { route = InputPage.route.title
+             , category = InputPage.route.category
+             , view = inputPageView
+             , saveExampleSourceCode =
+                triggerSaveExampleSourceCode InputPageMessage InputPage.route.saveExampleSourceCodeToModel
+             }
+           , { route = SpacePage.route.title
+             , category = SpacePage.route.category
+             , view = spacePageView
+             , saveExampleSourceCode =
+                triggerSaveExampleSourceCode SpacePageMessage SpacePage.route.saveExampleSourceCodeToModel
+             }
+           , { route = TypographyPage.route.title
+             , category = TypographyPage.route.category
+             , view = typographyPageView
+             , saveExampleSourceCode =
+                triggerSaveExampleSourceCode TypographyPageMessage TypographyPage.route.saveExampleSourceCodeToModel
+             }
+           , { route = TooltipPage.route.title
+             , category = TooltipPage.route.category
+             , view = tooltipPageView
+             , saveExampleSourceCode =
+                triggerSaveExampleSourceCode TooltipPageMessage TooltipPage.route.saveExampleSourceCodeToModel
+             }
+           ]
 
 
 categoryToString : ComponentCategory -> String
@@ -355,6 +367,7 @@ init url { commitHash, fileServerUrl } =
             , footer = Footer.initialModel
             , alertPageModel = AlertPage.route.initialModel
             , buttonPageModel = ButtonPage.route.initialModel
+            , checkboxPageModel = CheckboxPage.route.initialModel
             , dividerPageModel = DividerPage.route.initialModel
             , inputPageModel = InputPage.route.initialModel
             , spacePageModel = SpacePage.route.initialModel
@@ -450,6 +463,17 @@ update navKey msg model =
                 | buttonPageModel = buttonPageModel
               }
             , Cmd.map ButtonPageMessage buttonPageCmd
+            )
+
+        CheckboxPageMessage checkboxPageMsg ->
+            let
+                ( checkboxPageModel, checkboxPageCmd ) =
+                    CheckboxPage.route.update checkboxPageMsg model.checkboxPageModel
+            in
+            ( { model
+                | checkboxPageModel = checkboxPageModel
+              }
+            , Cmd.map CheckboxPageMessage checkboxPageCmd
             )
 
         DividerPageMessage dividerPageMsg ->

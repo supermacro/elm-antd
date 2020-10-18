@@ -11,6 +11,9 @@ module Ant.Css.Common exposing
     , btnLinkClass
     , btnPrimaryClass
     , btnTextClass
+    , checkboxClass
+    , checkboxCustomCheckmarkClass
+    , checkboxLabelClass
     , inputClass
     , makeSelector
     )
@@ -103,6 +106,27 @@ btnTextClass =
 btnLinkClass : String
 btnLinkClass =
     btnClass ++ "-link"
+
+
+
+-------------------------
+-------------------------
+-- Checkbox Class Names
+
+
+checkboxClass : String
+checkboxClass =
+    elmAntdPrefix ++ "__checkbox"
+
+
+checkboxLabelClass : String
+checkboxLabelClass =
+    checkboxClass ++ "-label"
+
+
+checkboxCustomCheckmarkClass : String
+checkboxCustomCheckmarkClass =
+    checkboxClass ++ "-checkmark"
 
 
 

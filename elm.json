@@ -3,10 +3,11 @@
     "name": "supermacro/elm-antd",
     "summary": "elm-antd is an implementation of the Ant design system for Elm",
     "license": "MIT",
-    "version": "4.2.2",
+    "version": "4.3.0",
     "exposed-modules": [
         "Ant.Alert",
         "Ant.Button",
+        "Ant.Checkbox",
         "Ant.Css",
         "Ant.Divider",
         "Ant.Icons",

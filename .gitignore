@@ -6,4 +6,5 @@ showcase/todo
 showcase/dist/
 showcase/elm-stuff/
 showcase/node_modules/
-file-server/node_modules/
+showcase/file-server/node_modules/
+

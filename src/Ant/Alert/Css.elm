@@ -122,18 +122,18 @@ styles theme =
         ]
 
     -- success alert styles
-    , makeSelector alertSuccessClass
+    , CG.class alertSuccessClass
         successStyles
 
     -- info alert styles
-    , makeSelector alertInfoClass
+    , CG.class alertInfoClass
         infoStyles
 
     -- warning alert styles
-    , makeSelector alertWarningClass
+    , CG.class alertWarningClass
         warningStyles
 
     -- error alert styles
-    , makeSelector alertErrorClass
+    , CG.class alertErrorClass
         errorStyles
     ]

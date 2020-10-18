@@ -24,6 +24,7 @@ homePage =
             [ internalLink "/components/button" "Button"
             , internalLink "/components/alert" "Alert"
             , internalLink "/components/tooltip" "Tooltip"
+            , internalLink "/components/checkbox" "Checkbox"
             , internalLink "/components/typography" "Typography"
             , internalLink "/components/divider" "Divider"
             , internalLink "/components/input" "Input"
