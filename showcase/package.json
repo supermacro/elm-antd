@@ -23,7 +23,7 @@
     "serve": "^11.3.2",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.11.0"
   },
   "engines": {
     "yarn": "please-use-npm"
