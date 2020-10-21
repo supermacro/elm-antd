@@ -15,7 +15,10 @@ module Ant.Css.Common exposing
     , checkboxCustomCheckmarkClass
     , checkboxLabelClass
     , inputClass
+    , inputRootActiveClass
+    , inputRootClass
     , makeSelector
+    , passwordInputVisibilityToggleIconClass
     )
 
 import Css exposing (Style)
@@ -138,3 +141,25 @@ checkboxCustomCheckmarkClass =
 inputClass : String
 inputClass =
     elmAntdPrefix ++ "__input"
+
+
+inputRootClass : String
+inputRootClass =
+    inputClass ++ "-root"
+
+
+
+-- Being toggled on and off by elm-antd-extras
+-- Once the `:has` pseudo selector is widely supported, we won't need to implement
+-- this logic in JS
+-- Context: https://stackoverflow.com/questions/1014861/is-there-a-css-parent-selector
+
+
+inputRootActiveClass : String
+inputRootActiveClass =
+    inputClass ++ "-active"
+
+
+passwordInputVisibilityToggleIconClass : String
+passwordInputVisibilityToggleIconClass =
+    inputClass ++ "-password-visibility-toggle-icon"

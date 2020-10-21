@@ -1,6 +1,6 @@
 module Routes.InputComponent.BasicExample exposing (Model, Msg, example)
 
-import Ant.Input exposing (input, onInput, toHtml, withPlaceholder)
+import Ant.Input as Input exposing (input, onInput, toHtml, withPlaceholder)
 import Html exposing (Html)
 
 
@@ -17,4 +17,4 @@ example =
     input
         |> withPlaceholder "Basic Usage"
         |> onInput InputTyped
-        |> toHtml
+        |> toHtml Input.Stateless

@@ -1,6 +1,6 @@
 module Ant.Input.Css exposing (styles)
 
-import Ant.Css.Common exposing (inputClass)
+import Ant.Css.Common exposing (inputRootActiveClass, inputRootClass, passwordInputVisibilityToggleIconClass)
 import Ant.Internals.Typography exposing (commonFontStyles, textColorRgba)
 import Ant.Theme exposing (Theme)
 import Color.Convert exposing (colorToHexWithAlpha)
@@ -31,33 +31,83 @@ styles theme =
                 |> colorToHexWithAlpha
                 |> hex
 
+        rootNodeStyles =
+            [ borderWidth (px 1)
+            , borderRadius (px 2)
+            , width (pct 100)
+            , height (px 30)
+            , borderStyle solid
+            , backgroundColor (hex "#fff")
+            , borderColor <| rgb 217 217 217
+            , padding2 (px 4) (px 11)
+            , hover
+                [ borderColor <| hex <| colorToHexWithAlpha theme.colors.primaryFaded
+                ]
+            ]
+
+        transitionStyles =
+            transition
+                [ Css.Transitions.borderColor transitionDuration
+                , Css.Transitions.boxShadow transitionDuration
+                ]
+
         inputStyles =
             commonFontStyles
                 ++ [ color textColor
-                   , borderWidth (px 1)
-                   , borderRadius (px 2)
-                   , width (pct 100)
-                   , height (px 30)
-                   , borderStyle solid
-                   , backgroundColor (hex "#fff")
-                   , borderColor <| rgb 217 217 217
                    , property "caret-color" "#000"
-                   , padding2 (px 4) (px 11)
-                   , focus
-                        [ borderColor <| hex <| colorToHexWithAlpha theme.colors.primaryFaded
-                        , boxShadow5 zero zero zero (px 2) focusBoxShadowColor
-                        , outline none
-                        ]
-                   , hover
-                        [ borderColor <| hex <| colorToHexWithAlpha theme.colors.primaryFaded
-                        ]
-                   , active
-                        [ borderColor <| hex <| colorToHexWithAlpha theme.colors.primary
-                        ]
-                   , transition
-                        [ Css.Transitions.borderColor transitionDuration
-                        , Css.Transitions.boxShadow transitionDuration
-                        ]
                    ]
+
+        inputBoxShadow =
+            boxShadow5 zero zero zero (px 2) focusBoxShadowColor
+
+        inputBorderColor =
+            borderColor <| hex <| colorToHexWithAlpha theme.colors.primaryFaded
     in
-    [ CG.class inputClass inputStyles ]
+    [ CG.selector ("input." ++ inputRootClass)
+        ((rootNodeStyles ++ inputStyles)
+            ++ [ transitionStyles
+               , focus
+                    [ inputBorderColor
+                    , inputBoxShadow
+                    , outline none
+                    ]
+               ]
+        )
+
+    -- Styles for wrapped inputs (i.e. password input) whose root node is a div
+    , CG.selector ("div." ++ inputRootClass)
+        (rootNodeStyles
+            ++ [ whiteSpace noWrap
+               , paddingRight (px 10)
+               , transitionStyles
+               ]
+        )
+    , CG.selector ("div." ++ inputRootActiveClass)
+        [ inputBoxShadow
+        , inputBorderColor
+        , transitionStyles
+        ]
+    , CG.selector ("div." ++ inputRootClass ++ "> ." ++ passwordInputVisibilityToggleIconClass)
+        [ cursor pointer
+        , color (hex "#9a9a9a")
+        , position absolute
+        , hover
+            [ color (rgba 0 0 0 0.85) ]
+        , transition
+            [ Css.Transitions.color transitionDuration
+            ]
+        ]
+    , CG.selector ("div." ++ inputRootClass ++ "> input")
+        (inputStyles
+            ++ [ border zero
+               , width (pct 95)
+               , marginTop (px 1)
+               , active
+                    [ outline none
+                    ]
+               , focus
+                    [ outline none
+                    ]
+               ]
+        )
+    ]

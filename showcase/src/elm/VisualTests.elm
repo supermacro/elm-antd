@@ -236,7 +236,7 @@ buildComponent component =
                     Input.input
                         |> Input.withSize inputConfig.size
                         |> Input.withPlaceholder "Placeholder"
-                        |> Input.toHtml
+                        |> Input.toHtml Input.Stateless
             in
             div [ style "max-width" "200px" ] [ input ]
 

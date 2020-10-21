@@ -1,9 +1,10 @@
 module Routes.InputComponent exposing (Model, Msg, route)
 
-import Css exposing (displayFlex, maxWidth, pct)
+import Css exposing (..)
 import Html.Styled as Styled exposing (div, fromUnstyled, text)
 import Html.Styled.Attributes exposing (css)
 import Routes.InputComponent.BasicExample as BasicExample
+import Routes.InputComponent.PasswordExample as PasswordExample
 import UI.Container as Container
 import UI.Typography as Typography
     exposing
@@ -22,15 +23,17 @@ title =
 
 type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
+    , passwordExample : Container.Model PasswordExample.Model PasswordExample.Msg
     }
 
 
 type DemoBox
-    = Basic
+    = Basic (Container.Msg BasicExample.Msg)
+    | Password (Container.Msg PasswordExample.Msg)
 
 
 type Msg
-    = DemoBoxMsg DemoBox (Container.Msg BasicExample.Msg)
+    = DemoBoxMsg DemoBox
     | ExampleSourceCodeLoaded (List SourceCode)
 
 
@@ -46,6 +49,11 @@ route =
                 "BasicExample.elm"
                 ()
                 (\_ _ -> ( (), Cmd.none ))
+        , passwordExample =
+            Container.initStatefulModel
+                "PasswordExample.elm"
+                PasswordExample.init
+                PasswordExample.update
         }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
@@ -54,18 +62,26 @@ route =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        DemoBoxMsg demoBox demoboxMsg ->
+        DemoBoxMsg demoBox ->
             case demoBox of
-                Basic ->
+                Basic basicExampleMsg ->
                     let
                         ( basicModel, basicCmd ) =
-                            Container.update (DemoBoxMsg Basic) demoboxMsg model.basicExample
+                            Container.update (DemoBoxMsg << Basic) basicExampleMsg model.basicExample
                     in
                     ( { model | basicExample = basicModel }, basicCmd )
+
+                Password passwordExampleMsg ->
+                    let
+                        ( passwordModel, passwordCmd ) =
+                            Container.update (DemoBoxMsg << Password) passwordExampleMsg model.passwordExample
+                    in
+                    ( { model | passwordExample = passwordModel }, passwordCmd )
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
                 | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
+                , passwordExample = Container.setSourceCode examplesSourceCode model.passwordExample
               }
             , Cmd.none
             )
@@ -81,9 +97,25 @@ basicExample model =
             }
     in
     Container.createDemoBox
-        (DemoBoxMsg Basic)
+        (DemoBoxMsg << Basic)
         model.basicExample
         (\_ -> BasicExample.example)
+        metaInfo
+
+
+passwordExample : Model -> Styled.Html Msg
+passwordExample model =
+    let
+        metaInfo =
+            { title = "Password field"
+            , content = "Input type of password."
+            , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
+            }
+    in
+    Container.createDemoBox
+        (DemoBoxMsg << Password)
+        model.passwordExample
+        PasswordExample.example
         metaInfo
 
 
@@ -98,8 +130,12 @@ view model =
             , text "A search input is required."
             ]
         , documentationSubheading Typography.WithoutAnchorLink "Examples"
-        , div []
-            [ div [ css [ maxWidth (pct 45) ] ] [ basicExample model ]
-            , div [] []
+        , div [ css [ displayFlex ] ]
+            [ div
+                [ css [ width (pct 45), marginRight (px 13) ] ]
+                [ basicExample model ]
+            , div
+                [ css [ width (pct 100), maxWidth (pct 45) ] ]
+                [ passwordExample model ]
             ]
         ]
