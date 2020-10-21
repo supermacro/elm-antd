@@ -81,11 +81,11 @@ const developmentConfig = {
   devServer: {
     inline: true,
     stats: { colors: true },
-    historyApiFallback: true
+    historyApiFallback: true,
   },
 }
 
 
 module.exports = IS_DEVELOPMENT
-  ? { ...commonConfig, ...developmentConfig }
+  ? { watch: true, ...commonConfig, ...developmentConfig }
   : commonConfig;
