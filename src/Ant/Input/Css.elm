@@ -63,6 +63,7 @@ styles theme =
         inputBorderColor =
             borderColor <| hex <| colorToHexWithAlpha theme.colors.primaryFaded
     in
+    -- Styles for simple inputs that are not wrapped by a div or other elements
     [ CG.selector ("input." ++ inputRootClass)
         ((rootNodeStyles ++ inputStyles)
             ++ [ transitionStyles
@@ -82,11 +83,13 @@ styles theme =
                , transitionStyles
                ]
         )
+    -- add styles for when the input is active / focused
     , CG.selector ("div." ++ inputRootActiveClass)
         [ inputBoxShadow
         , inputBorderColor
         , transitionStyles
         ]
+    -- styles for the icon in password inputs
     , CG.selector ("div." ++ inputRootClass ++ "> ." ++ passwordInputVisibilityToggleIconClass)
         [ cursor pointer
         , color (hex "#9a9a9a")
@@ -102,6 +105,7 @@ styles theme =
             ++ [ border zero
                , width (pct 95)
                , marginTop (px 1)
+               , height (px 19)
                , active
                     [ outline none
                     ]
