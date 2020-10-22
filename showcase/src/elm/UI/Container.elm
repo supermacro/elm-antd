@@ -20,12 +20,14 @@ import Html.Styled.Events exposing (onClick)
 import SyntaxHighlight exposing (elm, gitHub, toBlockHtml, useTheme)
 import UI.Typography exposing (commonTextStyles)
 import Utils exposing (SourceCode)
+import UrlGenerator
 
 
 type alias Model m msg =
     { fileName : String
     , sourceCodeVisible : Bool
     , sourceCode : Maybe String
+    , ellieLink : Maybe String 
 
     -- the model associated with the example
     , state : DemoState m msg
@@ -59,6 +61,7 @@ initModel fileName =
     { sourceCodeVisible = False
     , sourceCode = Nothing
     , fileName = fileName
+    , ellieLink = Nothing
     , state =
         { model = ()
         , update = \_ _ -> ( (), Cmd.none )
@@ -73,6 +76,7 @@ initStatefulModel fileName initialModel updateFn =
     { sourceCodeVisible = False
     , sourceCode = Nothing
     , fileName = fileName
+    , ellieLink = Nothing
     , state =
         { model = initialModel
         , update = updateFn
@@ -117,8 +121,14 @@ setSourceCode sourceCodeList model =
                 |> List.filter (\{ fileName } -> fileName == model.fileName)
                 |> List.head
                 |> Maybe.map .fileContents
+        
+        ellieLink = 
+            Maybe.map (UrlGenerator.fromSourceCode "4.3.0") maybeSourceCode
     in
-    { model | sourceCode = maybeSourceCode }
+    { model 
+        | sourceCode = maybeSourceCode
+        , ellieLink = ellieLink
+    }
 
 
 update : (Msg a -> msg) -> Msg a -> Model m a -> ( Model m a, Cmd msg )
@@ -200,23 +210,33 @@ type Either a b
 type alias EllieAppUrl =
     String
 
+-- If the Ellie link is not yet generated, the icon becomes Disables
 
-type alias IconContainerOptions msg =
-    { icon : Icon msg
-    , tooltipText : String
-    , event : Either msg EllieAppUrl
-    , extraStyles : List ( String, String )
-    }
+type IconContainerOptions msg 
+    = Disabled 
+        { icon : Icon msg
+        , extraStyles : List (String, String)
+        }
+    | Enabled 
+        { icon : Icon msg
+        , tooltipText : String
+        , event : Either msg EllieAppUrl
+        , extraStyles : List ( String, String )
+        }
 
 
 iconContainer : IconContainerOptions msg -> Styled.Html msg
-iconContainer { icon, tooltipText, event, extraStyles } =
-    let
-        commonIconStyles =
+iconContainer options =
+    let 
+        commonIconStyles enabled =
             [ ( "margin-right", "10px" )
             , ( "margin-left", "10px" )
-            , ( "cursor", "pointer" )
             ]
+            ++
+            if enabled then 
+                [( "cursor", "pointer" )]
+                else 
+                []
 
         baseAttributes =
             css
@@ -227,33 +247,41 @@ iconContainer { icon, tooltipText, event, extraStyles } =
                     [ opacity (num 1) ]
                 , opacityTransition
                 ]
-
-        childNode =
+        
+        viewIcon extraStyles icon enabled =
             icon
-                |> Icons.withStyles (extraStyles ++ commonIconStyles)
+                |> Icons.withStyles (extraStyles ++ commonIconStyles enabled)
                 |> Icons.toHtml
                 |> fromUnstyled
-
-        bareIconContainer =
-            case event of
-                Left msg ->
-                    span
-                        [ baseAttributes
-                        , onClick msg
-                        ]
-                        [ childNode ]
-
-                Right ellieAppUrl ->
-                    Styled.a
-                        [ baseAttributes
-                        , A.target "_blank"
-                        , href ellieAppUrl
-                        ]
-                        [ childNode ]
     in
-    tooltip tooltipText (toUnstyled bareIconContainer)
-        |> Tooltip.toHtml
-        |> fromUnstyled
+    case options of 
+        Disabled { icon, extraStyles } ->
+            span
+                [ baseAttributes ]
+                [ viewIcon extraStyles icon False ]
+
+        Enabled { icon, tooltipText, event, extraStyles} ->
+            let
+                bareIconContainer =
+                    case event of
+                        Left msg ->
+                            span
+                                [ baseAttributes
+                                , onClick msg
+                                ]
+                                [ viewIcon extraStyles icon True ]
+
+                        Right ellieAppUrl ->
+                            Styled.a
+                                [ baseAttributes
+                                , A.target "_blank"
+                                , href ellieAppUrl
+                                ]
+                                [ viewIcon extraStyles icon True ]
+            in
+            tooltip tooltipText (toUnstyled bareIconContainer)
+                |> Tooltip.toHtml
+                |> fromUnstyled
 
 
 view : Model m msg -> DemoBoxMetaInfo -> Styled.Html (Msg msg) -> Styled.Html (Msg msg)
@@ -284,23 +312,33 @@ view model metaInfo demo =
                             ]
                         ]
                         [ iconContainer <|
-                            IconContainerOptions
-                                Icons.ellieLogo
-                                "Open in Ellie"
-                                (Right metaInfo.ellieDemo)
-                                []
+                            case model.ellieLink of 
+                                Nothing -> 
+                                    Disabled 
+                                        { icon = Icons.ellieLogo
+                                        , extraStyles = []
+                                        }
+                                Just link ->
+                                    Enabled 
+                                        { icon = Icons.ellieLogo
+                                        , tooltipText = "Open in Ellie"
+                                        , event = (Right link)
+                                        , extraStyles = []
+                                        }
                         , iconContainer <|
-                            IconContainerOptions
-                                Icons.copyToClipboard
-                                "Copy code"
-                                (Left CopySourceToClipboardRequested)
-                                [ ( "width", "16px" ) ]
+                            Enabled
+                                { icon = Icons.copyToClipboard
+                                , tooltipText = "Copy code"
+                                , event = (Left CopySourceToClipboardRequested)
+                                , extraStyles = [ ( "width", "16px" ) ]
+                                }
                         , iconContainer <|
-                            IconContainerOptions
-                                Icons.codeOpenBrackets
-                                "Show code"
-                                (Left SourceCodeVisibilityToggled)
-                                [ ( "width", "17px" ) ]
+                            Enabled
+                                { icon = Icons.codeOpenBrackets
+                                , tooltipText = "Show code"
+                                , event = (Left SourceCodeVisibilityToggled)
+                                , extraStyles = [ ( "width", "17px" ) ]
+                                }
                         ]
 
                 sourceCodeView =

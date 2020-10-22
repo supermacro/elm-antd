@@ -7,6 +7,11 @@ if (VISUAL_TESTING_MODE) {
 } else {
   const Elm = require('./elm/Showcase.elm').Elm;
 
+  // Github API
+  const { Octokit } = require("@octokit/rest");
+  const octokit = new Octokit();
+
+
   // the JS version of Maybe a
   // is a | null
   // undefined does not constitute a Maybe value
@@ -22,6 +27,19 @@ if (VISUAL_TESTING_MODE) {
   app.ports.copySourceToClipboard.subscribe((src) => {
     navigator.clipboard.writeText(src)
   })
+
+  octokit.request('GET /repos/supermacro/elm-antd/releases/latest', {
+    owner: 'supermacro',
+    repo: 'elm-antd'
+  })
+    .then(data => {
+      console.log('Got Latest version!', data.data.tag_name)
+
+    })
+    .catch(err => {
+      console.log('Error when retrieving antd version!')
+      console.log(err)
+    })
 
   if ('serviceWorker' in navigator) {
     console.log('Registering service worker ... ')
