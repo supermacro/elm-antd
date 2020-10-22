@@ -7,6 +7,7 @@ port module Utils exposing
     , copySourceToClipboard
     , fetchComponentExamples
     , intoKebabCase
+    , fetchVersion
     )
 
 import Html.Styled as Styled
@@ -164,3 +165,16 @@ fetchComponentExamples baseUrl commitHash componentName tagger =
         { url = url
         , expect = Http.expectJson tagger (D.list sourceCodeDecoder)
         }
+
+-- GITHUB API - Fetch latest version
+
+versionDecoder : Decoder String 
+versionDecoder = 
+    D.field "tag_name" D.string
+
+fetchVersion : (Result Http.Error String -> msg) -> Cmd msg 
+fetchVersion gotVersion =
+    Http.get
+    { url = "https://api.github.com/repos/supermacro/elm-antd/releases/latest"
+    , expect = Http.expectJson gotVersion versionDecoder
+    }

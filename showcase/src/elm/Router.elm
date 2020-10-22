@@ -81,6 +81,9 @@ type alias Model =
     , fileServerUrl : String
     , footer : Footer.Model
 
+    -- fetch from Github API
+    , version : Maybe String
+
     -- sub models for each page
     , alertPageModel : AlertPage.Model
     , buttonPageModel : ButtonPage.Model
@@ -111,6 +114,7 @@ type Msg
       -- represents the outcome of having asynchronously fetched
       -- the source code of the examples for a particular component page
     | ComponentPageReceivedExamples Route (Result Http.Error (List RawSourceCode))
+    | GotVersion (Result Http.Error String)
     | FooterMessage Footer.Msg
 
 
@@ -364,6 +368,7 @@ init url { commitHash, fileServerUrl } =
             , examplesFetched = []
             , commitHash = commitHash
             , fileServerUrl = fileServerUrl
+            , version = Nothing
             , footer = Footer.initialModel
             , alertPageModel = AlertPage.route.initialModel
             , buttonPageModel = ButtonPage.route.initialModel
@@ -376,7 +381,10 @@ init url { commitHash, fileServerUrl } =
             }
     in
     ( model
-    , fetchComponentExamples model route
+    , Cmd.batch 
+        [ fetchComponentExamples model route
+        , Utils.fetchVersion GotVersion
+        ]
     )
 
 
@@ -444,6 +452,12 @@ update navKey msg model =
                 -- TODO: do some sort of error logging
                 Err e ->
                     ( model, Cmd.none )
+        
+        GotVersion resultVersion ->
+            -- TODO: Error handling
+            ( {model | version = Result.toMaybe resultVersion}
+            , Cmd.none
+            )
 
         AlertPageMessage alertPageMsg ->
             let
