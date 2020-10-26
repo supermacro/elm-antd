@@ -83,12 +83,14 @@ styles theme =
                , transitionStyles
                ]
         )
+
     -- add styles for when the input is active / focused
     , CG.selector ("div." ++ inputRootActiveClass)
         [ inputBoxShadow
         , inputBorderColor
         , transitionStyles
         ]
+
     -- styles for the icon in password inputs
     , CG.selector ("div." ++ inputRootClass ++ "> ." ++ passwordInputVisibilityToggleIconClass)
         [ cursor pointer
