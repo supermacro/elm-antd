@@ -1,6 +1,7 @@
 module Ant.Form.Base.PasswordField exposing
-    ( PasswordField, Attributes
+    ( Attributes
     , form
+    , PasswordField
     )
 
 {-| This module contains a reusable `TextField` type.
@@ -65,4 +66,3 @@ form :
 form =
     Base.field
         { isEmpty = \{ value } -> String.isEmpty value }
-

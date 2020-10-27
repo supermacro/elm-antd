@@ -1,6 +1,6 @@
 module Routes.InputComponent.PasswordExample exposing (Model, Msg, example, init, update)
 
-import Ant.Input as Input exposing (input, toHtml, withPlaceholder, withPasswordType)
+import Ant.Input as Input exposing (input, toHtml, withPasswordType, withPlaceholder)
 import Html exposing (Html)
 
 

@@ -9,7 +9,6 @@ module Ant.Form exposing
 
 {-| Build [composable forms](#Form) comprised of [fields](#fields).
 
-
 This is a port of [hecrj/composable-form](https://package.elm-lang.org/packages/hecrj/composable-form/latest). LICENSE located at ./src/Ant/Form/LICENSE.
 
 
@@ -163,11 +162,11 @@ emailField =
     TextField.form (Text TextEmail)
 
 
-
 type alias PasswordFieldValue =
     { value : String
     , textVisible : Bool
     }
+
 
 {-| Create a form that contains a single password field.
 

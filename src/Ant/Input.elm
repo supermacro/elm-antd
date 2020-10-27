@@ -1,7 +1,8 @@
 module Ant.Input exposing
     ( Input, input
-    , InputSize(..), withSize, InputType(..), withPasswordType, withPlaceholder
+    , InputSize(..), withSize, InputType(..), withPlaceholder
     , toHtml
+    , withPasswordType
     )
 
 {-| Input widget for data entry
@@ -39,9 +40,9 @@ import Html.Attributes as Attr exposing (class, placeholder)
 import Html.Events as E
 
 
--- String -> msg
--- init >> setValue config.value 
 
+-- String -> msg
+-- init >> setValue config.value
 -- setValue config
 
 
@@ -62,7 +63,7 @@ type InputSize
 {-| Defines the different kinds of input values you can have.
 -}
 type InputType msg
-    = Text 
+    = Text
     | Password { textVisible : Bool } (Bool -> msg)
 
 
@@ -77,7 +78,7 @@ defaultInputOpts : InputOpts msg
 defaultInputOpts =
     { size = Default
     , placeholder = Nothing
-    , type_ = Text 
+    , type_ = Text
     }
 
 
@@ -86,8 +87,6 @@ defaultInputOpts =
 input : (String -> msg) -> Input msg
 input =
     Input defaultInputOpts
-
-
 
 
 {-| Add a placeholder to the input

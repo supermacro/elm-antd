@@ -500,7 +500,6 @@ update navKey msg model =
             , Cmd.map DividerPageMessage dividerPageCmd
             )
 
-
         FormPageMessage formPageMsg ->
             let
                 ( formPageModel, formPageCmd ) =

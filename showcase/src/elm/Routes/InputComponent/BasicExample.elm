@@ -1,4 +1,4 @@
-module Routes.InputComponent.BasicExample exposing (Msg, Model, example, init, update)
+module Routes.InputComponent.BasicExample exposing (Model, Msg, example, init, update)
 
 import Ant.Input as Input exposing (input, toHtml, withPlaceholder)
 import Html exposing (Html)
@@ -16,7 +16,6 @@ init : Model
 init =
     { inputValue = ""
     }
-
 
 
 update : Msg -> Model -> ( Model, Cmd msg )

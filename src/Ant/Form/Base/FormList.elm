@@ -19,9 +19,9 @@ It is useful to build a variable list of forms based on a `List` of `values`.
 
 -}
 
-import Array exposing (Array)
 import Ant.Form.Base as Base
 import Ant.Form.Error exposing (Error)
+import Array exposing (Array)
 import List.Extra
 
 

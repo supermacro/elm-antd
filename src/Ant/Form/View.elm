@@ -9,6 +9,7 @@ module Ant.Form.View exposing
 
 {-| This module provides helpers to render a [`Form`](Form#Form).
 
+
 # Model
 
 @docs Model, State, idle
@@ -211,6 +212,7 @@ type alias InputFieldConfig msg =
     , error : Maybe Error
     , showError : Bool
     , attributes : TextField.Attributes
+
     --, modifiers : List (Input msg -> Input msg)
     }
 
@@ -459,16 +461,14 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
     case field.state of
         Form.Password { attributes, value, update } ->
             customConfig.passwordField
-                { onChange = 
-                    (\inputVal ->
+                { onChange =
+                    \inputVal ->
                         update { value = inputVal, textVisible = value.textVisible }
-                        |> onChange
-                    )
+                            |> onChange
                 , onToggleTextVisibility =
-                    (\visibilityVal ->
+                    \visibilityVal ->
                         update { value = value.value, textVisible = visibilityVal }
-                        |> onChange
-                    )
+                            |> onChange
                 , onBlur = blur attributes.label
                 , disabled = disabled
                 , value = value
@@ -787,7 +787,6 @@ passwordInputField { onChange, onToggleTextVisibility, value, attributes, error,
         |> Input.withPasswordType onToggleTextVisibility value.textVisible
         |> Input.toHtml value.value
         |> withLabelAndError attributes.label showError error
-
 
 
 inputField : String -> InputFieldConfig msg -> Html msg
