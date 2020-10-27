@@ -2,7 +2,7 @@ module Ant.Form.View exposing
     ( Model, State(..), idle
     , ViewConfig, Validation(..)
     , toHtml, htmlViewConfig
-    , custom, CustomConfig, FormConfig, TextFieldConfig, NumberFieldConfig, RangeFieldConfig
+    , custom, CustomConfig, FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
     , CheckboxFieldConfig, RadioFieldConfig, SelectFieldConfig
     , FormListConfig, FormListItemConfig
     )
@@ -26,7 +26,7 @@ module Ant.Form.View exposing
 
 # Custom
 
-@docs custom, CustomConfig, FormConfig, TextFieldConfig, NumberFieldConfig, RangeFieldConfig
+@docs custom, CustomConfig, FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
 @docs CheckboxFieldConfig, RadioFieldConfig, SelectFieldConfig
 @docs FormListConfig, FormListItemConfig
 
@@ -35,11 +35,13 @@ module Ant.Form.View exposing
 import Ant.Form as Form exposing (Form)
 import Ant.Form.Base.CheckboxField as CheckboxField
 import Ant.Form.Base.NumberField as NumberField
+import Ant.Form.Base.PasswordField as PasswordField
 import Ant.Form.Base.RadioField as RadioField
 import Ant.Form.Base.RangeField as RangeField
 import Ant.Form.Base.SelectField as SelectField
 import Ant.Form.Base.TextField as TextField
 import Ant.Form.Error as Error exposing (Error)
+import Ant.Input as Input exposing (input)
 import Html exposing (Html)
 import Html.Attributes as Attributes
 import Html.Events as Events
@@ -153,11 +155,11 @@ render a [`group`](Form#group) of fields, and a function to wrap the fields toge
 -}
 type alias CustomConfig msg element =
     { form : FormConfig msg element -> element
-    , textField : TextFieldConfig msg -> element
-    , emailField : TextFieldConfig msg -> element
-    , passwordField : TextFieldConfig msg -> element
-    , textareaField : TextFieldConfig msg -> element
-    , searchField : TextFieldConfig msg -> element
+    , inputField : InputFieldConfig msg -> element
+    , emailField : InputFieldConfig msg -> element
+    , passwordField : PasswordFieldConfig msg -> element
+    , textareaField : InputFieldConfig msg -> element
+    , searchField : InputFieldConfig msg -> element
     , numberField : NumberFieldConfig msg -> element
     , rangeField : RangeFieldConfig msg -> element
     , checkboxField : CheckboxFieldConfig msg -> element
@@ -201,7 +203,7 @@ type alias FormConfig msg element =
   - `attributes` are [`TextField.Attributes`](Form-Base-TextField#Attributes).
 
 -}
-type alias TextFieldConfig msg =
+type alias InputFieldConfig msg =
     { onChange : String -> msg
     , onBlur : Maybe msg
     , disabled : Bool
@@ -209,6 +211,19 @@ type alias TextFieldConfig msg =
     , error : Maybe Error
     , showError : Bool
     , attributes : TextField.Attributes
+    --, modifiers : List (Input msg -> Input msg)
+    }
+
+
+type alias PasswordFieldConfig msg =
+    { onChange : String -> msg
+    , onToggleTextVisibility : Bool -> msg
+    , onBlur : Maybe msg
+    , disabled : Bool
+    , value : { value : String, textVisible : Bool }
+    , error : Maybe Error
+    , showError : Bool
+    , attributes : PasswordField.Attributes
     }
 
 
@@ -218,7 +233,7 @@ type alias TextFieldConfig msg =
   - `value` contains the current value of the field.
   - `attributes` are [`NumberField.Attributes`](Form-Base-NumberField#Attributes).
 
-The other record fields are described in [`TextFieldConfig`](#TextFieldConfig).
+The other record fields are described in [`InputFieldConfig`](#InputFieldConfig).
 
 -}
 type alias NumberFieldConfig msg =
@@ -238,7 +253,7 @@ type alias NumberFieldConfig msg =
   - `value` will be `Nothing` if the field is blank or `Just` a `Float`.
   - `attributes` are [`RangeField.Attributes`](Form-Base-RangeField#Attributes).
 
-The other record fields are described in [`TextFieldConfig`](#TextFieldConfig).
+The other record fields are described in [`InputFieldConfig`](#InputFieldConfig).
 
 -}
 type alias RangeFieldConfig msg =
@@ -254,7 +269,7 @@ type alias RangeFieldConfig msg =
 
 {-| Describes how a checkbox field should be rendered.
 
-This is basically a [`TextFieldConfig`](#TextFieldConfig), but its `attributes` are
+This is basically a [`InputFieldConfig`](#InputFieldConfig), but its `attributes` are
 [`CheckboxField.Attributes`](Form-Base-CheckboxField#Attributes).
 
 -}
@@ -271,7 +286,7 @@ type alias CheckboxFieldConfig msg =
 
 {-| Describes how a radio field should be rendered.
 
-This is basically a [`TextFieldConfig`](#TextFieldConfig), but its `attributes` are
+This is basically a [`InputFieldConfig`](#InputFieldConfig), but its `attributes` are
 [`RadioField.Attributes`](Form-Base-RadioField#Attributes).
 
 -}
@@ -288,7 +303,7 @@ type alias RadioFieldConfig msg =
 
 {-| Describes how a select field should be rendered.
 
-This is basically a [`TextFieldConfig`](#TextFieldConfig), but its `attributes` are
+This is basically a [`InputFieldConfig`](#InputFieldConfig), but its `attributes` are
 [`SelectField.Attributes`](Form-Base-SelectField#Attributes).
 
 -}
@@ -442,6 +457,26 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
             Maybe.map (\onBlurEvent -> onBlurEvent label) onBlur
     in
     case field.state of
+        Form.Password { attributes, value, update } ->
+            customConfig.passwordField
+                { onChange = 
+                    (\inputVal ->
+                        update { value = inputVal, textVisible = value.textVisible }
+                        |> onChange
+                    )
+                , onToggleTextVisibility =
+                    (\visibilityVal ->
+                        update { value = value.value, textVisible = visibilityVal }
+                        |> onChange
+                    )
+                , onBlur = blur attributes.label
+                , disabled = disabled
+                , value = value
+                , error = field.error
+                , showError = showError attributes.label
+                , attributes = attributes
+                }
+
         Form.Text type_ { attributes, value, update } ->
             let
                 config =
@@ -456,13 +491,10 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
             in
             case type_ of
                 Form.TextRaw ->
-                    customConfig.textField config
+                    customConfig.inputField config
 
                 Form.TextArea ->
                     customConfig.textareaField config
-
-                Form.TextPassword ->
-                    customConfig.passwordField config
 
                 Form.TextEmail ->
                     customConfig.emailField config
@@ -601,9 +633,9 @@ In fact, [`toHtml`](#toHtml) is just implemented as:
 htmlViewConfig : CustomConfig msg (Html msg)
 htmlViewConfig =
     { form = form
-    , textField = inputField "text"
+    , inputField = newInputField
     , emailField = inputField "email"
-    , passwordField = inputField "password"
+    , passwordField = passwordInputField
     , searchField = inputField "search"
     , textareaField = textareaField
     , numberField = numberField
@@ -740,7 +772,25 @@ form { onSubmit, action, loading, state, fields } =
         )
 
 
-inputField : String -> TextFieldConfig msg -> Html msg
+newInputField : InputFieldConfig msg -> Html msg
+newInputField { onChange, value, attributes, error, showError } =
+    input onChange
+        |> Input.withPlaceholder attributes.placeholder
+        |> Input.toHtml value
+        |> withLabelAndError attributes.label showError error
+
+
+passwordInputField : PasswordFieldConfig msg -> Html msg
+passwordInputField { onChange, onToggleTextVisibility, value, attributes, error, showError } =
+    input onChange
+        |> Input.withPlaceholder attributes.placeholder
+        |> Input.withPasswordType onToggleTextVisibility value.textVisible
+        |> Input.toHtml value.value
+        |> withLabelAndError attributes.label showError error
+
+
+
+inputField : String -> InputFieldConfig msg -> Html msg
 inputField type_ { onChange, onBlur, disabled, value, error, showError, attributes } =
     Html.input
         ([ Events.onInput onChange
@@ -755,7 +805,7 @@ inputField type_ { onChange, onBlur, disabled, value, error, showError, attribut
         |> withLabelAndError attributes.label showError error
 
 
-textareaField : TextFieldConfig msg -> Html msg
+textareaField : InputFieldConfig msg -> Html msg
 textareaField { onChange, onBlur, disabled, value, error, showError, attributes } =
     Html.textarea
         ([ Events.onInput onChange

@@ -10,6 +10,9 @@ module Ant.Form exposing
 {-| Build [composable forms](#Form) comprised of [fields](#fields).
 
 
+This is a port of [hecrj/composable-form](https://package.elm-lang.org/packages/hecrj/composable-form/latest). LICENSE located at ./src/Ant/Form/LICENSE.
+
+
 # Definition
 
 @docs Form
@@ -52,6 +55,7 @@ import Ant.Form.Base as Base
 import Ant.Form.Base.CheckboxField as CheckboxField exposing (CheckboxField)
 import Ant.Form.Base.FormList as FormList exposing (FormList)
 import Ant.Form.Base.NumberField as NumberField exposing (NumberField)
+import Ant.Form.Base.PasswordField as PasswordField exposing (PasswordField)
 import Ant.Form.Base.RadioField as RadioField exposing (RadioField)
 import Ant.Form.Base.RangeField as RangeField exposing (RangeField)
 import Ant.Form.Base.SelectField as SelectField exposing (SelectField)
@@ -159,21 +163,27 @@ emailField =
     TextField.form (Text TextEmail)
 
 
+
+type alias PasswordFieldValue =
+    { value : String
+    , textVisible : Bool
+    }
+
 {-| Create a form that contains a single password field.
 
 It has the same configuration options as [`textField`](#textField).
 
 -}
 passwordField :
-    { parser : String -> Result String output
-    , value : values -> String
-    , update : String -> values -> values
+    { parser : PasswordFieldValue -> Result String output
+    , value : values -> PasswordFieldValue
+    , update : PasswordFieldValue -> values -> values
     , error : values -> Maybe String
-    , attributes : TextField.Attributes
+    , attributes : PasswordField.Attributes
     }
     -> Form values output
 passwordField =
-    TextField.form (Text TextPassword)
+    PasswordField.form Password
 
 
 {-| Create a form that contains a single textarea field.
@@ -693,6 +703,9 @@ mapFieldValues update values field =
         Text textType field_ ->
             Text textType (Field.mapValues newUpdate field_)
 
+        Password field_ ->
+            Password (Field.mapValues newUpdate field_)
+
         Number field_ ->
             Number (Field.mapValues newUpdate field_)
 
@@ -767,6 +780,7 @@ using the result of [`fill`](#fill).
 -}
 type Field values
     = Text TextType (TextField values)
+    | Password (PasswordField values)
     | Number (NumberField Float values)
     | Range (RangeField Float values)
     | Checkbox (CheckboxField values)
@@ -782,7 +796,6 @@ type Field values
 type TextType
     = TextRaw
     | TextEmail
-    | TextPassword
     | TextArea
     | TextSearch
 

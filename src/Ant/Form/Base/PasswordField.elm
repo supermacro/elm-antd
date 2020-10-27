@@ -1,5 +1,5 @@
-module Ant.Form.Base.TextField exposing
-    ( TextField, Attributes
+module Ant.Form.Base.PasswordField exposing
+    ( PasswordField, Attributes
     , form
     )
 
@@ -27,8 +27,8 @@ import Ant.Form.Field exposing (Field)
 custom fields or writing custom view code.
 
 -}
-type alias TextField values =
-    Field Attributes String values
+type alias PasswordField values =
+    Field Attributes { value : String, textVisible : Bool } values
 
 
 {-| The attributes of a TextField.
@@ -37,10 +37,12 @@ You need to provide these to:
 
   - [`Form.textField`][textField]
   - [`Form.emailField`][emailField]
+  - [`Form.passwordField`][passwordField]
   - [`Form.textareaField`][textareaField]
 
 [textField]: Form#textField
 [emailField]: Form#emailField
+[passwordField]: Form#passwordField
 [textareaField]: Form#textareaField
 
 -}
@@ -57,8 +59,10 @@ custom fields.
 
 -}
 form :
-    (TextField values -> field)
-    -> Base.FieldConfig Attributes String values output
+    (PasswordField values -> field)
+    -> Base.FieldConfig Attributes { value : String, textVisible : Bool } values output
     -> Base.Form values output field
 form =
-    Base.field { isEmpty = String.isEmpty }
+    Base.field
+        { isEmpty = \{ value } -> String.isEmpty value }
+

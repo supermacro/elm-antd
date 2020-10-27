@@ -38,7 +38,7 @@ type alias Model =
 type Msg
     = UrlChanged Url
     | LinkClicked Browser.UrlRequest
-    | InputMsg Input.Model
+    | InputMsg String
 
 
 main : Program () Model Msg
@@ -237,7 +237,7 @@ buildComponent component =
                     Input.input InputMsg
                         |> Input.withSize inputConfig.size
                         |> Input.withPlaceholder "Placeholder"
-                        |> Input.toHtml Input.init
+                        |> Input.toHtml ""
             in
             div [ style "max-width" "200px" ] [ input ]
 

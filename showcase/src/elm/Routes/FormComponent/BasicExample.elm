@@ -16,14 +16,14 @@ type alias Model =
 
 type alias FormValues =
     { email : String
-    , password : String
+    , password : { value : String, textVisible : Bool }
     , rememberMe : Bool
     }
 
 
 type Msg
     = FormChanged (FV.Model FormValues)
-    | LogIn EmailAddress String Bool
+    | LogIn EmailAddress { value : String, textVisible : Bool } Bool
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -103,7 +103,7 @@ init =
         formState =
             FV.idle
                 { email = ""
-                , password = ""
+                , password = { value = "", textVisible = False }
                 , rememberMe = True
                 }
     in
