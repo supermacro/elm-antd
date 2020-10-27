@@ -24,6 +24,7 @@ title =
 type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
     , passwordExample : Container.Model PasswordExample.Model PasswordExample.Msg
+    , version : String 
     }
 
 
@@ -44,7 +45,7 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { basicExample =
+        \v -> { basicExample =
             Container.initStatefulModel
                 "BasicExample.elm"
                 ()
@@ -54,6 +55,7 @@ route =
                 "PasswordExample.elm"
                 PasswordExample.init
                 PasswordExample.update
+            , version = v
         }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
@@ -80,8 +82,8 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
-                , passwordExample = Container.setSourceCode examplesSourceCode model.passwordExample
+                | basicExample = Container.setSourceCode model.version examplesSourceCode model.basicExample
+                , passwordExample = Container.setSourceCode model.version examplesSourceCode model.passwordExample
               }
             , Cmd.none
             )
@@ -94,6 +96,7 @@ basicExample model =
             { title = "Basic"
             , content = "Basic usage example."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
+            , version = model.version
             }
     in
     Container.createDemoBox
@@ -110,6 +113,7 @@ passwordExample model =
             { title = "Password field"
             , content = "Input type of password."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
+            , version = model.version
             }
     in
     Container.createDemoBox

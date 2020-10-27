@@ -23,6 +23,7 @@ type alias Model =
     { typeExample : Container.Model () Never
     , disabledExample : Container.Model () DisabledExample.Msg
     , iconExample : Container.Model () IconExample.Msg
+    , version : String 
     }
 
 
@@ -65,9 +66,9 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | typeExample = Container.setSourceCode examplesSourceCode model.typeExample
-                , disabledExample = Container.setSourceCode examplesSourceCode model.disabledExample
-                , iconExample = Container.setSourceCode examplesSourceCode model.iconExample
+                | typeExample = Container.setSourceCode model.version examplesSourceCode model.typeExample
+                , disabledExample = Container.setSourceCode model.version examplesSourceCode model.disabledExample
+                , iconExample = Container.setSourceCode model.version examplesSourceCode model.iconExample
               }
             , Cmd.none
             )
@@ -81,7 +82,7 @@ route =
     , update = update
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     , initialModel =
-        { typeExample = Container.initModel "TypeExample.elm"
+        \v -> { typeExample = Container.initModel "TypeExample.elm"
         , iconExample =
             Container.initStatefulModel
                 "IconExample.elm"
@@ -92,6 +93,7 @@ route =
                 "DisabledExample.elm"
                 ()
                 (\_ _ -> ( (), Cmd.none ))
+            , version = v
         }
     }
 
@@ -103,6 +105,7 @@ typeExample model =
             { title = "Type"
             , content = "There are \"primary\", \"default\", \"dashed\", \"text\" and \"link\" buttons in Elm Antd."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
+            , version = model.version
             }
     in
     Container.createDemoBox
@@ -119,6 +122,7 @@ disabledExample model =
             { title = "Disabled"
             , content = "You can disable any button"
             , ellieDemo = "https://ellie-app.com/9mjF8c8DLyTa1"
+            , version = model.version
             }
     in
     Container.createDemoBox
@@ -135,6 +139,7 @@ iconExample model =
             { title = "Icon"
             , content = "Button components can contain an Icon"
             , ellieDemo = "https://ellie-app.com/9mjF8c8DLyTa1"
+            , version = model.version
             }
     in
     Container.createDemoBox

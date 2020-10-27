@@ -26,6 +26,7 @@ type alias StatelessDemo =
 
 type alias Model =
     { basicExample : StatelessDemo
+    , version : String 
     }
 
 
@@ -45,7 +46,8 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { basicExample = Container.initModel "BasicExample.elm"
+        \v -> { basicExample = Container.initModel "BasicExample.elm"
+            , version = v
         }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
@@ -65,7 +67,7 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
+                | basicExample = Container.setSourceCode model.version examplesSourceCode model.basicExample
               }
             , Cmd.none
             )
@@ -78,6 +80,7 @@ basicExample model =
             { title = "Basic"
             , content = "The simplest usage."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
+            , version = model.version
             }
     in
     Container.createDemoBox

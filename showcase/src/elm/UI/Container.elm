@@ -51,6 +51,7 @@ type alias DemoBoxMetaInfo =
     { title : String
     , content : String
     , ellieDemo : String
+    , version : String 
     }
 
 
@@ -113,8 +114,8 @@ createDemoBox tagger model demoView metaInfo =
         |> Styled.map tagger
 
 
-setSourceCode : List SourceCode -> Model m msg -> Model m msg
-setSourceCode sourceCodeList model =
+setSourceCode : String -> List SourceCode -> Model m msg -> Model m msg
+setSourceCode version sourceCodeList model =
     let
         maybeSourceCode =
             sourceCodeList
@@ -123,7 +124,7 @@ setSourceCode sourceCodeList model =
                 |> Maybe.map .fileContents
         
         ellieLink = 
-            Maybe.map (UrlGenerator.fromSourceCode "4.3.0") maybeSourceCode
+            Maybe.map (UrlGenerator.fromSourceCode version) maybeSourceCode
     in
     { model 
         | sourceCode = maybeSourceCode

@@ -22,6 +22,7 @@ type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
     , disabledExample : Container.Model () Never
     , controlledExample : Container.Model ControlledExample.Model ControlledExample.Msg
+    , version : String 
     }
 
 
@@ -64,9 +65,9 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
-                , disabledExample = Container.setSourceCode examplesSourceCode model.disabledExample
-                , controlledExample = Container.setSourceCode examplesSourceCode model.controlledExample
+                | basicExample = Container.setSourceCode model.version examplesSourceCode model.basicExample
+                , disabledExample = Container.setSourceCode model.version examplesSourceCode model.disabledExample
+                , controlledExample = Container.setSourceCode model.version examplesSourceCode model.controlledExample
               }
             , Cmd.none
             )
@@ -80,12 +81,13 @@ route =
     , update = update
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     , initialModel =
-        { basicExample =
+        \v -> { basicExample =
             Container.initStatefulModel "BasicExample.elm" BasicExample.init BasicExample.update
         , controlledExample =
             Container.initStatefulModel "ControlledExample.elm" ControlledExample.init ControlledExample.update
         , disabledExample =
             Container.initModel "DisabledExample.elm"
+            , version = v
         }
     }
 
@@ -97,6 +99,7 @@ basicExample model =
             { title = "Basic"
             , content = "Basic usage of checkbox."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
+            , version = model.version
             }
     in
     Container.createDemoBox
@@ -113,6 +116,7 @@ controlledExample model =
             { title = "Controlled Checkbox"
             , content = "Communicated with other components."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
+            , version = model.version
             }
     in
     Container.createDemoBox
@@ -129,6 +133,7 @@ disabledExample model =
             { title = "Disabled"
             , content = "Disabled checkbox."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
+            , version = model.version
             }
     in
     Container.createDemoBox

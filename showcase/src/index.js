@@ -16,7 +16,8 @@ if (VISUAL_TESTING_MODE) {
   const app = Elm.Showcase.init({
     flags: {
       commitHash: maybeCommitHash,
-      fileServerUrl: process.env.FILE_SERVER_URL
+      fileServerUrl: process.env.FILE_SERVER_URL,
+      version: "5.0.0"
     }
   });
 

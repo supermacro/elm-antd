@@ -114,7 +114,6 @@ type Msg
       -- represents the outcome of having asynchronously fetched
       -- the source code of the examples for a particular component page
     | ComponentPageReceivedExamples Route (Result Http.Error (List RawSourceCode))
-    | GotVersion (Result Http.Error String)
     | FooterMessage Footer.Msg
 
 
@@ -358,7 +357,7 @@ fetchComponentExamples { commitHash, fileServerUrl, examplesFetched } routeName 
 
 
 init : Url -> Flags -> ( Model, Cmd Msg )
-init url { commitHash, fileServerUrl } =
+init url { commitHash, fileServerUrl, version } =
     let
         route =
             fromUrl url
@@ -369,22 +368,19 @@ init url { commitHash, fileServerUrl } =
             , commitHash = commitHash
             , fileServerUrl = fileServerUrl
             , version = Nothing
-            , footer = Footer.initialModel
-            , alertPageModel = AlertPage.route.initialModel
-            , buttonPageModel = ButtonPage.route.initialModel
-            , checkboxPageModel = CheckboxPage.route.initialModel
-            , dividerPageModel = DividerPage.route.initialModel
-            , inputPageModel = InputPage.route.initialModel
-            , spacePageModel = SpacePage.route.initialModel
-            , typographyPageModel = TypographyPage.route.initialModel
-            , tooltipPageModel = TooltipPage.route.initialModel
+            , footer = Footer.initialModel 
+            , alertPageModel = AlertPage.route.initialModel version 
+            , buttonPageModel = ButtonPage.route.initialModel version 
+            , checkboxPageModel = CheckboxPage.route.initialModel version 
+            , dividerPageModel = DividerPage.route.initialModel version 
+            , inputPageModel = InputPage.route.initialModel version 
+            , spacePageModel = SpacePage.route.initialModel version 
+            , typographyPageModel = TypographyPage.route.initialModel version 
+            , tooltipPageModel = TooltipPage.route.initialModel version 
             }
     in
     ( model
-    , Cmd.batch 
-        [ fetchComponentExamples model route
-        , Utils.fetchVersion GotVersion
-        ]
+    , fetchComponentExamples model route
     )
 
 
@@ -452,12 +448,6 @@ update navKey msg model =
                 -- TODO: do some sort of error logging
                 Err e ->
                     ( model, Cmd.none )
-        
-        GotVersion resultVersion ->
-            -- TODO: Error handling
-            ( {model | version = Result.toMaybe resultVersion}
-            , Cmd.none
-            )
 
         AlertPageMessage alertPageMsg ->
             let

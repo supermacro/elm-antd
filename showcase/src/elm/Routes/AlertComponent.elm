@@ -24,6 +24,7 @@ type alias Model =
     , descriptionExample : Container.Model () Never
     , typeExample : Container.Model () Never
     , closeableExample : Container.Model CloseableExample.Model CloseableExample.Msg
+    , version : String 
     }
 
 
@@ -78,10 +79,10 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
-                , typeExample = Container.setSourceCode examplesSourceCode model.typeExample
-                , closeableExample = Container.setSourceCode examplesSourceCode model.closeableExample
-                , descriptionExample = Container.setSourceCode examplesSourceCode model.descriptionExample
+                | basicExample = Container.setSourceCode model.version examplesSourceCode model.basicExample
+                , typeExample = Container.setSourceCode model.version examplesSourceCode model.typeExample
+                , closeableExample = Container.setSourceCode model.version examplesSourceCode model.closeableExample
+                , descriptionExample = Container.setSourceCode model.version examplesSourceCode model.descriptionExample
               }
             , Cmd.none
             )
@@ -95,11 +96,13 @@ route =
     , update = update
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     , initialModel =
+        \v -> 
         { basicExample = Container.initModel "BasicExample.elm"
         , typeExample = Container.initModel "TypeExample.elm"
         , descriptionExample = Container.initModel "DescriptionExample.elm"
         , closeableExample =
             Container.initStatefulModel "CloseableExample.elm" CloseableExample.init CloseableExample.update
+            , version = v
         }
     }
 
@@ -111,6 +114,7 @@ basicExample model =
             { title = "Basic"
             , content = "The simplest usage for short messages."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
+            , version = model.version
             }
 
         demoBox =
@@ -124,12 +128,13 @@ basicExample model =
 
 
 typeExample : Model -> Styled.Html Msg
-typeExample model =
+typeExample  model =
     let
         metaInfo =
             { title = "More Types"
             , content = "There are 4 types of Alert: Success, Info, Warning, Error"
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
+            , version = model.version
             }
 
         demoBox =
@@ -143,12 +148,13 @@ typeExample model =
 
 
 descriptionExample : Model -> Styled.Html Msg
-descriptionExample model =
+descriptionExample  model =
     let
         metaInfo =
             { title = "Description"
             , content = "Additional description for alert message."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
+            , version = model.version
             }
 
         demoBox =
