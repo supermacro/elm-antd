@@ -1,20 +1,33 @@
-module Routes.InputComponent.BasicExample exposing (Model, Msg, example)
+module Routes.InputComponent.BasicExample exposing (Model, Msg, example, init, update)
 
-import Ant.Input as Input exposing (input, onInput, toHtml, withPlaceholder)
+import Ant.Input as Input exposing (input, toHtml, withPlaceholder)
 import Html exposing (Html)
 
 
 type alias Model =
-    ()
+    Input.Model
 
 
 type Msg
-    = InputTyped String
+    = InputMsg Input.Model
 
 
-example : Html Msg
-example =
-    input
+init : Model
+init =
+    Input.init
+
+
+update : Msg -> Model -> ( Model, Cmd msg )
+update msg model =
+    case msg of
+        InputMsg newModel ->
+            ( newModel
+            , Cmd.none
+            )
+
+
+example : Model -> Html Msg
+example model =
+    input InputMsg
         |> withPlaceholder "Basic Usage"
-        |> onInput InputTyped
-        |> toHtml Input.Stateless
+        |> toHtml model

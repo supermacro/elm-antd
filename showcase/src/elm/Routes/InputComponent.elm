@@ -48,8 +48,8 @@ route =
         \v -> { basicExample =
             Container.initStatefulModel
                 "BasicExample.elm"
-                ()
-                (\_ _ -> ( (), Cmd.none ))
+                BasicExample.init
+                BasicExample.update
         , passwordExample =
             Container.initStatefulModel
                 "PasswordExample.elm"
@@ -102,7 +102,7 @@ basicExample model =
     Container.createDemoBox
         (DemoBoxMsg << Basic)
         model.basicExample
-        (\_ -> BasicExample.example)
+        BasicExample.example
         metaInfo
 
 

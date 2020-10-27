@@ -38,6 +38,7 @@ type alias Model =
 type Msg
     = UrlChanged Url
     | LinkClicked Browser.UrlRequest
+    | InputMsg Input.Model
 
 
 main : Program () Model Msg
@@ -186,7 +187,7 @@ centerContents children =
         [ children ]
 
 
-buildComponent : Component -> Html msg
+buildComponent : Component -> Html Msg
 buildComponent component =
     case component of
         Button buttonConfig ->
@@ -233,15 +234,15 @@ buildComponent component =
         Input inputConfig ->
             let
                 input =
-                    Input.input
+                    Input.input InputMsg
                         |> Input.withSize inputConfig.size
                         |> Input.withPlaceholder "Placeholder"
-                        |> Input.toHtml Input.Stateless
+                        |> Input.toHtml Input.init
             in
             div [ style "max-width" "200px" ] [ input ]
 
 
-view : Model -> { title : String, body : List (Html msg) }
+view : Model -> { title : String, body : List (Html Msg) }
 view { component, label } =
     let
         antdGlobalStyles =
