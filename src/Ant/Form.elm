@@ -162,21 +162,15 @@ emailField =
     TextField.form (Text TextEmail)
 
 
-type alias PasswordFieldValue =
-    { value : String
-    , textVisible : Bool
-    }
-
-
 {-| Create a form that contains a single password field.
 
 It has the same configuration options as [`textField`](#textField).
 
 -}
 passwordField :
-    { parser : PasswordFieldValue -> Result String output
-    , value : values -> PasswordFieldValue
-    , update : PasswordFieldValue -> values -> values
+    { parser : PasswordField.PasswordFieldValue -> Result String output
+    , value : values -> PasswordField.PasswordFieldValue
+    , update : PasswordField.PasswordFieldValue -> values -> values
     , error : values -> Maybe String
     , attributes : PasswordField.Attributes
     }

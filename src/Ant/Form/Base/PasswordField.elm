@@ -1,7 +1,7 @@
 module Ant.Form.Base.PasswordField exposing
     ( Attributes
     , form
-    , PasswordField
+    , PasswordField, PasswordFieldValue
     )
 
 {-| This module contains a reusable `TextField` type.
@@ -22,6 +22,12 @@ import Ant.Form.Base as Base
 import Ant.Form.Field exposing (Field)
 
 
+type alias PasswordFieldValue =
+    { value : String
+    , textVisible : Bool
+    }
+
+
 {-| Represents a text field.
 
 **Note:** You should not need to care about this unless you are creating your own
@@ -29,7 +35,7 @@ custom fields or writing custom view code.
 
 -}
 type alias PasswordField values =
-    Field Attributes { value : String, textVisible : Bool } values
+    Field Attributes PasswordFieldValue values
 
 
 {-| The attributes of a TextField.

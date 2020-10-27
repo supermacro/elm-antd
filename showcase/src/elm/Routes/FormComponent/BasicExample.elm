@@ -1,6 +1,7 @@
 module Routes.FormComponent.BasicExample exposing (Model, Msg, example, init, update)
 
 import Ant.Form as Form exposing (Form)
+import Ant.Form.Base.PasswordField exposing (PasswordFieldValue)
 import Ant.Form.View as FV
 import Html exposing (Html)
 
@@ -16,14 +17,14 @@ type alias Model =
 
 type alias FormValues =
     { email : String
-    , password : { value : String, textVisible : Bool }
+    , password : PasswordFieldValue
     , rememberMe : Bool
     }
 
 
 type Msg
     = FormChanged (FV.Model FormValues)
-    | LogIn EmailAddress { value : String, textVisible : Bool } Bool
+    | LogIn EmailAddress String Bool
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -71,7 +72,7 @@ form =
 
         passwordField =
             Form.passwordField
-                { parser = Ok
+                { parser = \{ value } -> Ok value
                 , value = .password
                 , update = \password values -> { values | password = password }
                 , error = always Nothing

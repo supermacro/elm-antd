@@ -222,7 +222,7 @@ type alias PasswordFieldConfig msg =
     , onToggleTextVisibility : Bool -> msg
     , onBlur : Maybe msg
     , disabled : Bool
-    , value : { value : String, textVisible : Bool }
+    , value : PasswordField.PasswordFieldValue
     , error : Maybe Error
     , showError : Bool
     , attributes : PasswordField.Attributes
