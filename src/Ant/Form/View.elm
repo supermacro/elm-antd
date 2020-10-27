@@ -2,7 +2,7 @@ module Ant.Form.View exposing
     ( Model, State(..), idle
     , ViewConfig, Validation(..)
     , toHtml, htmlViewConfig
-    , custom, CustomConfig, FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
+    , CustomConfig, FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
     , CheckboxFieldConfig, RadioFieldConfig, SelectFieldConfig
     , FormListConfig, FormListItemConfig
     )
@@ -27,7 +27,7 @@ module Ant.Form.View exposing
 
 # Custom
 
-@docs custom, CustomConfig, FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
+@docs CustomConfig, FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
 @docs CheckboxFieldConfig, RadioFieldConfig, SelectFieldConfig
 @docs FormListConfig, FormListItemConfig
 
@@ -347,99 +347,6 @@ type alias FormListItemConfig msg element =
     }
 
 
-{-| Create a custom view function.
-
-You need to provide a set of functions to render each field, and a function to
-put them all together in a form, see [`CustomConfig`](#CustomConfig).
-
-This can be used to create view functions that are compatible with `style-elements`,
-`elm-mdl`, `elm-css`, etc. You could even use it to transform forms into a `String` or `Json.Value`!
-Take a look at [the different view modules in the examples directory][view-examples]
-as you might find an implementation that works for you.
-
-[view-examples]: https://github.com/hecrj/composable-form/tree/master/examples/src/Form/View
-
-Once you provide a [`CustomConfig`](#CustomConfig), you get a view function that supports
-a [`ViewConfig`](#ViewConfig).
-
--}
-custom :
-    CustomConfig msg element
-    -> ViewConfig values msg
-    -> Form values msg
-    -> Model values
-    -> element
-custom config { onChange, action, loading, validation } form_ model =
-    let
-        { fields, result } =
-            Form.fill form_ model.values
-
-        errorTracking =
-            (\(ErrorTracking e) -> e) model.errorTracking
-
-        onSubmit =
-            case result of
-                Ok msg ->
-                    if model.state == Loading then
-                        Nothing
-
-                    else
-                        Just msg
-
-                Err _ ->
-                    if errorTracking.showAllErrors then
-                        Nothing
-
-                    else
-                        Just
-                            (onChange
-                                { model
-                                    | errorTracking =
-                                        ErrorTracking
-                                            { errorTracking | showAllErrors = True }
-                                }
-                            )
-
-        fieldToElement =
-            renderField
-                config
-                { onChange = \values -> onChange { model | values = values }
-                , onBlur = onBlur
-                , disabled = model.state == Loading
-                , showError = showError
-                }
-
-        onBlur =
-            case validation of
-                ValidateOnSubmit ->
-                    Nothing
-
-                ValidateOnBlur ->
-                    Just
-                        (\label ->
-                            onChange
-                                { model
-                                    | errorTracking =
-                                        ErrorTracking
-                                            { errorTracking
-                                                | showFieldError =
-                                                    Set.insert label errorTracking.showFieldError
-                                            }
-                                }
-                        )
-
-        showError label =
-            errorTracking.showAllErrors || Set.member label errorTracking.showFieldError
-    in
-    config.form
-        { onSubmit = onSubmit
-        , action = action
-        , loading = loading
-        , state = model.state
-        , fields = List.map fieldToElement fields
-        }
-
-
 type alias FieldConfig values msg =
     { onChange : values -> msg
     , onBlur : Maybe (String -> msg)
@@ -687,8 +594,75 @@ your own view functions. To customize the behavior of individual view functions,
 
 -}
 toHtml : ViewConfig values msg -> Form values msg -> Model values -> Html msg
-toHtml =
-    custom htmlViewConfig
+toHtml { onChange, action, loading, validation } form_ model =
+    let
+        { fields, result } =
+            Form.fill form_ model.values
+
+        errorTracking =
+            (\(ErrorTracking e) -> e) model.errorTracking
+
+        onSubmit =
+            case result of
+                Ok msg ->
+                    if model.state == Loading then
+                        Nothing
+
+                    else
+                        Just msg
+
+                Err _ ->
+                    if errorTracking.showAllErrors then
+                        Nothing
+
+                    else
+                        Just
+                            (onChange
+                                { model
+                                    | errorTracking =
+                                        ErrorTracking
+                                            { errorTracking | showAllErrors = True }
+                                }
+                            )
+
+        fieldToElement =
+            renderField
+                htmlViewConfig
+                { onChange = \values -> onChange { model | values = values }
+                , onBlur = onBlur
+                , disabled = model.state == Loading
+                , showError = showError
+                }
+
+        onBlur =
+            case validation of
+                ValidateOnSubmit ->
+                    Nothing
+
+                ValidateOnBlur ->
+                    Just
+                        (\label ->
+                            onChange
+                                { model
+                                    | errorTracking =
+                                        ErrorTracking
+                                            { errorTracking
+                                                | showFieldError =
+                                                    Set.insert label errorTracking.showFieldError
+                                            }
+                                }
+                        )
+
+        showError label =
+            errorTracking.showAllErrors || Set.member label errorTracking.showFieldError
+    in
+    htmlViewConfig.form
+        { onSubmit = onSubmit
+        , action = action
+        , loading = loading
+        , state = model.state
+        , fields = List.map fieldToElement fields
+        }
 
 
 formList : FormListConfig msg (Html msg) -> Html msg
