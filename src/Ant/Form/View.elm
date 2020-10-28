@@ -825,9 +825,12 @@ rangeField { onChange, onBlur, disabled, value, error, showError, attributes } =
 
 {-| TODO:
 opportunity for refactoring:
-- onBlur
-- error
-- showError
+
+  - onBlur
+
+  - error
+
+  - showError
 
     are unused for CheckboxFieldConfig
 
