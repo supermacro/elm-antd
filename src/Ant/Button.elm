@@ -2,6 +2,7 @@ module Ant.Button exposing
     ( Button
     , button, onClick, ButtonType(..), withType, withIcon, ButtonSize(..), disabled
     , toHtml
+    , HtmlButtonType(..), withHtmlType
     )
 
 {-| Button component
@@ -53,8 +54,20 @@ type ButtonSize
     | Small
 
 
+{-| The "type" attribute of a HTML button as defined in the button spec:
+
+<https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button>
+
+-}
+type HtmlButtonType
+    = Button_
+    | Reset
+    | Submit
+
+
 type alias Options msg =
     { type_ : ButtonType
+    , htmlType : HtmlButtonType
     , size : ButtonSize
     , disabled : Bool
     , loading : Bool
@@ -71,6 +84,7 @@ type alias Options msg =
 defaultOptions : Options msg
 defaultOptions =
     { type_ = Default
+    , htmlType = Button_
     , size = DefaultSize
     , disabled = False
     , loading = False
@@ -128,6 +142,17 @@ withIcon icon (Button options label) =
             { options | icon = Just icon }
     in
     Button newOptions label
+
+
+withHtmlType : HtmlButtonType -> Button msg -> Button msg
+withHtmlType htmlType (Button opts label) =
+    let
+        newOpts =
+            { opts
+                | htmlType = htmlType
+            }
+    in
+    Button newOpts label
 
 
 {-| Make your button emit messages. By default, clicking a button does nothing.
@@ -196,6 +221,17 @@ toHtml (Button options label) =
                 Nothing ->
                     []
 
+        htmlButtonType =
+            case options.htmlType of
+                Button_ ->
+                    A.type_ "button"
+
+                Submit ->
+                    A.type_ "submit"
+
+                Reset ->
+                    A.type_ "reset"
+
         buttonTypeClassName =
             case options.type_ of
                 Default ->
@@ -217,6 +253,7 @@ toHtml (Button options label) =
             [ A.class btnClass
             , A.class buttonTypeClassName
             , A.disabled options.disabled
+            , htmlButtonType
             ]
 
         attributes =
