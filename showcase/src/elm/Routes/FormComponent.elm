@@ -92,10 +92,8 @@ view model =
             ]
         , documentationSubheading Typography.WithoutAnchorLink "Examples"
         , div [ css [ displayFlex ] ]
-            [ div [ css [ maxWidth (pct 45), marginRight (px 13) ] ]
+            [ div [ css [ width (pct 100) ] ]
                 [ basicExample model
                 ]
-            , div [ css [ maxWidth (pct 45) ] ]
-                []
             ]
         ]

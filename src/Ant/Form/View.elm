@@ -33,6 +33,9 @@ module Ant.Form.View exposing
 
 -}
 
+import Ant.Button as Button exposing (button)
+import Ant.Checkbox as Checkbox exposing (checkbox)
+import Ant.Css.Common exposing (formCheckboxFieldClass, formLabelClass, formLabelInnerClass, formSubmitButtonClass)
 import Ant.Form as Form exposing (Form)
 import Ant.Form.Base.CheckboxField as CheckboxField
 import Ant.Form.Base.NumberField as NumberField
@@ -559,8 +562,6 @@ htmlViewConfig =
 
 {-| Render a form as HTML!
 
-You could use it like this:
-
     FormView.toHtml
         { onChange = FormChanged
         , action = "Log in"
@@ -569,28 +570,6 @@ You could use it like this:
         }
         loginForm
         model
-
-And here is an example of the produced HTML:
-
-```html
-<form class="elm-form">
-   <label class="elm-form-field">
-       <div class="elm-form-label">E-Mail</div>
-       <input type="email" value="some@value.com" placeholder="Type your e-mail...">
-   </label>
-   <label class="elm-form-field elm-form-field-error">
-       <div class="elm-form-label">Password</div>
-       <input type="password" value="" placeholder="Type your password...">
-       <div class="elm-form-error">This field is required</div>
-   </label>
-   <button type="submit">Log in</button>
-</form>
-```
-
-You can use the different CSS classes to style your forms as you please.
-
-If you need more control over the produced HTML, use [`custom`](#custom) to provide
-your own view functions. To customize the behavior of individual view functions, see [`htmlViewConfig`](#htmlViewConfig).
 
 -}
 toHtml : ViewConfig values msg -> Form values msg -> Model values -> Html msg
@@ -718,6 +697,22 @@ form { onSubmit, action, loading, state, fields } =
             onSubmit
                 |> Maybe.map (Events.onSubmit >> List.singleton)
                 |> Maybe.withDefault []
+
+        submitButtonText =
+            if state == Loading then
+                loading
+
+            else
+                action
+
+        submitButton =
+            button submitButtonText
+                |> Button.disabled (onSubmit == Nothing)
+                |> Button.withHtmlType Button.Submit
+                |> Button.withType Button.Primary
+                |> Button.toHtml
+                |> List.singleton
+                |> Html.div [ Attributes.class formSubmitButtonClass ]
     in
     Html.form (Attributes.class "elm-form" :: onSubmitEvent)
         (List.concat
@@ -731,16 +726,7 @@ form { onSubmit, action, loading, state, fields } =
 
                     _ ->
                         Html.text ""
-              , Html.button
-                    [ Attributes.type_ "submit"
-                    , Attributes.disabled (onSubmit == Nothing)
-                    ]
-                    [ if state == Loading then
-                        Html.text loading
-
-                      else
-                        Html.text action
-                    ]
+              , submitButton
               ]
             ]
         )
@@ -837,23 +823,26 @@ rangeField { onChange, onBlur, disabled, value, error, showError, attributes } =
         |> withLabelAndError attributes.label showError error
 
 
+{-| TODO:
+opportunity for refactoring:
+- onBlur
+- error
+- showError
+
+    are unused for CheckboxFieldConfig
+
+-}
 checkboxField : CheckboxFieldConfig msg -> Html msg
-checkboxField { onChange, onBlur, value, disabled, error, showError, attributes } =
-    [ Html.div [ Attributes.class "elm-form-label" ]
-        [ Html.input
-            ([ Events.onCheck onChange
-             , Attributes.checked value
-             , Attributes.disabled disabled
-             , Attributes.type_ "checkbox"
-             ]
-                |> withMaybeAttribute Events.onBlur onBlur
-            )
-            []
-        , Html.text attributes.label
-        ]
-    , maybeErrorMessage showError error
-    ]
-        |> wrapInFieldContainer showError error
+checkboxField { onChange, value, disabled, attributes } =
+    let
+        checkboxHtml =
+            checkbox
+                |> Checkbox.withOnCheck onChange
+                |> Checkbox.withLabel attributes.label
+                |> Checkbox.withDisabled disabled
+                |> Checkbox.toHtml value
+    in
+    Html.div [ Attributes.class formCheckboxFieldClass ] [ checkboxHtml ]
 
 
 radioField : RadioFieldConfig msg -> Html msg
@@ -931,7 +920,7 @@ wrapInFieldContainer showError error =
 fieldContainerAttributes : Bool -> Maybe Error -> List (Html.Attribute msg)
 fieldContainerAttributes showError error =
     [ Attributes.classList
-        [ ( "elm-form-field", True )
+        [ ( formLabelClass, True )
         , ( "elm-form-field-error", showError && error /= Nothing )
         ]
     ]
@@ -948,7 +937,7 @@ withLabelAndError label showError error fieldAsHtml =
 
 fieldLabel : String -> Html msg
 fieldLabel label =
-    Html.div [ Attributes.class "elm-form-label" ] [ Html.text label ]
+    Html.div [ Attributes.class formLabelInnerClass ] [ Html.text label ]
 
 
 maybeErrorMessage : Bool -> Maybe Error -> Html msg
