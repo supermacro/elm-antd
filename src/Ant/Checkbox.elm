@@ -44,9 +44,8 @@ import Html.Events as Events
 
 type alias CheckboxConfig msg =
     { disabled : Bool
+    , tagger : Maybe (Bool -> msg)
     , label : Maybe String
-    , checked : Bool
-    , tagger : Maybe msg
     }
 
 
@@ -56,12 +55,11 @@ type Checkbox msg
     = Checkbox (CheckboxConfig msg)
 
 
-defaultCheckboxConfig : Bool -> CheckboxConfig msg
-defaultCheckboxConfig checked =
+defaultCheckboxConfig : CheckboxConfig msg
+defaultCheckboxConfig =
     { disabled = False
-    , label = Nothing
-    , checked = checked
     , tagger = Nothing
+    , label = Nothing
     }
 
 
@@ -70,9 +68,9 @@ defaultCheckboxConfig checked =
     checkbox model.checked
 
 -}
-checkbox : Bool -> Checkbox msg
-checkbox checked =
-    Checkbox (defaultCheckboxConfig checked)
+checkbox : Checkbox msg
+checkbox =
+    Checkbox defaultCheckboxConfig
 
 
 {-| Emit messages from your checkbox.
@@ -81,7 +79,7 @@ checkbox checked =
         |> withOnCheck RememberMeCheckboxToggled
 
 -}
-withOnCheck : msg -> Checkbox msg -> Checkbox msg
+withOnCheck : (Bool -> msg) -> Checkbox msg -> Checkbox msg
 withOnCheck tagger (Checkbox config) =
     let
         newConfig =
@@ -132,13 +130,13 @@ withDisabled disabled (Checkbox config) =
         |> toHtml
 
 -}
-toHtml : Checkbox msg -> Html msg
-toHtml (Checkbox config) =
+toHtml : Bool -> Checkbox msg -> Html msg
+toHtml checked (Checkbox config) =
     let
         optionalOnCheckEvent =
             case config.tagger of
                 Just tagger ->
-                    Events.onCheck (\_ -> tagger)
+                    Events.onCheck tagger
 
                 Nothing ->
                     Attr.attribute "no-oncheck" "no-oncheck"
@@ -154,7 +152,7 @@ toHtml (Checkbox config) =
         [ H.text <| Maybe.withDefault "" config.label
         , H.input
             [ Attr.type_ "checkbox"
-            , Attr.checked config.checked
+            , Attr.checked checked
             , optionalOnCheckEvent
             , Attr.disabled config.disabled
             ]
