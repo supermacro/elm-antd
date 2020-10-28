@@ -6,6 +6,7 @@ module Ant.Tooltip exposing (tooltip, Tooltip, toHtml, withPosition, TooltipPosi
 
 -}
 
+import Ant.Css.Common as Common
 import Ant.Internals.Typography exposing (fontList)
 import Css exposing (..)
 import Html exposing (Html)
@@ -21,13 +22,6 @@ https://codepen.io/pure-css/pen/bddggP
 https://kazzkiq.github.io/balloon.css/
 https://webdesign.tutsplus.com/tutorials/css-tooltip-magic--cms-28082
 --}
--- you have to escape the text to ensure that the `val` value
--- is wrapped in quotes
-
-
-content : String -> Css.Style
-content val =
-    property "content" ("\"" ++ val ++ "\"")
 
 
 {-| Defines the positioning of the Tooltip
@@ -207,7 +201,7 @@ toHtml (Tooltip opts tooltipText childNode) =
                    , backgroundColor boxAndArrowColor
                    , color (hex "#fff")
                    , padding (px 8)
-                   , content tooltipText
+                   , Common.content tooltipText
                    , position absolute
                    , whiteSpace noWrap
                    , zIndex (int 10)
@@ -232,7 +226,7 @@ toHtml (Tooltip opts tooltipText childNode) =
                    , width zero
                    , height zero
                    , border3 arrowSize solid transparent
-                   , content ""
+                   , Common.content ""
                    ]
 
         positionSpecificArrowStyles =
