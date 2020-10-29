@@ -82,9 +82,6 @@ type alias Model =
     , fileServerUrl : String
     , footer : Footer.Model
 
-    -- fetch from Github API
-    , version : Maybe String
-
     -- sub models for each page
     , alertPageModel : AlertPage.Model
     , buttonPageModel : ButtonPage.Model
@@ -369,7 +366,7 @@ fetchComponentExamples { commitHash, fileServerUrl, examplesFetched } routeName 
 
 
 init : Url -> Flags -> ( Model, Cmd Msg )
-init url { commitHash, fileServerUrl, version } =
+init url { commitHash, fileServerUrl, elmAntdVersion } =
     let
         route =
             fromUrl url
@@ -379,17 +376,16 @@ init url { commitHash, fileServerUrl, version } =
             , examplesFetched = []
             , commitHash = commitHash
             , fileServerUrl = fileServerUrl
-            , version = Nothing
             , footer = Footer.initialModel
-            , alertPageModel = AlertPage.route.initialModel version
-            , buttonPageModel = ButtonPage.route.initialModel version
-            , checkboxPageModel = CheckboxPage.route.initialModel version
-            , dividerPageModel = DividerPage.route.initialModel version
-            , formPageModel = FormPage.route.initialModel version
-            , inputPageModel = InputPage.route.initialModel version
-            , spacePageModel = SpacePage.route.initialModel version
-            , typographyPageModel = TypographyPage.route.initialModel version
-            , tooltipPageModel = TooltipPage.route.initialModel version
+            , alertPageModel = AlertPage.route.initialModel elmAntdVersion
+            , buttonPageModel = ButtonPage.route.initialModel elmAntdVersion
+            , checkboxPageModel = CheckboxPage.route.initialModel elmAntdVersion
+            , dividerPageModel = DividerPage.route.initialModel elmAntdVersion
+            , formPageModel = FormPage.route.initialModel elmAntdVersion
+            , inputPageModel = InputPage.route.initialModel elmAntdVersion
+            , spacePageModel = SpacePage.route.initialModel elmAntdVersion
+            , typographyPageModel = TypographyPage.route.initialModel elmAntdVersion
+            , tooltipPageModel = TooltipPage.route.initialModel elmAntdVersion
             }
     in
     ( model
