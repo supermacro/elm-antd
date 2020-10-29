@@ -2,8 +2,11 @@ module UrlGenerator exposing (fromSourceCode)
 
 import Parser exposing ((|.), (|=), DeadEnd, Parser, Problem(..), Step(..))
 
+
+
 -- Can also be put into Utils
 -- but it might get pretty complicated so it's probably better to be put in its own file.
+
 
 fromSourceCode : String -> String -> String
 fromSourceCode version elmCode =
@@ -16,7 +19,6 @@ fromSourceCode version elmCode =
 
         elmCodeUrl =
             encodeUrl code
-
 
         htmlCodeUrl =
             encodeUrl htmlCode
@@ -122,8 +124,6 @@ encodeUrl =
         >> String.replace "@" "%40"
         >> String.replace "[" "%5B"
         >> String.replace "]" "%5D"
-
-
 
 
 

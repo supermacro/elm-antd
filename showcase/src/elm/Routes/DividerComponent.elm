@@ -28,7 +28,7 @@ type alias Model =
     , textWithoutHeadingExample : StatelessDemo
     , withTitleExample : StatelessDemo
     , verticalExample : StatelessDemo
-    , version : String 
+    , version : String
     }
 
 
@@ -99,12 +99,13 @@ route =
     , view = view
     , update = update
     , initialModel =
-        \v -> { horizontalExample = Container.initModel "HorizontalExample.elm"
-        , textWithoutHeadingExample = Container.initModel "TextWithoutHeadingExample.elm"
-        , withTitleExample = Container.initModel "WithTitleExample.elm"
-        , verticalExample = Container.initModel "VerticalExample.elm"
+        \v ->
+            { horizontalExample = Container.initModel "HorizontalExample.elm"
+            , textWithoutHeadingExample = Container.initModel "TextWithoutHeadingExample.elm"
+            , withTitleExample = Container.initModel "WithTitleExample.elm"
+            , verticalExample = Container.initModel "VerticalExample.elm"
             , version = v
-        }
+            }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
 

@@ -380,16 +380,16 @@ init url { commitHash, fileServerUrl, version } =
             , commitHash = commitHash
             , fileServerUrl = fileServerUrl
             , version = Nothing
-            , footer = Footer.initialModel 
-            , alertPageModel = AlertPage.route.initialModel version 
-            , buttonPageModel = ButtonPage.route.initialModel version 
-            , checkboxPageModel = CheckboxPage.route.initialModel version 
-            , dividerPageModel = DividerPage.route.initialModel version 
+            , footer = Footer.initialModel
+            , alertPageModel = AlertPage.route.initialModel version
+            , buttonPageModel = ButtonPage.route.initialModel version
+            , checkboxPageModel = CheckboxPage.route.initialModel version
+            , dividerPageModel = DividerPage.route.initialModel version
             , formPageModel = FormPage.route.initialModel version
-            , inputPageModel = InputPage.route.initialModel version 
-            , spacePageModel = SpacePage.route.initialModel version 
-            , typographyPageModel = TypographyPage.route.initialModel version 
-            , tooltipPageModel = TooltipPage.route.initialModel version 
+            , inputPageModel = InputPage.route.initialModel version
+            , spacePageModel = SpacePage.route.initialModel version
+            , typographyPageModel = TypographyPage.route.initialModel version
+            , tooltipPageModel = TooltipPage.route.initialModel version
             }
     in
     ( model

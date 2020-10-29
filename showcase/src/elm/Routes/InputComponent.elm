@@ -24,7 +24,7 @@ title =
 type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
     , passwordExample : Container.Model PasswordExample.Model PasswordExample.Msg
-    , version : String 
+    , version : String
     }
 
 
@@ -45,18 +45,19 @@ route =
     , view = view
     , update = update
     , initialModel =
-        \v -> { basicExample =
-            Container.initStatefulModel
-                "BasicExample.elm"
-                BasicExample.init
-                BasicExample.update
-        , passwordExample =
-            Container.initStatefulModel
-                "PasswordExample.elm"
-                PasswordExample.init
-                PasswordExample.update
+        \v ->
+            { basicExample =
+                Container.initStatefulModel
+                    "BasicExample.elm"
+                    BasicExample.init
+                    BasicExample.update
+            , passwordExample =
+                Container.initStatefulModel
+                    "PasswordExample.elm"
+                    PasswordExample.init
+                    PasswordExample.update
             , version = v
-        }
+            }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
 

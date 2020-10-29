@@ -19,15 +19,15 @@ import Html.Styled.Attributes as A exposing (css, href)
 import Html.Styled.Events exposing (onClick)
 import SyntaxHighlight exposing (elm, gitHub, toBlockHtml, useTheme)
 import UI.Typography exposing (commonTextStyles)
-import Utils exposing (SourceCode)
 import UrlGenerator
+import Utils exposing (SourceCode)
 
 
 type alias Model m msg =
     { fileName : String
     , sourceCodeVisible : Bool
     , sourceCode : Maybe String
-    , ellieLink : Maybe String 
+    , ellieLink : Maybe String
 
     -- the model associated with the example
     , state : DemoState m msg
@@ -121,11 +121,11 @@ setSourceCode version sourceCodeList model =
                 |> List.filter (\{ fileName } -> fileName == model.fileName)
                 |> List.head
                 |> Maybe.map .fileContents
-        
-        ellieLink = 
+
+        ellieLink =
             Maybe.map (UrlGenerator.fromSourceCode version) maybeSourceCode
     in
-    { model 
+    { model
         | sourceCode = maybeSourceCode
         , ellieLink = ellieLink
     }
@@ -210,14 +210,17 @@ type Either a b
 type alias EllieAppUrl =
     String
 
+
+
 -- If the Ellie link is not yet generated, the icon becomes Disables
 
-type IconContainerOptions msg 
-    = Disabled 
+
+type IconContainerOptions msg
+    = Disabled
         { icon : Icon msg
-        , extraStyles : List (String, String)
+        , extraStyles : List ( String, String )
         }
-    | Enabled 
+    | Enabled
         { icon : Icon msg
         , tooltipText : String
         , event : Either msg EllieAppUrl
@@ -227,16 +230,17 @@ type IconContainerOptions msg
 
 iconContainer : IconContainerOptions msg -> Styled.Html msg
 iconContainer options =
-    let 
+    let
         commonIconStyles enabled =
             [ ( "margin-right", "10px" )
             , ( "margin-left", "10px" )
             ]
-            ++
-            if enabled then 
-                [( "cursor", "pointer" )]
-                else 
-                []
+                ++ (if enabled then
+                        [ ( "cursor", "pointer" ) ]
+
+                    else
+                        []
+                   )
 
         baseAttributes =
             css
@@ -247,20 +251,20 @@ iconContainer options =
                     [ opacity (num 1) ]
                 , opacityTransition
                 ]
-        
+
         viewIcon extraStyles icon enabled =
             icon
                 |> Icons.withStyles (extraStyles ++ commonIconStyles enabled)
                 |> Icons.toHtml
                 |> fromUnstyled
     in
-    case options of 
+    case options of
         Disabled { icon, extraStyles } ->
             span
                 [ baseAttributes ]
                 [ viewIcon extraStyles icon False ]
 
-        Enabled { icon, tooltipText, event, extraStyles} ->
+        Enabled { icon, tooltipText, event, extraStyles } ->
             let
                 bareIconContainer =
                     case event of
@@ -312,31 +316,32 @@ view model metaInfo demo =
                             ]
                         ]
                         [ iconContainer <|
-                            case model.ellieLink of 
-                                Nothing -> 
-                                    Disabled 
+                            case model.ellieLink of
+                                Nothing ->
+                                    Disabled
                                         { icon = Icons.ellieLogo
                                         , extraStyles = []
                                         }
+
                                 Just link ->
-                                    Enabled 
+                                    Enabled
                                         { icon = Icons.ellieLogo
                                         , tooltipText = "Open in Ellie"
-                                        , event = (Right link)
+                                        , event = Right link
                                         , extraStyles = []
                                         }
                         , iconContainer <|
                             Enabled
                                 { icon = Icons.copyToClipboard
                                 , tooltipText = "Copy code"
-                                , event = (Left CopySourceToClipboardRequested)
+                                , event = Left CopySourceToClipboardRequested
                                 , extraStyles = [ ( "width", "16px" ) ]
                                 }
                         , iconContainer <|
                             Enabled
                                 { icon = Icons.codeOpenBrackets
                                 , tooltipText = "Show code"
-                                , event = (Left SourceCodeVisibilityToggled)
+                                , event = Left SourceCodeVisibilityToggled
                                 , extraStyles = [ ( "width", "17px" ) ]
                                 }
                         ]

@@ -24,7 +24,7 @@ type alias Model =
     , descriptionExample : Container.Model () Never
     , typeExample : Container.Model () Never
     , closeableExample : Container.Model CloseableExample.Model CloseableExample.Msg
-    , version : String 
+    , version : String
     }
 
 
@@ -96,14 +96,14 @@ route =
     , update = update
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     , initialModel =
-        \v -> 
-        { basicExample = Container.initModel "BasicExample.elm"
-        , typeExample = Container.initModel "TypeExample.elm"
-        , descriptionExample = Container.initModel "DescriptionExample.elm"
-        , closeableExample =
-            Container.initStatefulModel "CloseableExample.elm" CloseableExample.init CloseableExample.update
+        \v ->
+            { basicExample = Container.initModel "BasicExample.elm"
+            , typeExample = Container.initModel "TypeExample.elm"
+            , descriptionExample = Container.initModel "DescriptionExample.elm"
+            , closeableExample =
+                Container.initStatefulModel "CloseableExample.elm" CloseableExample.init CloseableExample.update
             , version = v
-        }
+            }
     }
 
 
@@ -127,7 +127,7 @@ basicExample model =
 
 
 typeExample : Model -> Styled.Html Msg
-typeExample  model =
+typeExample model =
     let
         metaInfo =
             { title = "More Types"
@@ -146,7 +146,7 @@ typeExample  model =
 
 
 descriptionExample : Model -> Styled.Html Msg
-descriptionExample  model =
+descriptionExample model =
     let
         metaInfo =
             { title = "Description"

@@ -23,7 +23,7 @@ type alias Model =
     { typeExample : Container.Model () Never
     , disabledExample : Container.Model () DisabledExample.Msg
     , iconExample : Container.Model () IconExample.Msg
-    , version : String 
+    , version : String
     }
 
 
@@ -82,19 +82,20 @@ route =
     , update = update
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     , initialModel =
-        \v -> { typeExample = Container.initModel "TypeExample.elm"
-        , iconExample =
-            Container.initStatefulModel
-                "IconExample.elm"
-                ()
-                (\_ _ -> ( (), Cmd.none ))
-        , disabledExample =
-            Container.initStatefulModel
-                "DisabledExample.elm"
-                ()
-                (\_ _ -> ( (), Cmd.none ))
+        \v ->
+            { typeExample = Container.initModel "TypeExample.elm"
+            , iconExample =
+                Container.initStatefulModel
+                    "IconExample.elm"
+                    ()
+                    (\_ _ -> ( (), Cmd.none ))
+            , disabledExample =
+                Container.initStatefulModel
+                    "DisabledExample.elm"
+                    ()
+                    (\_ _ -> ( (), Cmd.none ))
             , version = v
-        }
+            }
     }
 
 

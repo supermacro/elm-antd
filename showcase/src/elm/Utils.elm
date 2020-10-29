@@ -21,7 +21,7 @@ type alias CommitHash =
 type alias Flags =
     { commitHash : CommitHash
     , fileServerUrl : String
-    , version : String 
+    , version : String
     }
 
 

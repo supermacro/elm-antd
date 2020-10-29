@@ -26,7 +26,7 @@ type alias StatelessDemo =
 
 type alias Model =
     { basicExample : StatelessDemo
-    , version : String 
+    , version : String
     }
 
 
@@ -46,9 +46,10 @@ route =
     , view = view
     , update = update
     , initialModel =
-        \v -> { basicExample = Container.initModel "BasicExample.elm"
+        \v ->
+            { basicExample = Container.initModel "BasicExample.elm"
             , version = v
-        }
+            }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
 
