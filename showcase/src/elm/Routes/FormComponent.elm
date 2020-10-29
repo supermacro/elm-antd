@@ -69,7 +69,7 @@ basicExample model =
     let
         metaInfo =
             { title = "Basic"
-            , content = "Basic usage of checkbox."
+            , content = "Basic Form data control. Includes layout, initial values, validation and submit."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
             }
     in
