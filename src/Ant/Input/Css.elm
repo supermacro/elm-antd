@@ -20,8 +20,8 @@ textColor =
     rgba r g b a
 
 
-{-| Ant.Form.Css has some input UI overrides. This function is used there to make box shadow look different.
-When a form field has errors.
+{-| Ant.Form.Css has some input UI overrides. This function is used there to make box shadow look
+different when a form field has errors.
 -}
 createInputBoxShadow : Color.Color -> Style
 createInputBoxShadow =
