@@ -15,18 +15,15 @@ fromSourceCode version elmCode =
             elliefy elmCode
 
         titleUrl =
-            encodeUrl title
+            encodeUrlComponent title
 
         elmCodeUrl =
-            encodeUrl code
-
-        htmlCodeUrl =
-            encodeUrl htmlCode
+            encodeUrlComponent code
 
         -- Package parsing is interesting because every package has its own '&packages='
         packagesUrl =
             packages version
-                |> List.map (packageToString >> encodeUrl)
+                |> List.map (packageToString >> encodeUrlComponent)
                 |> List.map (\p -> "&packages=" ++ p)
                 |> String.join ""
 
@@ -41,29 +38,6 @@ fromSourceCode version elmCode =
                 ++ "&elmversion=0.19.1"
     in
     link
-
-
-
----- HTML
-
-
-htmlCode : String
-htmlCode =
-    """<html>
-<head>
-  <style>
-    /* you can style your program here */
-  </style>
-</head>
-<body>
-  <main></main>
-  <script>
-    var app = Elm.Main.init({ node: document.querySelector('main') })
-    // you can use ports and stuff here
-  </script>
-</body>
-</html>
-"""
 
 
 
@@ -96,12 +70,13 @@ packageToString p =
 
 
 ---- ENCODING
--- replacing every reserved URL character using (most likely) the most inefficient way possible
--- reserved characters (from Wikipedia): ! * ' ( ) ; : @ & = + $ , / ? % # [ ]
 
 
-encodeUrl : String -> String
-encodeUrl =
+{-| replacing every reserved URL character using (most likely) the most inefficient way possible
+Reserved characters (from Wikipedia) are: ! \* ' ( ) ; : @ & = + $ , / ? % # [ ]
+-}
+encodeUrlComponent : String -> String
+encodeUrlComponent =
     String.replace "%" "%25"
         >> String.replace "\n" "%0A"
         >> String.replace " " "%20"
@@ -208,15 +183,15 @@ type alias FunInfo =
 fileParser : Parser File
 fileParser =
     Parser.succeed File
-        |= moduleDeclaration
+        |= moduleDeclarationParser
         |. spacesAndComments
         |= imports
         |. spacesAndComments
         |= codeBlocks
 
 
-moduleDeclaration : Parser ModuleDeclaration
-moduleDeclaration =
+moduleDeclarationParser : Parser ModuleDeclaration
+moduleDeclarationParser =
     let
         moduleName : Parser String
         moduleName =
@@ -434,19 +409,13 @@ changeModuleNameTo newName file =
 
 
 elliefyExports : File -> File
-elliefyExports file =
-    case file.moduleDeclaration.exposes of
+elliefyExports ({ moduleDeclaration } as file) =
+    case moduleDeclaration.exposes of
         [ "example" ] ->
             let
                 newExposes =
                     [ "main" ]
-
-                mDeclaration =
-                    file.moduleDeclaration
-
-                newMDeclaration =
-                    { mDeclaration | exposes = newExposes }
-
+                    
                 -- rename instances of "example" to "main"
                 newCodeBlocks =
                     file.codeBlocks
@@ -461,13 +430,13 @@ elliefyExports file =
                                         else
                                             FunDef funData
 
-                                    typeDef ->
+                                    TypeDef _ ->
                                         -- do not change type definitions
-                                        typeDef
+                                        block
                             )
             in
             { file
-                | moduleDeclaration = newMDeclaration
+                | moduleDeclaration = { moduleDeclaration | exposes = newExposes }
                 , codeBlocks = newCodeBlocks
             }
 
@@ -511,3 +480,27 @@ codeBlocksToString block =
 
         FunDef { funName, typeAnnotation, val } ->
             funName ++ typeAnnotation ++ "\n" ++ funName ++ val
+
+
+
+---- HTML
+
+
+htmlCodeUrl : String
+htmlCodeUrl =
+    encodeUrlComponent
+        """<html>
+<head>
+  <style>
+    /* you can style your program here */
+  </style>
+</head>
+<body>
+  <main></main>
+  <script>
+    var app = Elm.Main.init({ node: document.querySelector('main') })
+    // you can use ports and stuff here
+  </script>
+</body>
+</html>
+"""
