@@ -84,7 +84,7 @@ view : Model -> Styled.Html Msg
 view model =
     div []
         [ documentationHeading "Form"
-        , documentationText <| text "Composable form component that is built on top of the great 'hecrj/composable-form' library"
+        , documentationText <| text "Composable form component that is built on top of a fork of the excellent 'hecrj/composable-form' library. If you're familiar with composable-form already, then you'll feel right at home!"
         , documentationSubheading Typography.WithAnchorLink "When To Use"
         , documentationUnorderedList
             [ text "When building Forms of any size; whether they include only a single input, or several inputs that are dependent on each other."
