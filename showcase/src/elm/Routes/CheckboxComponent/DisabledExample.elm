@@ -20,9 +20,9 @@ disabledCheckbox checked =
                 NotChecked ->
                     False
     in
-    checkbox isChecked
+    checkbox
         |> withDisabled True
-        |> toHtml
+        |> toHtml isChecked
 
 
 example : Html msg

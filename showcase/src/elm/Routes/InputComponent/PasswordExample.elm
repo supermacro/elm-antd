@@ -1,34 +1,44 @@
 module Routes.InputComponent.PasswordExample exposing (Model, Msg, example, init, update)
 
-import Ant.Input as Input exposing (input, toHtml, withPlaceholder, withType)
+import Ant.Input as Input exposing (input, toHtml, withPasswordType, withPlaceholder)
 import Html exposing (Html)
 
 
 type alias Model =
-    Input.Model
+    { inputValue : String
+    , textVisibility : Bool
+    }
 
 
 type Msg
-    = InputMsg Input.Model
+    = InputChanged String
+    | InputTextVisibilityChanged Bool
 
 
 init : Model
 init =
-    Input.init
+    { inputValue = ""
+    , textVisibility = False
+    }
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
-        InputMsg newModel ->
-            ( newModel
+        InputChanged newValue ->
+            ( { model | inputValue = newValue }
+            , Cmd.none
+            )
+
+        InputTextVisibilityChanged newVisibility ->
+            ( { model | textVisibility = newVisibility }
             , Cmd.none
             )
 
 
 example : Model -> Html Msg
 example model =
-    input InputMsg
+    input InputChanged
         |> withPlaceholder "input password"
-        |> withType Input.Password
-        |> toHtml model
+        |> withPasswordType InputTextVisibilityChanged model.textVisibility
+        |> toHtml model.inputValue

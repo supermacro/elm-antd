@@ -40,6 +40,7 @@ import Routes.AlertComponent as AlertPage
 import Routes.ButtonComponent as ButtonPage
 import Routes.CheckboxComponent as CheckboxPage
 import Routes.DividerComponent as DividerPage
+import Routes.FormComponent as FormPage
 import Routes.Home exposing (homePage)
 import Routes.InputComponent as InputPage
 import Routes.NotFound exposing (notFound)
@@ -89,6 +90,7 @@ type alias Model =
     , buttonPageModel : ButtonPage.Model
     , checkboxPageModel : CheckboxPage.Model
     , dividerPageModel : DividerPage.Model
+    , formPageModel : FormPage.Model
     , inputPageModel : InputPage.Model
     , spacePageModel : SpacePage.Model
     , typographyPageModel : TypographyPage.Model
@@ -107,6 +109,7 @@ type Msg
     | ButtonPageMessage ButtonPage.Msg
     | CheckboxPageMessage CheckboxPage.Msg
     | DividerPageMessage DividerPage.Msg
+    | FormPageMessage FormPage.Msg
     | InputPageMessage InputPage.Msg
     | SpacePageMessage SpacePage.Msg
     | TooltipPageMessage TooltipPage.Msg
@@ -146,7 +149,6 @@ unimplementedComponents =
         , ( "AutoComplete", DataEntry )
         , ( "Cascader", DataEntry )
         , ( "DatePicker", DataEntry )
-        , ( "Form", DataEntry )
         , ( "InputNumber", DataEntry )
         , ( "Mentions", DataEntry )
         , ( "Rate", DataEntry )
@@ -221,6 +223,10 @@ componentList =
             DividerPage.route.view model.dividerPageModel
                 |> Styled.map DividerPageMessage
 
+        formPageView model =
+            FormPage.route.view model.formPageModel
+                |> Styled.map FormPageMessage
+
         inputPageView model =
             InputPage.route.view model.inputPageModel
                 |> Styled.map InputPageMessage
@@ -261,6 +267,12 @@ componentList =
              , view = dividerPageView
              , saveExampleSourceCode =
                 triggerSaveExampleSourceCode DividerPageMessage DividerPage.route.saveExampleSourceCodeToModel
+             }
+           , { route = FormPage.route.title
+             , category = FormPage.route.category
+             , view = formPageView
+             , saveExampleSourceCode =
+                triggerSaveExampleSourceCode FormPageMessage FormPage.route.saveExampleSourceCodeToModel
              }
            , { route = InputPage.route.title
              , category = InputPage.route.category
@@ -373,6 +385,7 @@ init url { commitHash, fileServerUrl, version } =
             , buttonPageModel = ButtonPage.route.initialModel version 
             , checkboxPageModel = CheckboxPage.route.initialModel version 
             , dividerPageModel = DividerPage.route.initialModel version 
+            , formPageModel = FormPage.route.initialModel version
             , inputPageModel = InputPage.route.initialModel version 
             , spacePageModel = SpacePage.route.initialModel version 
             , typographyPageModel = TypographyPage.route.initialModel version 
@@ -489,6 +502,17 @@ update navKey msg model =
                 | dividerPageModel = dividerPageModel
               }
             , Cmd.map DividerPageMessage dividerPageCmd
+            )
+
+        FormPageMessage formPageMsg ->
+            let
+                ( formPageModel, formPageCmd ) =
+                    FormPage.route.update formPageMsg model.formPageModel
+            in
+            ( { model
+                | formPageModel = formPageModel
+              }
+            , Cmd.map FormPageMessage formPageCmd
             )
 
         InputPageMessage inputPageMsg ->

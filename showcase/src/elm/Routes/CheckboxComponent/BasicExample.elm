@@ -10,7 +10,7 @@ type alias Model =
 
 
 type Msg
-    = CheckboxToggled
+    = CheckboxToggled Bool
 
 
 init : Model
@@ -20,15 +20,15 @@ init =
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
-update _ { checked } =
-    ( { checked = not checked }
+update (CheckboxToggled newVal) { checked } =
+    ( { checked = newVal }
     , Cmd.none
     )
 
 
 example : Model -> Html Msg
 example model =
-    checkbox model.checked
+    checkbox
         |> withOnCheck CheckboxToggled
         |> withLabel "Checkbox"
-        |> toHtml
+        |> toHtml model.checked

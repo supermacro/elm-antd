@@ -16,7 +16,7 @@ type alias Model =
 type Msg
     = CheckToggleButtonClicked
     | DisableToggleButtonClicked
-    | CheckboxToggled
+    | CheckboxToggled Bool
 
 
 init : Model
@@ -34,7 +34,12 @@ update msg ({ checked, disabled } as model) =
             , Cmd.none
             )
 
-        _ ->
+        CheckboxToggled newVal ->
+            ( { model | checked = newVal }
+            , Cmd.none
+            )
+
+        CheckToggleButtonClicked ->
             ( { model | checked = not checked }
             , Cmd.none
             )
@@ -57,11 +62,11 @@ viewCheckbox model =
             else
                 "Enabled"
     in
-    checkbox model.checked
+    checkbox
         |> withOnCheck CheckboxToggled
         |> withLabel (checkedLabelPart ++ "-" ++ disabledLabelPart)
         |> withDisabled model.disabled
-        |> Checkbox.toHtml
+        |> Checkbox.toHtml model.checked
 
 
 primaryButton : String -> Msg -> Html Msg

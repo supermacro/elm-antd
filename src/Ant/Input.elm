@@ -1,8 +1,8 @@
 module Ant.Input exposing
     ( Input, input
-    , InputSize(..), withSize, InputType(..), withType, withPlaceholder
-    , Model, init, getValue, setValue
+    , InputSize(..), withSize, InputType(..), withPlaceholder
     , toHtml
+    , withPasswordType
     )
 
 {-| Input widget for data entry
@@ -16,11 +16,6 @@ module Ant.Input exposing
 ## Modifying the input
 
 @docs InputSize, withSize, InputType, withType, withPlaceholder
-
-
-## Creating, getting and setting input state
-
-@docs Model, init, getValue, setValue
 
 
 ## Rendering the input
@@ -45,19 +40,16 @@ import Html.Attributes as Attr exposing (class, placeholder)
 import Html.Events as E
 
 
-{-| Opaque state of input. You can get the value of the input with `getValue` and also set the value with `setvalue`.
--}
-type Model
-    = Model
-        { value : String
-        , textVisible : Bool
-        }
+
+-- String -> msg
+-- init >> setValue config.value
+-- setValue config
 
 
 {-| Represents a customizeable input.
 -}
 type Input msg
-    = Input InputOpts (Model -> msg)
+    = Input (InputOpts msg) (String -> msg)
 
 
 {-| Determines the vertical height of the input
@@ -70,19 +62,19 @@ type InputSize
 
 {-| Defines the different kinds of input values you can have.
 -}
-type InputType
+type InputType msg
     = Text
-    | Password
+    | Password { textVisible : Bool } (Bool -> msg)
 
 
-type alias InputOpts =
+type alias InputOpts msg =
     { size : InputSize
     , placeholder : Maybe String
-    , type_ : InputType
+    , type_ : InputType msg
     }
 
 
-defaultInputOpts : InputOpts
+defaultInputOpts : InputOpts msg
 defaultInputOpts =
     { size = Default
     , placeholder = Nothing
@@ -92,30 +84,9 @@ defaultInputOpts =
 
 {-| Create a customizeable input component
 -}
-input : (Model -> msg) -> Input msg
+input : (String -> msg) -> Input msg
 input =
     Input defaultInputOpts
-
-
-{-| Initialize the state of the input
--}
-init : Model
-init =
-    Model { value = "", textVisible = True }
-
-
-{-| Get the value of the input
--}
-getValue : Model -> String
-getValue (Model model) =
-    model.value
-
-
-{-| Set the value for the input
--}
-setValue : String -> Model -> Model
-setValue newVal (Model model) =
-    Model { model | value = newVal }
 
 
 {-| Add a placeholder to the input
@@ -144,15 +115,15 @@ withSize size (Input inputOpts tagger) =
 
     input InputMsg
         |> withType Input.Password
-        |> toHtml model
+        |> toHtml model.inputValue
 
 -}
-withType : InputType -> Input msg -> Input msg
-withType type_ (Input inputOpts tagger) =
+withPasswordType : (Bool -> msg) -> Bool -> Input msg -> Input msg
+withPasswordType visibilityToggledTagger state (Input inputOpts tagger) =
     let
         newOpts =
             { inputOpts
-                | type_ = type_
+                | type_ = Password { textVisible = state } visibilityToggledTagger
             }
     in
     Input newOpts tagger
@@ -182,17 +153,14 @@ iconToHtml msg icon =
         [ iconHtml ]
 
 
-passwordInputToHtml : (Model -> msg) -> Model -> List (Attribute msg) -> Html msg
-passwordInputToHtml tagger (Model model) baseAttributes =
+passwordInputToHtml : (Bool -> msg) -> { textVisible : Bool } -> List (Attribute msg) -> Html msg
+passwordInputToHtml tagger { textVisible } baseAttributes =
     let
-        updatedModel =
-            { model | textVisible = not model.textVisible }
-
         msg =
-            tagger (Model updatedModel)
+            tagger (not textVisible)
 
         ( passwordInputAttribute, optionalIcon ) =
-            if model.textVisible then
+            if textVisible then
                 ( Attr.type_ "text"
                 , iconToHtml msg Icons.eyeOutlined
                 )
@@ -211,17 +179,17 @@ passwordInputToHtml tagger (Model model) baseAttributes =
 
 {-| Convert the input into a `Html msg`
 -}
-toHtml : Model -> Input msg -> Html msg
-toHtml (Model model) (Input inputOpts tagger) =
+toHtml : String -> Input msg -> Html msg
+toHtml value (Input inputOpts tagger) =
     let
         placeholderValue =
             Maybe.withDefault "" inputOpts.placeholder
 
         baseAttributes =
-            [ E.onInput (\newVal -> tagger <| Model { model | value = newVal })
+            [ E.onInput tagger
             , class inputClass
             , placeholder placeholderValue
-            , Attr.value model.value
+            , Attr.value value
             ]
     in
     case inputOpts.type_ of
@@ -234,5 +202,5 @@ toHtml (Model model) (Input inputOpts tagger) =
                 )
                 []
 
-        Password ->
-            passwordInputToHtml tagger (Model model) baseAttributes
+        Password visibilityState visibilityToggleTagger ->
+            passwordInputToHtml visibilityToggleTagger visibilityState baseAttributes

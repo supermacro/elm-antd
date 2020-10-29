@@ -14,6 +14,13 @@ module Ant.Css.Common exposing
     , checkboxClass
     , checkboxCustomCheckmarkClass
     , checkboxLabelClass
+    , content
+    , formCheckboxFieldClass
+    , formClass
+    , formLabelClass
+    , formLabelInnerClass
+    , formRequiredFieldClass
+    , formSubmitButtonClass
     , inputClass
     , inputRootActiveClass
     , inputRootClass
@@ -28,6 +35,13 @@ import Css.Global as CG exposing (Snippet)
 makeSelector : String -> List Style -> Snippet
 makeSelector =
     CG.selector << String.append "."
+
+
+{-| you have to escape the text to ensure that the `val` value is wrapped in quotes
+-}
+content : String -> Css.Style
+content val =
+    Css.property "content" ("\"" ++ val ++ "\"")
 
 
 elmAntdPrefix : String
@@ -135,6 +149,42 @@ checkboxCustomCheckmarkClass =
 
 -------------------------
 -------------------------
+-- Form Class Names
+
+
+formClass : String
+formClass =
+    elmAntdPrefix ++ "__form"
+
+
+formLabelClass : String
+formLabelClass =
+    formClass ++ "-label"
+
+
+formLabelInnerClass : String
+formLabelInnerClass =
+    formClass ++ "-label-inner"
+
+
+formRequiredFieldClass : String
+formRequiredFieldClass =
+    formClass ++ "-required-field"
+
+
+formCheckboxFieldClass : String
+formCheckboxFieldClass =
+    formClass ++ "-checkbox-field"
+
+
+formSubmitButtonClass : String
+formSubmitButtonClass =
+    formClass ++ "-submit-button"
+
+
+
+-------------------------
+-------------------------
 -- Input Class Names
 
 
@@ -149,10 +199,12 @@ inputRootClass =
 
 
 
--- Being toggled on and off by elm-antd-extras
--- Once the `:has` pseudo selector is widely supported, we won't need to implement
--- this logic in JS
--- Context: https://stackoverflow.com/questions/1014861/is-there-a-css-parent-selector
+{-
+   This Class is being toggled on and off by elm-antd-extras
+   Once the `:has` pseudo selector is widely supported, we won't need to implement
+   this logic in JS
+   Context: https://stackoverflow.com/questions/1014861/is-there-a-css-parent-selector
+-}
 
 
 inputRootActiveClass : String
