@@ -1,6 +1,7 @@
 module UrlGenerator exposing (fromSourceCode)
 
 import Parser exposing ((|.), (|=), DeadEnd, Parser, Problem(..), Step(..))
+import Url.Builder
 
 
 
@@ -14,28 +15,25 @@ fromSourceCode version elmCode =
         { title, code } =
             elliefy elmCode
 
-        titleUrl =
-            encodeUrlComponent title
-
-        elmCodeUrl =
-            encodeUrlComponent code
-
         -- Package parsing is interesting because every package has its own '&packages='
         packagesUrl =
             packages version
-                |> List.map (packageToString >> encodeUrlComponent)
-                |> List.map (\p -> "&packages=" ++ p)
-                |> String.join ""
+                |> List.map packageToString
+                |> List.map (\p -> ( "packages", p ))
 
         link =
-            "https://ellie-app.com/a/example/v1?title="
-                ++ titleUrl
-                ++ "&elmcode="
-                ++ elmCodeUrl
-                ++ "&htmlcode="
-                ++ htmlCodeUrl
-                ++ packagesUrl
-                ++ "&elmversion=0.19.1"
+            Url.Builder.crossOrigin
+                "https://ellie-app.com/a/example/v1"
+                []
+                ([ ( "title", title )
+                 , ( "elmcode", code )
+                 , ( "htmlcode", htmlCode )
+                 ]
+                    ++ packagesUrl
+                    ++ [ ( "elmversion", "0.19.1" ) ]
+                    |> List.map
+                        (\( key, value ) -> Url.Builder.string key value)
+                )
     in
     link
 
@@ -66,39 +64,6 @@ packages version =
 packageToString : Package -> String
 packageToString p =
     p.name ++ "@" ++ p.version
-
-
-
----- ENCODING
-
-
-{-| replacing every reserved URL character using (most likely) the most inefficient way possible
-Reserved characters (from Wikipedia) are: ! \* ' ( ) ; : @ & = + $ , / ? % # [ ]
--}
-encodeUrlComponent : String -> String
-encodeUrlComponent =
-    String.replace "%" "%25"
-        >> String.replace "\n" "%0A"
-        >> String.replace " " "%20"
-        >> String.replace "\"" "%22"
-        >> String.replace "!" "%21"
-        >> String.replace "#" "%23"
-        >> String.replace "$" "%24"
-        >> String.replace "&" "%26"
-        >> String.replace "'" "%27"
-        >> String.replace "(" "%28"
-        >> String.replace ")" "%29"
-        >> String.replace "*" "%2A"
-        >> String.replace "+" "%2B"
-        >> String.replace "," "%2C"
-        >> String.replace "/" "%2F"
-        >> String.replace ":" "%3A"
-        >> String.replace ";" "%3B"
-        >> String.replace "=" "%3D"
-        >> String.replace "?" "%3F"
-        >> String.replace "@" "%40"
-        >> String.replace "[" "%5B"
-        >> String.replace "]" "%5D"
 
 
 
@@ -415,7 +380,7 @@ elliefyExports ({ moduleDeclaration } as file) =
             let
                 newExposes =
                     [ "main" ]
-                    
+
                 -- rename instances of "example" to "main"
                 newCodeBlocks =
                     file.codeBlocks
@@ -486,10 +451,9 @@ codeBlocksToString block =
 ---- HTML
 
 
-htmlCodeUrl : String
-htmlCodeUrl =
-    encodeUrlComponent
-        """<html>
+htmlCode : String
+htmlCode =
+    """<html>
 <head>
   <style>
     /* you can style your program here */
