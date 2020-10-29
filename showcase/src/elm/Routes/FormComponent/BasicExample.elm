@@ -39,7 +39,7 @@ update msg model =
                     model.loginFormState
 
                 newModel =
-                    { loginFormState | state = FV.Success "You have been logged in successfully" }
+                    { loginFormState | state = FV.Success }
             in
             ( { loginFormState = newModel }
             , Cmd.none

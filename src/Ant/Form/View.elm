@@ -100,7 +100,7 @@ type State
     = Idle
     | Loading
     | Error String
-    | Success String
+    | Success
 
 
 type ErrorTracking
@@ -729,9 +729,6 @@ form { onSubmit, action, loading, state, fields } =
                     Error error ->
                         errorMessage error
 
-                    Success success ->
-                        successMessage success
-
                     _ ->
                         Html.text ""
               , submitButton
@@ -972,11 +969,6 @@ maybeErrorMessage showError maybeError =
 
             else
                 defaultNode
-
-
-successMessage : String -> Html msg
-successMessage =
-    Html.text >> List.singleton >> Html.div [ Attributes.class "elm-form-success" ]
 
 
 errorMessage : String -> Html msg
