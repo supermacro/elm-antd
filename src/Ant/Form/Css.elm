@@ -123,9 +123,6 @@ styles theme =
                     [ borderColor (hex dangerColor)
                     ]
                 , focus
-                    -- TODO: this is a hack that works for now
-                    -- but realistically, the dangerColor should be part of a theme
-                    -- See https://github.com/supermacro/elm-antd/blob/master/src/Ant/Theme.elm#L35
                     [ errorBoxShadow
                     , borderColor (hex dangerColor)
                     ]
