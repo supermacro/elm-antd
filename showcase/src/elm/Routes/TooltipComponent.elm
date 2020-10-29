@@ -80,7 +80,6 @@ basicExample model =
             { title = "Basic"
             , content = "The simplest usage."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
-            , version = model.version
             }
     in
     Container.createDemoBox

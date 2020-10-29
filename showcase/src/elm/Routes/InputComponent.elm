@@ -96,7 +96,6 @@ basicExample model =
             { title = "Basic"
             , content = "Basic usage example."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -113,7 +112,6 @@ passwordExample model =
             { title = "Password field"
             , content = "Input type of password."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
-            , version = model.version
             }
     in
     Container.createDemoBox

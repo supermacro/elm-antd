@@ -94,7 +94,6 @@ basicExample model =
             { title = "Basic"
             , content = "Basic usage example. Default direction is horizontal."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -111,7 +110,6 @@ verticalAndSpacingExample model =
             { title = "Vertical and Spacing"
             , content = "Using vertical direction and a mixture of medium and large spacing."
             , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
-            , version = model.version
             }
     in
     Container.createDemoBox

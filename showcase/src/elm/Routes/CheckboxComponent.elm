@@ -99,7 +99,6 @@ basicExample model =
             { title = "Basic"
             , content = "Basic usage of checkbox."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -116,7 +115,6 @@ controlledExample model =
             { title = "Controlled Checkbox"
             , content = "Communicated with other components."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -133,7 +131,6 @@ disabledExample model =
             { title = "Disabled"
             , content = "Disabled checkbox."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
-            , version = model.version
             }
     in
     Container.createDemoBox

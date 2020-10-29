@@ -51,7 +51,6 @@ type alias DemoBoxMetaInfo =
     { title : String
     , content : String
     , ellieDemo : String
-    , version : String 
     }
 
 

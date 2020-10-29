@@ -114,7 +114,6 @@ basicExample model =
             { title = "Basic"
             , content = "The simplest usage for short messages."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
-            , version = model.version
             }
 
         demoBox =
@@ -134,7 +133,6 @@ typeExample  model =
             { title = "More Types"
             , content = "There are 4 types of Alert: Success, Info, Warning, Error"
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
-            , version = model.version
             }
 
         demoBox =
@@ -154,7 +152,6 @@ descriptionExample  model =
             { title = "Description"
             , content = "Additional description for alert message."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
-            , version = model.version
             }
 
         demoBox =

@@ -94,7 +94,6 @@ basicExample model =
             { title = "Basic"
             , content = "A document sample"
             , ellieDemo = "https://ellie-app.com/9mHk3JkJXSza1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -111,7 +110,6 @@ titleComponentExample model =
             { title = "Title Component"
             , content = "Display the various levels for titles"
             , ellieDemo = "https://ellie-app.com/9mHmQ7FdJsSa1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -128,7 +126,6 @@ textComponentExample model =
             { title = "Text and Link Component"
             , content = "Provides multiple types of text and link."
             , ellieDemo = "https://ellie-app.com/9mHyDsVVZk6a1"
-            , version = model.version
             }
     in
     Container.createDemoBox

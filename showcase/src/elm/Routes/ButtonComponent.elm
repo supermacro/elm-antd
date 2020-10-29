@@ -105,7 +105,6 @@ typeExample model =
             { title = "Type"
             , content = "There are \"primary\", \"default\", \"dashed\", \"text\" and \"link\" buttons in Elm Antd."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -122,7 +121,6 @@ disabledExample model =
             { title = "Disabled"
             , content = "You can disable any button"
             , ellieDemo = "https://ellie-app.com/9mjF8c8DLyTa1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -139,7 +137,6 @@ iconExample model =
             { title = "Icon"
             , content = "Button components can contain an Icon"
             , ellieDemo = "https://ellie-app.com/9mjF8c8DLyTa1"
-            , version = model.version
             }
     in
     Container.createDemoBox

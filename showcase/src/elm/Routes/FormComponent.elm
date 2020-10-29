@@ -74,7 +74,6 @@ basicExample model =
             { title = "Basic"
             , content = "Basic usage of checkbox."
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
-            , version = model.version
             }
     in
     Container.createDemoBox

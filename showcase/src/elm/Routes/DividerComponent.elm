@@ -116,7 +116,6 @@ horizontalExample model =
             { title = "Horizontal"
             , content = "Divider is \"horizontal\" by default. You can add text within Divider."
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -133,7 +132,6 @@ textWithoutHeadingExample model =
             { title = "Text without heading style"
             , content = "You can use non-heading style of divider text by setting Plain textStyle"
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -150,7 +148,6 @@ withTitleExample model =
             { title = "Divider with title"
             , content = "Divider with inner title, use \"withOrientation\" to align it."
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
-            , version = model.version
             }
     in
     Container.createDemoBox
@@ -167,7 +164,6 @@ verticalExample model =
             { title = "Vertical"
             , content = "Use \"withType Vertical\" make it vertical."
             , ellieDemo = "https://ellie-app.com/9jQvNFNtj8Fa1"
-            , version = model.version
             }
     in
     Container.createDemoBox
