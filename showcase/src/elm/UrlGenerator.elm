@@ -38,7 +38,7 @@ fromSourceCode version elmCode =
                 ++ "&htmlcode="
                 ++ htmlCodeUrl
                 ++ packagesUrl
-                ++ "&elmversion=0.19.0"
+                ++ "&elmversion=0.19.1"
     in
     link
 
