@@ -20,7 +20,7 @@ type alias Model =
     { basicExample : StatelessDemo
     , titleExample : StatelessDemo
     , textExample : StatelessDemo
-    , version : String
+    , version : Maybe String
     }
 
 

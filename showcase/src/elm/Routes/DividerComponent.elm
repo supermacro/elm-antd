@@ -28,7 +28,7 @@ type alias Model =
     , textWithoutHeadingExample : StatelessDemo
     , withTitleExample : StatelessDemo
     , verticalExample : StatelessDemo
-    , version : String
+    , version : Maybe String
     }
 
 

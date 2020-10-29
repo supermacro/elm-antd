@@ -21,7 +21,7 @@ type alias CommitHash =
 type alias Flags =
     { commitHash : CommitHash
     , fileServerUrl : String
-    , elmAntdVersion : String
+    , elmAntdVersion : Maybe String
     }
 
 
@@ -55,7 +55,7 @@ type alias DocumentationRoute model msg =
     , update : msg -> model -> ( model, Cmd msg )
     , category : ComponentCategory
     , view : model -> Styled.Html msg
-    , initialModel : String -> model
+    , initialModel : Maybe String -> model
     , saveExampleSourceCodeToModel : List SourceCode -> msg
     }
 

@@ -28,7 +28,7 @@ type alias StatelessDemo =
 type alias Model =
     { basicExample : StatelessDemo
     , verticalAndSpacingExample : StatelessDemo
-    , version : String
+    , version : Maybe String
     }
 
 

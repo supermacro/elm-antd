@@ -18,7 +18,7 @@ import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
-    , version : String
+    , version : Maybe String
     }
 
 

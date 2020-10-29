@@ -24,7 +24,7 @@ type alias Model =
     , descriptionExample : Container.Model () Never
     , typeExample : Container.Model () Never
     , closeableExample : Container.Model CloseableExample.Model CloseableExample.Msg
-    , version : String
+    , version : Maybe String
     }
 
 

@@ -24,7 +24,7 @@ title =
 type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
     , passwordExample : Container.Model PasswordExample.Model PasswordExample.Msg
-    , version : String
+    , version : Maybe String
     }
 
 

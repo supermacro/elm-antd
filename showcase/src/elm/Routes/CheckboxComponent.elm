@@ -22,7 +22,7 @@ type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
     , disabledExample : Container.Model () Never
     , controlledExample : Container.Model ControlledExample.Model ControlledExample.Msg
-    , version : String
+    , version : Maybe String
     }
 
 

@@ -113,8 +113,8 @@ createDemoBox tagger model demoView metaInfo =
         |> Styled.map tagger
 
 
-setSourceCode : String -> List SourceCode -> Model m msg -> Model m msg
-setSourceCode version sourceCodeList model =
+setSourceCode : Maybe String -> List SourceCode -> Model m msg -> Model m msg
+setSourceCode elmAntdVersion sourceCodeList model =
     let
         maybeSourceCode =
             sourceCodeList
@@ -123,7 +123,11 @@ setSourceCode version sourceCodeList model =
                 |> Maybe.map .fileContents
 
         ellieLink =
-            Maybe.map (UrlGenerator.fromSourceCode version) maybeSourceCode
+            case (maybeSourceCode, elmAntdVersion) of 
+                (Just elmCode, Just version) ->
+                    Just <| UrlGenerator.fromSourceCode version elmCode 
+                _ ->
+                    Nothing 
     in
     { model
         | sourceCode = maybeSourceCode
