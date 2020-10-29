@@ -1,69 +1,11 @@
-module UrlGenerator exposing (fromSourceCode)
+module Utils.FileParser exposing (elliefy)
+
+
+{- | File-related Logic
+-}
 
 import Parser exposing ((|.), (|=), DeadEnd, Parser, Problem(..), Step(..))
 import Url.Builder
-
-
-
--- Can also be put into Utils
--- but it might get pretty complicated so it's probably better to be put in its own file.
-
-
-fromSourceCode : String -> String -> String
-fromSourceCode version elmCode =
-    let
-        { title, code } =
-            elliefy elmCode
-
-        -- Package parsing is interesting because every package has its own '&packages='
-        packagesUrl =
-            packages version
-                |> List.map packageToString
-                |> List.map (\p -> ( "packages", p ))
-
-        link =
-            Url.Builder.crossOrigin
-                "https://ellie-app.com/a/example/v1"
-                []
-                ([ ( "title", title )
-                 , ( "elmcode", code )
-                 , ( "htmlcode", htmlCode )
-                 ]
-                    ++ packagesUrl
-                    ++ [ ( "elmversion", "0.19.1" ) ]
-                    |> List.map
-                        (\( key, value ) -> Url.Builder.string key value)
-                )
-    in
-    link
-
-
-
----- PACKAGES
-
-
-type alias Package =
-    { name : String
-    , version : String
-    }
-
-
-
--- Elm-antd will have dynamic versioning
-
-
-packages : String -> List Package
-packages version =
-    [ Package "elm/browser" "1.0.2"
-    , Package "elm/core" "1.0.5"
-    , Package "elm/html" "1.0.0"
-    , Package "supermacro/elm-antd" version
-    ]
-
-
-packageToString : Package -> String
-packageToString p =
-    p.name ++ "@" ++ p.version
 
 
 
@@ -224,9 +166,9 @@ codeBlocks =
 -----------------------
 -- HELPERS
 -----------------------
--- parses stuff between (..)
 
 
+{- parses stuff between (..) -}
 exposes : Parser (List String)
 exposes =
     let
@@ -445,26 +387,3 @@ codeBlocksToString block =
 
         FunDef { funName, typeAnnotation, val } ->
             funName ++ typeAnnotation ++ "\n" ++ funName ++ val
-
-
-
----- HTML
-
-
-htmlCode : String
-htmlCode =
-    """<html>
-<head>
-  <style>
-    /* you can style your program here */
-  </style>
-</head>
-<body>
-  <main></main>
-  <script>
-    var app = Elm.Main.init({ node: document.querySelector('main') })
-    // you can use ports and stuff here
-  </script>
-</body>
-</html>
-"""

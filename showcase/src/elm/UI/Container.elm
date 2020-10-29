@@ -19,8 +19,8 @@ import Html.Styled.Attributes as A exposing (css, href)
 import Html.Styled.Events exposing (onClick)
 import SyntaxHighlight exposing (elm, gitHub, toBlockHtml, useTheme)
 import UI.Typography exposing (commonTextStyles)
-import UrlGenerator
 import Utils exposing (SourceCode)
+import Utils.EllieLinks as EllieLinks
 
 
 type alias Model m msg =
@@ -123,11 +123,12 @@ setSourceCode elmAntdVersion sourceCodeList model =
                 |> Maybe.map .fileContents
 
         ellieLink =
-            case (maybeSourceCode, elmAntdVersion) of 
-                (Just elmCode, Just version) ->
-                    Just <| UrlGenerator.fromSourceCode version elmCode 
+            case ( maybeSourceCode, elmAntdVersion ) of
+                ( Just elmCode, Just version ) ->
+                    Just <| EllieLinks.fromSourceCode version elmCode
+
                 _ ->
-                    Nothing 
+                    Nothing
     in
     { model
         | sourceCode = maybeSourceCode
