@@ -17,6 +17,8 @@ module Ant.Css.Common exposing
     , content
     , formCheckboxFieldClass
     , formClass
+    , formFieldErrorMessageClass
+    , formFieldErrorMessageShowingClass
     , formLabelClass
     , formLabelInnerClass
     , formRequiredFieldClass
@@ -60,10 +62,8 @@ alertClass =
     elmAntdPrefix ++ "__alert"
 
 
-
--- property name for tracking the state of a closeable alert
-
-
+{-| property name for tracking the state of a closeable alert
+-}
 alertStateAttributeName : String
 alertStateAttributeName =
     "is_closing"
@@ -172,6 +172,16 @@ formRequiredFieldClass =
     formClass ++ "-required-field"
 
 
+formFieldErrorMessageClass : String
+formFieldErrorMessageClass =
+    formClass ++ "-field-error-message"
+
+
+formFieldErrorMessageShowingClass : String
+formFieldErrorMessageShowingClass =
+    formFieldErrorMessageClass ++ "_showing-error"
+
+
 formCheckboxFieldClass : String
 formCheckboxFieldClass =
     formClass ++ "-checkbox-field"
@@ -198,15 +208,11 @@ inputRootClass =
     inputClass ++ "-root"
 
 
-
-{-
-   This Class is being toggled on and off by elm-antd-extras
-   Once the `:has` pseudo selector is widely supported, we won't need to implement
-   this logic in JS
-   Context: https://stackoverflow.com/questions/1014861/is-there-a-css-parent-selector
+{-| This Class is being toggled on and off dynamically by elm-antd-extras
+Once the `:has` pseudo selector is widely supported, we won't need to implement
+this logic in JS
+Context: <https://stackoverflow.com/questions/1014861/is-there-a-css-parent-selector>
 -}
-
-
 inputRootActiveClass : String
 inputRootActiveClass =
     inputClass ++ "-active"

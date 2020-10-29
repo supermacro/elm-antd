@@ -35,7 +35,15 @@ module Ant.Form.View exposing
 
 import Ant.Button as Button exposing (button)
 import Ant.Checkbox as Checkbox exposing (checkbox)
-import Ant.Css.Common exposing (formCheckboxFieldClass, formLabelClass, formLabelInnerClass, formSubmitButtonClass)
+import Ant.Css.Common
+    exposing
+        ( formCheckboxFieldClass
+        , formFieldErrorMessageClass
+        , formFieldErrorMessageShowingClass
+        , formLabelClass
+        , formLabelInnerClass
+        , formSubmitButtonClass
+        )
 import Ant.Form as Form exposing (Form)
 import Ant.Form.Base.CheckboxField as CheckboxField
 import Ant.Form.Base.NumberField as NumberField
@@ -92,7 +100,7 @@ type State
     = Idle
     | Loading
     | Error String
-    | Success String
+    | Success
 
 
 type ErrorTracking
@@ -721,9 +729,6 @@ form { onSubmit, action, loading, state, fields } =
                     Error error ->
                         errorMessage error
 
-                    Success success ->
-                        successMessage success
-
                     _ ->
                         Html.text ""
               , submitButton
@@ -924,7 +929,7 @@ fieldContainerAttributes : Bool -> Maybe Error -> List (Html.Attribute msg)
 fieldContainerAttributes showError error =
     [ Attributes.classList
         [ ( formLabelClass, True )
-        , ( "elm-form-field-error", showError && error /= Nothing )
+        , ( formFieldErrorMessageShowingClass, showError && error /= Nothing )
         ]
     ]
 
@@ -932,8 +937,10 @@ fieldContainerAttributes showError error =
 withLabelAndError : String -> Bool -> Maybe Error -> Html msg -> Html msg
 withLabelAndError label showError error fieldAsHtml =
     [ fieldLabel label
-    , fieldAsHtml
-    , maybeErrorMessage showError error
+    , Html.div []
+        [ fieldAsHtml
+        , maybeErrorMessage showError error
+        ]
     ]
         |> wrapInFieldContainer showError error
 
@@ -945,6 +952,10 @@ fieldLabel label =
 
 maybeErrorMessage : Bool -> Maybe Error -> Html msg
 maybeErrorMessage showError maybeError =
+    let
+        defaultNode =
+            Html.div [ Attributes.class formFieldErrorMessageClass ] [ Html.text "" ]
+    in
     case maybeError of
         Just (Error.External externalError) ->
             errorMessage externalError
@@ -954,20 +965,15 @@ maybeErrorMessage showError maybeError =
                 maybeError
                     |> Maybe.map errorToString
                     |> Maybe.map errorMessage
-                    |> Maybe.withDefault (Html.text "")
+                    |> Maybe.withDefault defaultNode
 
             else
-                Html.text ""
-
-
-successMessage : String -> Html msg
-successMessage =
-    Html.text >> List.singleton >> Html.div [ Attributes.class "elm-form-success" ]
+                defaultNode
 
 
 errorMessage : String -> Html msg
 errorMessage =
-    Html.text >> List.singleton >> Html.div [ Attributes.class "elm-form-error" ]
+    Html.text >> List.singleton >> Html.div [ Attributes.class formFieldErrorMessageClass ]
 
 
 errorToString : Error -> String

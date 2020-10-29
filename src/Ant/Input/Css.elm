@@ -1,8 +1,9 @@
-module Ant.Input.Css exposing (styles)
+module Ant.Input.Css exposing (createInputBoxShadow, styles)
 
 import Ant.Css.Common exposing (inputRootActiveClass, inputRootClass, passwordInputVisibilityToggleIconClass)
 import Ant.Internals.Typography exposing (commonFontStyles, textColorRgba)
 import Ant.Theme exposing (Theme)
+import Color as Color
 import Color.Convert exposing (colorToHexWithAlpha)
 import Color.Manipulate exposing (lighten)
 import Css exposing (..)
@@ -19,17 +20,22 @@ textColor =
     rgba r g b a
 
 
+{-| Ant.Form.Css has some input UI overrides. This function is used there to make box shadow look different.
+When a form field has errors.
+-}
+createInputBoxShadow : Color.Color -> Style
+createInputBoxShadow =
+    Color.Manipulate.lighten 0.26
+        >> colorToHexWithAlpha
+        >> hex
+        >> boxShadow5 zero zero zero (px 2)
+
+
 styles : Theme -> List Snippet
 styles theme =
     let
         transitionDuration =
             350
-
-        focusBoxShadowColor =
-            theme.colors.primaryFaded
-                |> Color.Manipulate.lighten 0.2
-                |> colorToHexWithAlpha
-                |> hex
 
         rootNodeStyles =
             [ borderWidth (px 1)
@@ -58,7 +64,7 @@ styles theme =
                    ]
 
         inputBoxShadow =
-            boxShadow5 zero zero zero (px 2) focusBoxShadowColor
+            createInputBoxShadow theme.colors.primaryFaded
 
         inputBorderColor =
             borderColor <| hex <| colorToHexWithAlpha theme.colors.primaryFaded
