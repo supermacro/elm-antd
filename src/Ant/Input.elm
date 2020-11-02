@@ -1,8 +1,7 @@
 module Ant.Input exposing
     ( Input, input
-    , InputSize(..), withSize, InputType(..), withPlaceholder
+    , InputSize(..), withSize, InputType(..), withPasswordType, withPlaceholder
     , toHtml
-    , withPasswordType
     )
 
 {-| Input widget for data entry
@@ -116,6 +115,7 @@ withSize size (Input inputOpts tagger) =
     input InputMsg
         |> withPasswordType VisibilityToggled model.visibility
         |> toHtml model.inputValue
+
 -}
 withPasswordType : (Bool -> msg) -> Bool -> Input msg -> Input msg
 withPasswordType visibilityToggledTagger state (Input inputOpts tagger) =

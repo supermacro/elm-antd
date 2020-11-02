@@ -1,8 +1,7 @@
 module Ant.Button exposing
     ( Button
-    , button, onClick, ButtonType(..), withType, withIcon, ButtonSize(..), disabled
+    , button, onClick, ButtonType(..), withType, withIcon, ButtonSize(..), disabled, withHtmlType, HtmlButtonType(..)
     , toHtml
-    , HtmlButtonType(..), withHtmlType
     )
 
 {-| Button component
