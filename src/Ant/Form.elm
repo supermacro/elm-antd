@@ -414,12 +414,9 @@ disable =
     Base.disable
 
 
-{-| Wraps a form in a group.
+{-| Render a group of fields horizontally.
 
-Using this function does not affect the behavior of the form in any way. However, groups of fields
-might be rendered differently. For instance, [`Form.View`](Form-View) renders groups of
-fields horizontally.
-
+Using this function does not affect the behavior of the form in any way. It is simply to change the layout of a set of fields.
 -}
 group : Form values output -> Form values output
 group form =
