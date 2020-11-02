@@ -9,7 +9,7 @@ module Ant.Form.Base.PasswordField exposing
 
 # Definition
 
-@docs TextField, Attributes
+@docs PasswordField, PasswordFieldValue, Attributes
 
 
 # Helpers
@@ -22,13 +22,15 @@ import Ant.Form.Base as Base
 import Ant.Form.Field exposing (Field)
 
 
+{-| Represents the entire state of the stateful password input field.
+-}
 type alias PasswordFieldValue =
     { value : String
     , textVisible : Bool
     }
 
 
-{-| Represents a text field.
+{-| Represents a password input field.
 
 **Note:** You should not need to care about this unless you are creating your own
 custom fields or writing custom view code.

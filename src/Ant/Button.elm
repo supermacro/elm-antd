@@ -12,7 +12,7 @@ module Ant.Button exposing
 
 # Customizing the Button
 
-@docs button, onClick, ButtonType, withType, withIcon, ButtonSize, disabled
+@docs button, onClick, ButtonType, withType, withIcon, ButtonSize, disabled, withHtmlType, HtmlButtonType
 
 @docs toHtml
 
@@ -144,6 +144,8 @@ withIcon icon (Button options label) =
     Button newOptions label
 
 
+{-| Specify the "type" attribute of the button.
+-}
 withHtmlType : HtmlButtonType -> Button msg -> Button msg
 withHtmlType htmlType (Button opts label) =
     let

@@ -15,7 +15,7 @@ module Ant.Input exposing
 
 ## Modifying the input
 
-@docs InputSize, withSize, InputType, withType, withPlaceholder
+@docs InputSize, withSize, InputType, withPasswordType, withPlaceholder
 
 
 ## Rendering the input
@@ -114,9 +114,8 @@ withSize size (Input inputOpts tagger) =
 {-| Modify the type of the input.
 
     input InputMsg
-        |> withType Input.Password
+        |> withPasswordType VisibilityToggled model.visibility
         |> toHtml model.inputValue
-
 -}
 withPasswordType : (Bool -> msg) -> Bool -> Input msg -> Input msg
 withPasswordType visibilityToggledTagger state (Input inputOpts tagger) =
