@@ -1,7 +1,6 @@
 module Ant.Form exposing
     ( Form
-    , inputField, emailField, passwordField, textareaField, numberField, rangeField, checkboxField
-    , radioField, selectField
+    , inputField, passwordField, checkboxField
     , succeed, append, optional, disable, group, section, andThen, meta, list
     , map, mapValues
     , Field(..), TextType(..), FilledField, fill
@@ -19,8 +18,9 @@ This is a port of [hecrj/composable-form](https://package.elm-lang.org/packages/
 
 # Fields
 
-@docs inputField, emailField, passwordField, textareaField, numberField, rangeField, checkboxField
-@docs radioField, selectField
+@docs inputField, passwordField, checkboxField
+
+> FYI: I have hidden a bunch of fields because they have not yet been integrated to render elm-antd inputs yet. But PRs are always welcome!
 
 
 # Composition

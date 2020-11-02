@@ -1,10 +1,8 @@
 module Ant.Form.View exposing
     ( Model, State(..), idle
     , ViewConfig, Validation(..)
-    , toHtml, htmlViewConfig
-    , CustomConfig, FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
-    , CheckboxFieldConfig, RadioFieldConfig, SelectFieldConfig
-    , FormListConfig, FormListItemConfig
+    , toHtml
+    , FormConfig
     )
 
 {-| This module provides helpers to render a [`Form`](Form#Form).
@@ -22,7 +20,7 @@ module Ant.Form.View exposing
 
 # Basic HTML
 
-@docs toHtml, htmlViewConfig
+@docs toHtml
 
 
 # Custom
@@ -156,16 +154,6 @@ type Validation
     | ValidateOnBlur
 
 
-
--- Custom
-
-
-{-| The configuration needed to create a custom view function.
-
-It needs functions to render each of [the supported `Form` fields](Form#fields), a function to
-render a [`group`](Form#group) of fields, and a function to wrap the fields together in a `form`.
-
--}
 type alias CustomConfig msg element =
     { form : FormConfig msg element -> element
     , inputField : InputFieldConfig msg -> element
@@ -531,30 +519,16 @@ maybeIgnoreChildError maybeParentError field =
 
 
 {-| Default [`CustomConfig`](#CustomConfig) implementation for HTML output.
-
-You can update a subset of the `CustomConfig` fields to implement a view function that overrides the behavior of `toHtml`. For example:
-
-    htmlView : ViewConfig values msg -> Form values msg -> Model values -> Html msg
-    htmlView =
-        custom
-            { htmlViewConfig
-                | selectField = mySelectField
-                , radioField = myRadioField
-            }
-
-In fact, [`toHtml`](#toHtml) is just implemented as:
-
-    toHtml : ViewConfig values msg -> Form values msg -> Model values -> Html msg
-    toHtml =
-        custom htmlViewConfig
-
 -}
 htmlViewConfig : CustomConfig msg (Html msg)
 htmlViewConfig =
     { form = form
     , inputField = newInputField
-    , emailField = inputField "email"
+    , group = group
     , passwordField = passwordInputField
+
+    -- TODO: Un-integrated
+    , emailField = inputField "email"
     , searchField = inputField "search"
     , textareaField = textareaField
     , numberField = numberField
@@ -562,7 +536,6 @@ htmlViewConfig =
     , checkboxField = checkboxField
     , radioField = radioField
     , selectField = selectField
-    , group = group
     , section = section
     , formList = formList
     , formListItem = formListItem
