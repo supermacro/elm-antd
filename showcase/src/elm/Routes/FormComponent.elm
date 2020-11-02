@@ -12,6 +12,7 @@ import UI.Typography as Typography
         , documentationSubheading
         , documentationText
         , documentationUnorderedList
+        , link
         )
 import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
@@ -85,6 +86,12 @@ view model =
     div []
         [ documentationHeading "Form"
         , documentationText <| text "Composable form component that is built on top of a fork of the excellent 'hecrj/composable-form' library. If you're familiar with composable-form already, then you'll feel right at home!"
+        , documentationText <| text "More examples available at the hecrj/composable-form website:"
+        , link "https://hecrj.github.io/composable-form" "demos"
+        , Styled.span []
+            [ text " | "
+            , link "https://github.com/hecrj/composable-form/tree/master/examples/src/Page" " (source)"
+            ]
         , documentationSubheading Typography.WithAnchorLink "When To Use"
         , documentationUnorderedList
             [ text "When building Forms of any size; whether they include only a single input, or several inputs that are dependent on each other."
