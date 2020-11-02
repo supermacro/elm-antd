@@ -40,18 +40,19 @@ import Ant.Css.Common
         ( formCheckboxFieldClass
         , formFieldErrorMessageClass
         , formFieldErrorMessageShowingClass
+        , formGroupClass
         , formLabelClass
         , formLabelInnerClass
         , formSubmitButtonClass
         )
 import Ant.Form as Form exposing (Form)
 import Ant.Form.Base.CheckboxField as CheckboxField
+import Ant.Form.Base.InputField as InputField
 import Ant.Form.Base.NumberField as NumberField
 import Ant.Form.Base.PasswordField as PasswordField
 import Ant.Form.Base.RadioField as RadioField
 import Ant.Form.Base.RangeField as RangeField
 import Ant.Form.Base.SelectField as SelectField
-import Ant.Form.Base.InputField as InputField
 import Ant.Form.Error as Error exposing (Error)
 import Ant.Input as Input exposing (input)
 import Html exposing (Html)
@@ -909,7 +910,7 @@ selectField { onChange, onBlur, disabled, value, error, showError, attributes } 
 
 group : List (Html msg) -> Html msg
 group =
-    Html.div [ Attributes.class "elm-form-group" ]
+    Html.div [ Attributes.class formGroupClass ]
 
 
 section : String -> List (Html msg) -> Html msg

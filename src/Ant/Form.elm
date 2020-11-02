@@ -53,12 +53,12 @@ might suit your needs.
 import Ant.Form.Base as Base
 import Ant.Form.Base.CheckboxField as CheckboxField exposing (CheckboxField)
 import Ant.Form.Base.FormList as FormList exposing (FormList)
+import Ant.Form.Base.InputField as InputField exposing (InputField)
 import Ant.Form.Base.NumberField as NumberField exposing (NumberField)
 import Ant.Form.Base.PasswordField as PasswordField exposing (PasswordField)
 import Ant.Form.Base.RadioField as RadioField exposing (RadioField)
 import Ant.Form.Base.RangeField as RangeField exposing (RangeField)
 import Ant.Form.Base.SelectField as SelectField exposing (SelectField)
-import Ant.Form.Base.InputField as InputField exposing (InputField)
 import Ant.Form.Error exposing (Error)
 import Ant.Form.Field as Field
 
@@ -417,6 +417,7 @@ disable =
 {-| Render a group of fields horizontally.
 
 Using this function does not affect the behavior of the form in any way. It is simply to change the layout of a set of fields.
+
 -}
 group : Form values output -> Form values output
 group form =

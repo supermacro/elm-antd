@@ -6,12 +6,14 @@ import Ant.Css.Common as Common
         , formClass
         , formFieldErrorMessageClass
         , formFieldErrorMessageShowingClass
+        , formGroupClass
         , formLabelClass
         , formLabelInnerClass
         , formRequiredFieldClass
         , formSubmitButtonClass
         , inputRootActiveClass
         , inputRootClass
+        , makeSelector
         )
 import Ant.Input.Css exposing (createInputBoxShadow)
 import Ant.Internals.Theme exposing (dangerColor)
@@ -46,6 +48,12 @@ styles theme =
     [ CG.class formClass
         [ width (pct 100)
         , maxWidth (px 700)
+        ]
+    , CG.class formGroupClass
+        [ displayFlex
+        ]
+    , makeSelector (formGroupClass ++ " > *:not(:first-child)")
+        [ marginLeft (px 18)
         ]
     , CG.class formCheckboxFieldClass
         [ marginLeft (pct 33)

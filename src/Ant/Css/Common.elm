@@ -19,6 +19,7 @@ module Ant.Css.Common exposing
     , formClass
     , formFieldErrorMessageClass
     , formFieldErrorMessageShowingClass
+    , formGroupClass
     , formLabelClass
     , formLabelInnerClass
     , formRequiredFieldClass
@@ -180,6 +181,11 @@ formFieldErrorMessageClass =
 formFieldErrorMessageShowingClass : String
 formFieldErrorMessageShowingClass =
     formFieldErrorMessageClass ++ "_showing-error"
+
+
+formGroupClass : String
+formGroupClass =
+    formClass ++ "-group"
 
 
 formCheckboxFieldClass : String

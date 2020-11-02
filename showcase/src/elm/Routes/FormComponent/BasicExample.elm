@@ -10,6 +10,10 @@ type EmailAddress
     = EmailAddress String
 
 
+type Checkboxes
+    = Checkboxes Bool Bool
+
+
 type alias Model =
     { loginFormState : FV.Model FormValues
     }
@@ -19,12 +23,13 @@ type alias FormValues =
     { email : String
     , password : PasswordFieldValue
     , rememberMe : Bool
+    , dummy : Bool
     }
 
 
 type Msg
     = FormChanged (FV.Model FormValues)
-    | LogIn EmailAddress String Bool
+    | LogIn EmailAddress String Checkboxes
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -33,7 +38,7 @@ update msg model =
         FormChanged newFormModel ->
             ( { loginFormState = newFormModel }, Cmd.none )
 
-        LogIn email password rememberMe ->
+        LogIn email password (Checkboxes rememberMe dummy) ->
             let
                 loginFormState =
                     model.loginFormState
@@ -59,7 +64,7 @@ form : Form FormValues Msg
 form =
     let
         emailField =
-            Form.textField
+            Form.inputField
                 { parser = parseEmailAddress
                 , value = .email
                 , update = \email values -> { values | email = email }
@@ -91,11 +96,26 @@ form =
                 , attributes =
                     { label = "Remember me" }
                 }
+
+        dummyCheckbox =
+            Form.checkboxField
+                { parser = Ok
+                , value = .dummy
+                , update = \value values -> { values | dummy = value }
+                , error = always Nothing
+                , attributes =
+                    { label = "Test123" }
+                }
     in
     Form.succeed LogIn
         |> Form.append emailField
         |> Form.append passwordField
-        |> Form.append rememberMeCheckbox
+        |> Form.append
+            (Form.succeed Checkboxes
+                |> Form.append rememberMeCheckbox
+                |> Form.append dummyCheckbox
+                |> Form.group
+            )
 
 
 init : Model
@@ -106,6 +126,7 @@ init =
                 { email = ""
                 , password = { value = "", textVisible = False }
                 , rememberMe = True
+                , dummy = True
                 }
     in
     { loginFormState = formState
