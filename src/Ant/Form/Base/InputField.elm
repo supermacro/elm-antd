@@ -1,14 +1,14 @@
-module Ant.Form.Base.TextField exposing
-    ( TextField, Attributes
+module Ant.Form.Base.InputField exposing
+    ( InputField, Attributes
     , form
     )
 
-{-| This module contains a reusable `TextField` type.
+{-| This module contains a reusable `InputField` type.
 
 
 # Definition
 
-@docs TextField, Attributes
+@docs InputField, Attributes
 
 
 # Helpers
@@ -27,11 +27,11 @@ import Ant.Form.Field exposing (Field)
 custom fields or writing custom view code.
 
 -}
-type alias TextField values =
+type alias InputField values =
     Field Attributes String values
 
 
-{-| The attributes of a TextField.
+{-| The attributes of a InputField.
 
 You need to provide these to:
 
@@ -50,14 +50,14 @@ type alias Attributes =
     }
 
 
-{-| Builds a [`Form`](Form-Base#Form) with a single `TextField`.
+{-| Builds a [`Form`](Form-Base#Form) with a single `InputField`.
 
 **Note:** You should not need to care about this unless you are creating your own
 custom fields.
 
 -}
 form :
-    (TextField values -> field)
+    (InputField values -> field)
     -> Base.FieldConfig Attributes String values output
     -> Base.Form values output field
 form =

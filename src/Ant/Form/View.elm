@@ -51,7 +51,7 @@ import Ant.Form.Base.PasswordField as PasswordField
 import Ant.Form.Base.RadioField as RadioField
 import Ant.Form.Base.RangeField as RangeField
 import Ant.Form.Base.SelectField as SelectField
-import Ant.Form.Base.TextField as TextField
+import Ant.Form.Base.InputField as InputField
 import Ant.Form.Error as Error exposing (Error)
 import Ant.Input as Input exposing (input)
 import Html exposing (Html)
@@ -212,7 +212,7 @@ type alias FormConfig msg element =
   - `error` might contain a field [`Error`](Form-Error#Error).
   - `showError` tells you if you should show the `error` for this particular field. Its value
     depends on the [validation strategy](#Validation).
-  - `attributes` are [`TextField.Attributes`](Form-Base-TextField#Attributes).
+  - `attributes` are [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 type alias InputFieldConfig msg =
@@ -222,7 +222,7 @@ type alias InputFieldConfig msg =
     , value : String
     , error : Maybe Error
     , showError : Bool
-    , attributes : TextField.Attributes
+    , attributes : InputField.Attributes
 
     --, modifiers : List (Input msg -> Input msg)
     }

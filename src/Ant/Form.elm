@@ -1,6 +1,6 @@
 module Ant.Form exposing
     ( Form
-    , textField, emailField, passwordField, textareaField, numberField, rangeField, checkboxField
+    , inputField, emailField, passwordField, textareaField, numberField, rangeField, checkboxField
     , radioField, selectField
     , succeed, append, optional, disable, group, section, andThen, meta, list
     , map, mapValues
@@ -19,7 +19,7 @@ This is a port of [hecrj/composable-form](https://package.elm-lang.org/packages/
 
 # Fields
 
-@docs textField, emailField, passwordField, textareaField, numberField, rangeField, checkboxField
+@docs inputField, emailField, passwordField, textareaField, numberField, rangeField, checkboxField
 @docs radioField, selectField
 
 
@@ -58,7 +58,7 @@ import Ant.Form.Base.PasswordField as PasswordField exposing (PasswordField)
 import Ant.Form.Base.RadioField as RadioField exposing (RadioField)
 import Ant.Form.Base.RangeField as RangeField exposing (RangeField)
 import Ant.Form.Base.SelectField as SelectField exposing (SelectField)
-import Ant.Form.Base.TextField as TextField exposing (TextField)
+import Ant.Form.Base.InputField as InputField exposing (InputField)
 import Ant.Form.Error exposing (Error)
 import Ant.Form.Field as Field
 
@@ -99,7 +99,7 @@ It requires some configuration:
   - `value` describes how to obtain the field value from the form `values`
   - `update` describes how the current form `values` should be updated with a new field value
   - `attributes` let you define the specific attributes of the field (`label` and `placeholder`
-    in this case, see [`TextField.Attributes`](Form-Base-TextField#Attributes))
+    in this case, see [`InputField.Attributes`](Form-Base-InputField#Attributes))
 
 It might seem like a lot of configuration, but don't be scared! In practice, it isn't!
 For instance, you could use this function to build a `nameField` that only succeeds when the
@@ -107,7 +107,7 @@ inputted name has at least 2 characters, like this:
 
     nameField : Form { r | name : String } String
     nameField =
-        Form.textField
+        Form.inputField
             { parser =
                 \name ->
                     if String.length name < 2 then
@@ -133,21 +133,21 @@ As you can see:
   - `attributes` are most of the time a simple record
 
 -}
-textField :
+inputField :
     { parser : String -> Result String output
     , value : values -> String
     , update : String -> values -> values
     , error : values -> Maybe String
-    , attributes : TextField.Attributes
+    , attributes : InputField.Attributes
     }
     -> Form values output
-textField =
-    TextField.form (Text TextRaw)
+inputField =
+    InputField.form (Text TextRaw)
 
 
 {-| Create a form that contains a single email field.
 
-It has the same configuration options as [`textField`](#textField).
+It has the same configuration options as [`inputField`](#inputField).
 
 -}
 emailField :
@@ -155,16 +155,16 @@ emailField :
     , value : values -> String
     , update : String -> values -> values
     , error : values -> Maybe String
-    , attributes : TextField.Attributes
+    , attributes : InputField.Attributes
     }
     -> Form values output
 emailField =
-    TextField.form (Text TextEmail)
+    InputField.form (Text TextEmail)
 
 
 {-| Create a form that contains a single password field.
 
-It has the same configuration options as [`textField`](#textField).
+It has the same configuration options as [`inputField`](#inputField).
 
 -}
 passwordField :
@@ -181,7 +181,7 @@ passwordField =
 
 {-| Create a form that contains a single textarea field.
 
-It has the same configuration options as [`textField`](#textField).
+It has the same configuration options as [`inputField`](#inputField).
 
 -}
 textareaField :
@@ -189,16 +189,16 @@ textareaField :
     , value : values -> String
     , update : String -> values -> values
     , error : values -> Maybe String
-    , attributes : TextField.Attributes
+    , attributes : InputField.Attributes
     }
     -> Form values output
 textareaField =
-    TextField.form (Text TextArea)
+    InputField.form (Text TextArea)
 
 
 {-| Create a form that contains a single search field.
 
-It has the same configuration options as [`textField`](#textField).
+It has the same configuration options as [`inputField`](#inputField).
 
 -}
 searchField :
@@ -206,19 +206,19 @@ searchField :
     , value : values -> String
     , update : String -> values -> values
     , error : values -> Maybe String
-    , attributes : TextField.Attributes
+    , attributes : InputField.Attributes
     }
     -> Form values output
 searchField =
-    TextField.form (Text TextSearch)
+    InputField.form (Text TextSearch)
 
 
 {-| Create a form that contains a single number field.
 
-It has a very similar configuration to [`textField`](#textField), the only difference is:
+It has a very similar configuration to [`inputField`](#inputField), the only difference is:
 
   - Its attributes are [`NumberField.Attributes`](Form-Base-NumberField#Attributes)
-    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).
+    instead of [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 numberField :
@@ -235,10 +235,10 @@ numberField =
 
 {-| Create a form that contains a single range field.
 
-It has a very similar configuration to [`textField`](#textField), the only difference is:
+It has a very similar configuration to [`inputField`](#inputField), the only difference is:
 
   - Its attributes are [`RangeField.Attributes`](Form-Base-RangeField#Attributes)
-    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).
+    instead of [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 rangeField :
@@ -255,11 +255,11 @@ rangeField =
 
 {-| Create a form that contains a single checkbox field.
 
-It has a very similar configuration to [`textField`](#textField), the only differences are:
+It has a very similar configuration to [`inputField`](#inputField), the only differences are:
 
   - Its value is a `Bool` instead of `String`.
   - Its attributes are [`CheckboxField.Attributes`](Form-Base-CheckboxField#Attributes)
-    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).
+    instead of [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 checkboxField :
@@ -276,10 +276,10 @@ checkboxField =
 
 {-| Create a form that contains a single fieldset of radio fields.
 
-It has a very similar configuration to [`textField`](#textField), the only difference is:
+It has a very similar configuration to [`inputField`](#inputField), the only difference is:
 
   - Its attributes are [`RadioField.Attributes`](Form-Base-RadioField#Attributes)
-    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).
+    instead of [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 radioField :
@@ -296,10 +296,10 @@ radioField =
 
 {-| Create a form that contains a single select field.
 
-It has a very similar configuration to [`textField`](#textField), the only difference is:
+It has a very similar configuration to [`inputField`](#inputField), the only difference is:
 
   - Its attributes are [`SelectField.Attributes`](Form-Base-SelectField#Attributes)
-    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).
+    instead of [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 selectField :
@@ -512,7 +512,7 @@ to choose between different forms, like this:
                         Question ->
                             let
                                 titleField =
-                                    Form.textField
+                                    Form.inputField
                                         { -- ...
                                         }
 
@@ -769,7 +769,7 @@ using the result of [`fill`](#fill).
 
 -}
 type Field values
-    = Text TextType (TextField values)
+    = Text TextType (InputField values)
     | Password (PasswordField values)
     | Number (NumberField Float values)
     | Range (RangeField Float values)
