@@ -1,7 +1,7 @@
 module Routes.FormComponent.BasicExample exposing (Model, Msg, example, init, update)
 
 import Ant.Form as Form exposing (Form)
-import Ant.Form.Base.PasswordField exposing (PasswordFieldValue)
+import Ant.Form.PasswordField exposing (PasswordFieldValue)
 import Ant.Form.View as FV
 import Html exposing (Html)
 

@@ -1,4 +1,4 @@
-module Ant.Form.Base.CheckboxField exposing (CheckboxField, Attributes)
+module Ant.Form.CheckboxField exposing (CheckboxField, Attributes)
 
 {-| This module contains a reusable `CheckboxField` type.
 

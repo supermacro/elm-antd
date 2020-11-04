@@ -45,14 +45,14 @@ import Ant.Css.Common
         , formSubmitButtonClass
         )
 import Ant.Form as Form exposing (Form)
-import Ant.Form.Base.CheckboxField as CheckboxField
-import Ant.Form.Base.InputField as InputField
 import Ant.Form.Base.NumberField as NumberField
-import Ant.Form.Base.PasswordField as PasswordField
 import Ant.Form.Base.RadioField as RadioField
 import Ant.Form.Base.RangeField as RangeField
 import Ant.Form.Base.SelectField as SelectField
+import Ant.Form.CheckboxField as CheckboxField
 import Ant.Form.Error as Error exposing (Error)
+import Ant.Form.InputField as InputField
+import Ant.Form.PasswordField as PasswordField
 import Ant.Input as Input exposing (input)
 import Html exposing (Html)
 import Html.Attributes as Attributes

@@ -1,4 +1,4 @@
-module Ant.Form.Base.PasswordField exposing (PasswordField, PasswordFieldValue, Attributes)
+module Ant.Form.PasswordField exposing (PasswordField, PasswordFieldValue, Attributes)
 
 {-| This module contains a reusable `TextField` type.
 

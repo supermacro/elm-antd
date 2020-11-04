@@ -51,16 +51,16 @@ might suit your needs.
 -}
 
 import Ant.Form.Base as Base
-import Ant.Form.Base.CheckboxField as CheckboxField exposing (CheckboxField)
 import Ant.Form.Base.FormList as FormList exposing (FormList)
-import Ant.Form.Base.InputField as InputField exposing (InputField)
 import Ant.Form.Base.NumberField as NumberField exposing (NumberField)
-import Ant.Form.Base.PasswordField as PasswordField exposing (PasswordField)
 import Ant.Form.Base.RadioField as RadioField exposing (RadioField)
 import Ant.Form.Base.RangeField as RangeField exposing (RangeField)
 import Ant.Form.Base.SelectField as SelectField exposing (SelectField)
+import Ant.Form.CheckboxField as CheckboxField exposing (CheckboxField)
 import Ant.Form.Error exposing (Error)
 import Ant.Form.Field as Field
+import Ant.Form.InputField as InputField exposing (InputField)
+import Ant.Form.PasswordField as PasswordField exposing (PasswordField)
 
 
 

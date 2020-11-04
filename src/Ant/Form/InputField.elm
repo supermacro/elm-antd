@@ -1,4 +1,4 @@
-module Ant.Form.Base.InputField exposing (InputField, Attributes)
+module Ant.Form.InputField exposing (InputField, Attributes)
 
 {-| This module contains a reusable `InputField` type.
 
