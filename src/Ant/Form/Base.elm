@@ -169,6 +169,7 @@ field { isEmpty } build config =
                 { value = value
                 , update = update
                 , attributes = config.attributes
+                , isOptional = False
                 }
     in
     Form

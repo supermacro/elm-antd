@@ -24,12 +24,13 @@ type alias FormValues =
     , password : PasswordFieldValue
     , rememberMe : Bool
     , dummy : Bool
+    , address : String
     }
 
 
 type Msg
     = FormChanged (FV.Model FormValues)
-    | LogIn EmailAddress String Checkboxes
+    | LogIn EmailAddress String Checkboxes (Maybe String)
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -38,7 +39,7 @@ update msg model =
         FormChanged newFormModel ->
             ( { loginFormState = newFormModel }, Cmd.none )
 
-        LogIn email password (Checkboxes rememberMe dummy) ->
+        LogIn email password (Checkboxes rememberMe dummy) maybeAddress ->
             let
                 loginFormState =
                     model.loginFormState
@@ -106,16 +107,32 @@ form =
                 , attributes =
                     { label = "Test123" }
                 }
+
+        addressField =
+            Form.inputField
+                { parser = Ok
+                , value = .address
+                , update = \value values -> { values | address = value }
+                , error = always Nothing
+                , attributes =
+                    { label = "Address"
+                    , placeholder = "Address"
+                    }
+                }
     in
     Form.succeed LogIn
         |> Form.append emailField
         |> Form.append passwordField
         |> Form.append
+            -- horizontally render groups of fields using the
+            -- `group` function
             (Form.succeed Checkboxes
                 |> Form.append rememberMeCheckbox
                 |> Form.append dummyCheckbox
                 |> Form.group
             )
+        -- Make fields optional
+        |> Form.append (Form.optional addressField)
 
 
 init : Model
@@ -127,6 +144,7 @@ init =
                 , password = { value = "", textVisible = False }
                 , rememberMe = True
                 , dummy = True
+                , address = ""
                 }
     in
     { loginFormState = formState

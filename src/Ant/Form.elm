@@ -145,22 +145,6 @@ inputField =
     InputField.form (Text TextRaw)
 
 
-{-| Create a form that contains a single email field.
-
-It has the same configuration options as [`inputField`](#inputField).
-
--}
-emailField :
-    { parser : String -> Result String output
-    , value : values -> String
-    , update : String -> values -> values
-    , error : values -> Maybe String
-    , attributes : InputField.Attributes
-    }
-    -> Form values output
-emailField =
-    InputField.form (Text TextEmail)
-
 
 {-| Create a form that contains a single password field.
 
@@ -195,22 +179,6 @@ textareaField :
 textareaField =
     InputField.form (Text TextArea)
 
-
-{-| Create a form that contains a single search field.
-
-It has the same configuration options as [`inputField`](#inputField).
-
--}
-searchField :
-    { parser : String -> Result String output
-    , value : values -> String
-    , update : String -> values -> values
-    , error : values -> Maybe String
-    , attributes : InputField.Attributes
-    }
-    -> Form values output
-searchField =
-    InputField.form (Text TextSearch)
 
 
 {-| Create a form that contains a single number field.
@@ -400,7 +368,16 @@ are filled correctly.
 -}
 optional : Form values output -> Form values (Maybe output)
 optional =
-    Base.optional
+    let
+        markFieldAsOptional filledField = 
+            case filledField of
+                Text textType fieldInfo -> 
+                    Text textType { fieldInfo | isOptional = True }
+
+                a -> a
+    in
+    Base.optional >> Base.mapField markFieldAsOptional
+
 
 
 {-| Disable a form.
@@ -786,9 +763,9 @@ type Field values
 -}
 type TextType
     = TextRaw
-    | TextEmail
     | TextArea
-    | TextSearch
+    -- | TextEmail
+    -- | TextSearch
 
 
 {-| Represents a filled field.

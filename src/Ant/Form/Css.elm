@@ -51,6 +51,7 @@ styles theme =
         ]
     , CG.class formGroupClass
         [ displayFlex
+        , marginBottom (px 25)
         ]
     , makeSelector (formGroupClass ++ " > *:not(:first-child)")
         [ marginLeft (px 18)
@@ -68,6 +69,19 @@ styles theme =
         [ displayFlex
         , width (pct 100)
         , marginBottom (px 10)
+        , CG.withClass formRequiredFieldClass
+            [ CG.children
+                [ CG.class formLabelInnerClass
+                    [ before
+                        [ Common.content "*"
+                        , position relative
+                        , bottom (px 3)
+                        , color (hex dangerColor)
+                        , marginRight (px 4)
+                        ]
+                    ]
+                ]
+            ]
         , CG.children
             [ CG.class formLabelInnerClass
                 (commonFontStyles
@@ -77,13 +91,6 @@ styles theme =
                        , textAlign right
                        , marginTop auto
                        , marginBottom auto
-                       , before
-                            [ Common.content "*"
-                            , position relative
-                            , bottom (px 3)
-                            , color (hex dangerColor)
-                            , marginRight (px 4)
-                            ]
                        , after
                             [ Common.content ":"
                             , marginRight (px 8)
@@ -105,8 +112,6 @@ styles theme =
         , top (px 8)
         ]
 
-    -- TODO: figure out how rendering of optional fields is done
-    -- , CG.selector "." ++ formLabelClass ++ "." ++ formRequiredFieldClass ++ " > ." ++ formLabelInnerClass
     , CG.class formFieldErrorMessageClass
         (commonFontStyles
             ++ [ color (hex dangerColor)
