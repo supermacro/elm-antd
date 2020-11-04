@@ -289,7 +289,7 @@ viewItemGroup theme (ItemGroup title menuItems) =
         itemGroupLabel =
             fromUnstyled
                 (Text.text title
-                    |> Text.textType Text.Secondary
+                    |> Text.withType Text.Secondary
                     |> Text.toHtml
                 )
     in

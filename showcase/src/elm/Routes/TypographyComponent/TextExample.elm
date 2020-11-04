@@ -10,11 +10,11 @@ example =
     List.map Text.toHtml
         [ text "Ant Design"
         , text "Ant Design"
-            |> Text.textType Secondary
+            |> Text.withType Secondary
         , text "Ant Design"
-            |> Text.textType Warning
+            |> Text.withType Warning
         , text "Ant Design"
-            |> Text.textType Danger
+            |> Text.withType Danger
         , text "Ant Design"
             |> Text.disabled True
         , text "Ant Design"
@@ -29,6 +29,8 @@ example =
             |> Text.lineThrough True
         , text "Ant Design"
             |> Text.strong
+        , text "Ant Design (Link)"
+            |> Text.withType (Link "https://elm-antd.netlify.app" Text.Blank)
         ]
         |> space
         |> Space.direction Space.Vertical

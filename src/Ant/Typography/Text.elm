@@ -1,13 +1,29 @@
-module Ant.Typography.Text exposing (TextType(..), Text, text, code, keyboard, textType, strong, disabled, underlined, lineThrough, highlighted, toHtml, listToHtml)
+module Ant.Typography.Text exposing
+    ( Text
+    , text
+    , TextType(..), LinkTarget(..), withType, code, keyboard, strong, disabled, underlined, lineThrough, highlighted, toHtml, listToHtml
+    )
 
 {-| Create decorated text values
 
-@docs TextType, Text, text, code, keyboard, textType, strong, disabled, underlined, lineThrough, highlighted, toHtml, listToHtml
+
+## Create a customizeable `Text` component
+
+@docs Text
+
+@docs text
+
+
+## Customize a `Text` component
+
+@docs TextType, LinkTarget, withType, code, keyboard, strong, disabled, underlined, lineThrough, highlighted, toHtml, listToHtml
 
 -}
 
 import Ant.Internals.Theme exposing (dangerColor, warningColor)
 import Ant.Internals.Typography exposing (fontList, textColorRgba, textSelectionStyles)
+import Ant.Theme exposing (defaultTheme)
+import Color.Convert exposing (colorToHexWithAlpha)
 import Css exposing (..)
 import Html exposing (Html)
 import Html.Styled as Styled exposing (text, toUnstyled)
@@ -18,9 +34,26 @@ import Html.Styled.Attributes as A exposing (css)
 -}
 type TextType
     = Primary
+    | Link Url LinkTarget
     | Secondary
     | Warning
     | Danger
+
+
+type alias Url =
+    String
+
+
+{-| Specifies the 'target' html attribute for anchor elements
+
+More info: <https://www.w3schools.com/tags/att_a_target.asp>
+
+-}
+type LinkTarget
+    = Blank
+    | Self
+    | Parent
+    | Top
 
 
 type BorderStyle
@@ -58,15 +91,31 @@ defaultTextOptions =
     }
 
 
+linkTargetToString : LinkTarget -> String
+linkTargetToString trgt =
+    case trgt of
+        Blank ->
+            "_blank"
+
+        Self ->
+            "_self"
+
+        Parent ->
+            "_parent"
+
+        Top ->
+            "_top"
+
+
 {-| Create a text value
 
 By default the text looks just like any regular text. To decorate it, you need to apply one or more of the below options.
 
-text "hello, world!"
-|> textType Warning
-|> underlined True
-|> strong
-|> toHtml
+    text "hello, world!"
+        |> withType Warning
+        |> underlined True
+        |> strong
+        |> toHtml
 
 -}
 text : String -> Text
@@ -74,13 +123,21 @@ text value =
     Text defaultTextOptions value
 
 
-{-| Change the text's type
-text "Elm"
-|> textType Secondary
-|> toHtml
+{-| Change the text's type. This allows you to create anchor links as well, see second example.
+
+    text "Elm"
+        |> withType Secondary
+        |> toHtml
+
+    text "forgot password?"
+        |> withType (Link "https://myapp.com/forgot-password" Blank)
+        |> toHtml
+
+The second argument to `Link` is a [`LinkTarget`](Ant-Typography-Text#LinkTarget).
+
 -}
-textType : TextType -> Text -> Text
-textType textType_ (Text textOptions value) =
+withType : TextType -> Text -> Text
+withType textType_ (Text textOptions value) =
     let
         newTextOptions =
             { textOptions | type_ = textType_ }
@@ -239,6 +296,9 @@ toHtml (Text opts value) =
                     in
                     color (rgba r g b 0.25)
 
+                ( Link _ _, _ ) ->
+                    color <| hex <| colorToHexWithAlpha defaultTheme.colors.primary
+
                 ( Primary, _ ) ->
                     let
                         { r, g, b, a } =
@@ -279,7 +339,12 @@ toHtml (Text opts value) =
                     ]
 
             else
-                cursor inherit
+                case opts.type_ of
+                    Link _ _ ->
+                        cursor pointer
+
+                    _ ->
+                        cursor inherit
 
         underlineStyles =
             if opts.underlined then
@@ -325,19 +390,31 @@ toHtml (Text opts value) =
                         , Css.lineHeight (px 18)
                         , Css.fontSize (px 14)
                         ]
+
+        ( textContainer, additionalAttributes ) =
+            case opts.type_ of
+                Link url linkTarget ->
+                    ( Styled.a
+                    , [ A.href url, A.target <| linkTargetToString linkTarget ]
+                    )
+
+                _ ->
+                    ( Styled.span, [] )
     in
     toUnstyled
-        (Styled.span
-            [ css
-                [ textSelectionStyles
-                , borderStyles
-                , fontWeight
-                , cursorStyles
-                , textColor
-                , underlineStyles
-                , backgroundStyles
-                ]
-            , A.disabled opts.disabled
-            ]
+        (textContainer
+            (additionalAttributes
+                ++ [ css
+                        [ textSelectionStyles
+                        , borderStyles
+                        , fontWeight
+                        , cursorStyles
+                        , textColor
+                        , underlineStyles
+                        , backgroundStyles
+                        ]
+                   , A.disabled opts.disabled
+                   ]
+            )
             [ Styled.text value ]
         )
