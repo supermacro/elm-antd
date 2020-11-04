@@ -142,8 +142,7 @@ inputField :
     }
     -> Form values output
 inputField =
-    InputField.form (Text TextRaw)
-
+    Base.field { isEmpty = String.isEmpty } (Text TextRaw)
 
 
 {-| Create a form that contains a single password field.
@@ -160,7 +159,9 @@ passwordField :
     }
     -> Form values output
 passwordField =
-    PasswordField.form Password
+    Base.field
+        { isEmpty = \{ value } -> String.isEmpty value }
+        Password
 
 
 {-| Create a form that contains a single textarea field.
@@ -177,8 +178,7 @@ textareaField :
     }
     -> Form values output
 textareaField =
-    InputField.form (Text TextArea)
-
+    Base.field { isEmpty = String.isEmpty } (Text TextArea)
 
 
 {-| Create a form that contains a single number field.
@@ -239,7 +239,7 @@ checkboxField :
     }
     -> Form values output
 checkboxField =
-    CheckboxField.form Checkbox
+    Base.field { isEmpty = always False } Checkbox
 
 
 {-| Create a form that contains a single fieldset of radio fields.
@@ -369,15 +369,15 @@ are filled correctly.
 optional : Form values output -> Form values (Maybe output)
 optional =
     let
-        markFieldAsOptional filledField = 
+        markFieldAsOptional filledField =
             case filledField of
-                Text textType fieldInfo -> 
+                Text textType fieldInfo ->
                     Text textType { fieldInfo | isOptional = True }
 
-                a -> a
+                a ->
+                    a
     in
     Base.optional >> Base.mapField markFieldAsOptional
-
 
 
 {-| Disable a form.
@@ -764,8 +764,11 @@ type Field values
 type TextType
     = TextRaw
     | TextArea
-    -- | TextEmail
-    -- | TextSearch
+
+
+
+-- | TextEmail
+-- | TextSearch
 
 
 {-| Represents a filled field.

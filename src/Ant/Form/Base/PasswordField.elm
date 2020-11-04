@@ -1,7 +1,4 @@
-module Ant.Form.Base.PasswordField exposing
-    ( PasswordField, PasswordFieldValue, Attributes
-    , form
-    )
+module Ant.Form.Base.PasswordField exposing (PasswordField, PasswordFieldValue, Attributes)
 
 {-| This module contains a reusable `TextField` type.
 
@@ -10,14 +7,8 @@ module Ant.Form.Base.PasswordField exposing
 
 @docs PasswordField, PasswordFieldValue, Attributes
 
-
-# Helpers
-
-@docs form
-
 -}
 
-import Ant.Form.Base as Base
 import Ant.Form.Field exposing (Field)
 
 
@@ -58,18 +49,3 @@ type alias Attributes =
     { label : String
     , placeholder : String
     }
-
-
-{-| Builds a [`Form`](Form-Base#Form) with a single `TextField`.
-
-**Note:** You should not need to care about this unless you are creating your own
-custom fields.
-
--}
-form :
-    (PasswordField values -> field)
-    -> Base.FieldConfig Attributes { value : String, textVisible : Bool } values output
-    -> Base.Form values output field
-form =
-    Base.field
-        { isEmpty = \{ value } -> String.isEmpty value }

@@ -39,9 +39,9 @@ import Ant.Css.Common
         , formFieldErrorMessageClass
         , formFieldErrorMessageShowingClass
         , formGroupClass
-        , formRequiredFieldClass
         , formLabelClass
         , formLabelInnerClass
+        , formRequiredFieldClass
         , formSubmitButtonClass
         )
 import Ant.Form as Form exposing (Form)
@@ -419,6 +419,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , error = field.error
                 , showError = showError attributes.label
                 , attributes = attributes
+
                 -- FIXME: hard-coding for now because this field is not in use / exported
                 , isOptional = False
                 }
@@ -432,6 +433,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , error = field.error
                 , showError = showError attributes.label
                 , attributes = attributes
+
                 -- FIXME: hard-coding for now because this field is not in use / exported
                 , isOptional = False
                 }
@@ -456,6 +458,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , error = field.error
                 , showError = showError attributes.label
                 , attributes = attributes
+
                 -- FIXME: hard-coding for now because this field is not in use / exported
                 , isOptional = False
                 }
@@ -469,6 +472,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , error = field.error
                 , showError = showError attributes.label
                 , attributes = attributes
+
                 -- FIXME: hard-coding for now because this field is not in use / exported
                 , isOptional = False
                 }
@@ -887,7 +891,8 @@ section title fields =
 
 
 type alias FieldInfo a =
-    { a | showError : Bool
+    { a
+        | showError : Bool
         , error : Maybe Error
         , isOptional : Bool
     }
@@ -906,7 +911,6 @@ fieldContainerAttributes { isOptional, showError, error } =
         , ( formFieldErrorMessageShowingClass, showError && error /= Nothing )
         ]
     ]
-
 
 
 withLabelAndError : FieldInfo a -> String -> Html msg -> Html msg

@@ -111,7 +111,6 @@ styles theme =
         , position relative
         , top (px 8)
         ]
-
     , CG.class formFieldErrorMessageClass
         (commonFontStyles
             ++ [ color (hex dangerColor)

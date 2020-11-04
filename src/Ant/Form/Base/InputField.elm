@@ -1,7 +1,4 @@
-module Ant.Form.Base.InputField exposing
-    ( InputField, Attributes
-    , form
-    )
+module Ant.Form.Base.InputField exposing (InputField, Attributes)
 
 {-| This module contains a reusable `InputField` type.
 
@@ -10,14 +7,8 @@ module Ant.Form.Base.InputField exposing
 
 @docs InputField, Attributes
 
-
-# Helpers
-
-@docs form
-
 -}
 
-import Ant.Form.Base as Base
 import Ant.Form.Field exposing (Field)
 
 
@@ -48,17 +39,3 @@ type alias Attributes =
     { label : String
     , placeholder : String
     }
-
-
-{-| Builds a [`Form`](Form-Base#Form) with a single `InputField`.
-
-**Note:** You should not need to care about this unless you are creating your own
-custom fields.
-
--}
-form :
-    (InputField values -> field)
-    -> Base.FieldConfig Attributes String values output
-    -> Base.Form values output field
-form =
-    Base.field { isEmpty = String.isEmpty }
