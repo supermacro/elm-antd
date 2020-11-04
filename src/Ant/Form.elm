@@ -1,6 +1,7 @@
 module Ant.Form exposing
     ( Form
     , inputField, passwordField, checkboxField
+    , withAdjacentHtml
     , succeed, append, optional, disable, group, section, andThen, meta, list
     , map, mapValues
     , Field(..), TextType(..), FilledField, fill
@@ -21,6 +22,8 @@ This is a port of [hecrj/composable-form](https://package.elm-lang.org/packages/
 @docs inputField, passwordField, checkboxField
 
 > FYI: I have hidden a bunch of fields because they have not yet been integrated to render elm-antd inputs yet. But PRs are always welcome!
+
+@docs withAdjacentHtml
 
 
 # Composition
@@ -44,7 +47,6 @@ This section describes how to fill a `Form` with its `values` and obtain its
 different fields and its `output`. This is mostly used to write custom view code.
 
 If you just want to render a simple form as `Html`, check [`Form.View`](Form-View) first as it
-might suit your needs.
 
 @docs Field, TextType, FilledField, fill
 
@@ -61,6 +63,7 @@ import Ant.Form.Error exposing (Error)
 import Ant.Form.Field as Field
 import Ant.Form.InputField as InputField exposing (InputField)
 import Ant.Form.PasswordField as PasswordField exposing (PasswordField)
+import Html exposing (Html)
 
 
 
@@ -433,6 +436,41 @@ section title form =
         )
 
 
+{-| Add arbitrary Html to a field.
+
+**Use this only on individual fields**, not on an entire composed form. See example below of correct usage:
+
+        rememberMeCheckbox =
+            Form.checkboxField
+                { parser = Ok
+                , value = .rememberMe
+                , update = \value values -> { values | rememberMe = value }
+                , error = always Nothing
+                , attributes =
+                    { label = "Remember me" }
+                }
+                |> Form.withAdjacentHtml (Html.a [ A.style "cursor" "pointer" ] [ Html.text "forgot password?" ])
+
+-}
+withAdjacentHtml : Html Never -> Form values output -> Form values output
+withAdjacentHtml node form =
+    Base.Form
+        (\values ->
+            let
+                filledForm =
+                    fill form values
+
+                filledFieldsWithAdjacentHtml =
+                    List.map
+                        (\filledField -> { filledField | adjacentHtml = Just node })
+                        filledForm.fields
+            in
+            { filledForm
+                | fields = filledFieldsWithAdjacentHtml
+            }
+        )
+
+
 {-| Fill a form `andThen` fill another one.
 
 This is useful to build dynamic forms. For instance, you could use the output of a `selectField`
@@ -596,6 +634,7 @@ list config elementForIndex =
                         { state = mapFieldValues update values filledField.state
                         , error = filledField.error
                         , isDisabled = filledField.isDisabled
+                        , adjacentHtml = filledField.adjacentHtml
                         }
                     )
                     filledElement.fields
@@ -696,6 +735,7 @@ mapFieldValues update values field =
                         { state = mapFieldValues update values filledField.state
                         , error = filledField.error
                         , isDisabled = filledField.isDisabled
+                        , adjacentHtml = filledField.adjacentHtml
                         }
                     )
                     fields
@@ -708,6 +748,7 @@ mapFieldValues update values field =
                         { state = mapFieldValues update values filledField.state
                         , error = filledField.error
                         , isDisabled = filledField.isDisabled
+                        , adjacentHtml = filledField.adjacentHtml
                         }
                     )
                     fields
@@ -724,6 +765,7 @@ mapFieldValues update values field =
                                         { state = mapFieldValues update values filledField.state
                                         , error = filledField.error
                                         , isDisabled = filledField.isDisabled
+                                        , adjacentHtml = filledField.adjacentHtml
                                         }
                                     )
                                     fields

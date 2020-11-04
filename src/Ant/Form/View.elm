@@ -190,6 +190,12 @@ type alias FormConfig msg element =
     }
 
 
+{-| Represents non-interactive HTML that a user _MIGHT_ want to add to form fields
+-}
+type alias AdjacentHtml =
+    Maybe (Html Never)
+
+
 {-| Describes how a text field should be rendered.
 
   - `onChange` takes a new value for the field and returns the `msg` that should be produced.
@@ -212,6 +218,7 @@ type alias InputFieldConfig msg =
     , showError : Bool
     , attributes : InputField.Attributes
     , isOptional : Bool
+    , adjacentHtml : AdjacentHtml
 
     --, modifiers : List (Input msg -> Input msg)
     }
@@ -226,6 +233,7 @@ type alias PasswordFieldConfig msg =
     , error : Maybe Error
     , showError : Bool
     , attributes : PasswordField.Attributes
+    , adjacentHtml : AdjacentHtml
     , isOptional : Bool
     }
 
@@ -246,6 +254,7 @@ type alias NumberFieldConfig msg =
     , value : String
     , error : Maybe Error
     , showError : Bool
+    , adjacentHtml : AdjacentHtml
     , attributes : NumberField.Attributes Float
     , isOptional : Bool
     }
@@ -268,6 +277,7 @@ type alias RangeFieldConfig msg =
     , error : Maybe Error
     , showError : Bool
     , attributes : RangeField.Attributes Float
+    , adjacentHtml : AdjacentHtml
     , isOptional : Bool
     }
 
@@ -283,6 +293,7 @@ type alias CheckboxFieldConfig msg =
     , onBlur : Maybe msg
     , disabled : Bool
     , value : Bool
+    , adjacentHtml : AdjacentHtml
     , error : Maybe Error
     , showError : Bool
     , attributes : CheckboxField.Attributes
@@ -301,6 +312,7 @@ type alias RadioFieldConfig msg =
     , disabled : Bool
     , value : String
     , error : Maybe Error
+    , adjacentHtml : AdjacentHtml
     , showError : Bool
     , attributes : RadioField.Attributes
     , isOptional : Bool
@@ -319,6 +331,7 @@ type alias SelectFieldConfig msg =
     , disabled : Bool
     , value : String
     , error : Maybe Error
+    , adjacentHtml : AdjacentHtml
     , showError : Bool
     , attributes : SelectField.Attributes
     , isOptional : Bool
@@ -388,6 +401,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , showError = showError attributes.label
                 , attributes = attributes
                 , isOptional = isOptional
+                , adjacentHtml = field.adjacentHtml
                 }
 
         Form.Text type_ { attributes, value, update, isOptional } ->
@@ -401,6 +415,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                     , showError = showError attributes.label
                     , attributes = attributes
                     , isOptional = isOptional
+                    , adjacentHtml = field.adjacentHtml
                     }
             in
             case type_ of
@@ -419,6 +434,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , error = field.error
                 , showError = showError attributes.label
                 , attributes = attributes
+                , adjacentHtml = field.adjacentHtml
 
                 -- FIXME: hard-coding for now because this field is not in use / exported
                 , isOptional = False
@@ -428,6 +444,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
             customConfig.rangeField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
+                , adjacentHtml = field.adjacentHtml
                 , disabled = field.isDisabled || disabled
                 , value = value
                 , error = field.error
@@ -445,6 +462,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , disabled = field.isDisabled || disabled
                 , value = value
                 , error = field.error
+                , adjacentHtml = field.adjacentHtml
                 , showError = showError attributes.label
                 , attributes = attributes
                 }
@@ -456,6 +474,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , disabled = field.isDisabled || disabled
                 , value = value
                 , error = field.error
+                , adjacentHtml = field.adjacentHtml
                 , showError = showError attributes.label
                 , attributes = attributes
 
@@ -470,6 +489,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , disabled = field.isDisabled || disabled
                 , value = value
                 , error = field.error
+                , adjacentHtml = field.adjacentHtml
                 , showError = showError attributes.label
                 , attributes = attributes
 
@@ -723,24 +743,24 @@ form { onSubmit, action, loading, state, fields } =
 
 
 inputField : InputFieldConfig msg -> Html msg
-inputField ({ onChange, value, attributes } as fieldInfo) =
+inputField ({ onChange, value, attributes, adjacentHtml } as fieldInfo) =
     input onChange
         |> Input.withPlaceholder attributes.placeholder
         |> Input.toHtml value
-        |> withLabelAndError fieldInfo attributes.label
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 passwordInputField : PasswordFieldConfig msg -> Html msg
-passwordInputField ({ onChange, onToggleTextVisibility, value, attributes } as fieldInfo) =
+passwordInputField ({ onChange, onToggleTextVisibility, value, attributes, adjacentHtml } as fieldInfo) =
     input onChange
         |> Input.withPlaceholder attributes.placeholder
         |> Input.withPasswordType onToggleTextVisibility value.textVisible
         |> Input.toHtml value.value
-        |> withLabelAndError fieldInfo attributes.label
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 textareaField : InputFieldConfig msg -> Html msg
-textareaField ({ onChange, onBlur, disabled, value, attributes } as fieldInfo) =
+textareaField ({ onChange, onBlur, disabled, value, attributes, adjacentHtml } as fieldInfo) =
     Html.textarea
         ([ Events.onInput onChange
          , Attributes.disabled disabled
@@ -750,11 +770,11 @@ textareaField ({ onChange, onBlur, disabled, value, attributes } as fieldInfo) =
             |> withMaybeAttribute Events.onBlur onBlur
         )
         []
-        |> withLabelAndError fieldInfo attributes.label
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 numberField : NumberFieldConfig msg -> Html msg
-numberField ({ onChange, onBlur, disabled, value, attributes } as fieldInfo) =
+numberField ({ onChange, onBlur, disabled, value, attributes, adjacentHtml } as fieldInfo) =
     let
         stepAttr =
             attributes.step
@@ -774,11 +794,11 @@ numberField ({ onChange, onBlur, disabled, value, attributes } as fieldInfo) =
             |> withMaybeAttribute Events.onBlur onBlur
         )
         []
-        |> withLabelAndError fieldInfo attributes.label
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 rangeField : RangeFieldConfig msg -> Html msg
-rangeField ({ onChange, onBlur, disabled, value, error, showError, attributes } as fieldInfo) =
+rangeField ({ onChange, onBlur, disabled, value, attributes, adjacentHtml } as fieldInfo) =
     Html.div
         [ Attributes.class "elm-form-range-field" ]
         [ Html.input
@@ -795,7 +815,7 @@ rangeField ({ onChange, onBlur, disabled, value, error, showError, attributes } 
             []
         , Html.span [] [ Html.text (value |> Maybe.map String.fromFloat |> Maybe.withDefault "") ]
         ]
-        |> withLabelAndError fieldInfo attributes.label
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 {-| TODO:
@@ -811,7 +831,7 @@ opportunity for refactoring:
 
 -}
 checkboxField : CheckboxFieldConfig msg -> Html msg
-checkboxField { onChange, value, disabled, attributes } =
+checkboxField { onChange, value, disabled, attributes, adjacentHtml } =
     let
         checkboxHtml =
             checkbox
@@ -820,7 +840,7 @@ checkboxField { onChange, value, disabled, attributes } =
                 |> Checkbox.withDisabled disabled
                 |> Checkbox.toHtml value
     in
-    Html.div [ Attributes.class formCheckboxFieldClass ] [ checkboxHtml ]
+    Html.div [ Attributes.class formCheckboxFieldClass ] [ checkboxHtml, createAdjacentHtmlNode adjacentHtml ]
 
 
 radioField : RadioFieldConfig msg -> Html msg
@@ -851,7 +871,7 @@ radioField ({ onChange, onBlur, disabled, value, error, showError, attributes } 
 
 
 selectField : SelectFieldConfig msg -> Html msg
-selectField ({ onChange, onBlur, disabled, value, error, showError, attributes } as fieldInfo) =
+selectField ({ onChange, onBlur, disabled, value, error, showError, attributes, adjacentHtml } as fieldInfo) =
     let
         toOption ( key, label_ ) =
             Html.option
@@ -874,7 +894,7 @@ selectField ({ onChange, onBlur, disabled, value, error, showError, attributes }
             |> withMaybeAttribute Events.onBlur onBlur
         )
         (placeholderOption :: List.map toOption attributes.options)
-        |> withLabelAndError fieldInfo attributes.label
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 group : List (Html msg) -> Html msg
@@ -898,6 +918,16 @@ type alias FieldInfo a =
     }
 
 
+createAdjacentHtmlNode : Maybe (Html Never) -> Html msg
+createAdjacentHtmlNode maybeAdjacentHtml =
+    case maybeAdjacentHtml of
+        Just node ->
+            Html.map never node
+
+        Nothing ->
+            Html.text ""
+
+
 wrapInFieldContainer : FieldInfo a -> List (Html msg) -> Html msg
 wrapInFieldContainer fieldInfo =
     Html.label <| fieldContainerAttributes fieldInfo
@@ -913,12 +943,13 @@ fieldContainerAttributes { isOptional, showError, error } =
     ]
 
 
-withLabelAndError : FieldInfo a -> String -> Html msg -> Html msg
-withLabelAndError ({ showError, error } as fieldInfo) label fieldAsHtml =
+withLabelAndError : FieldInfo a -> String -> Maybe (Html Never) -> Html msg -> Html msg
+withLabelAndError ({ showError, error } as fieldInfo) label maybeAdjacentNode fieldAsHtml =
     [ fieldLabel label
     , Html.div []
         [ fieldAsHtml
         , maybeErrorMessage showError error
+        , createAdjacentHtmlNode maybeAdjacentNode
         ]
     ]
         |> wrapInFieldContainer fieldInfo

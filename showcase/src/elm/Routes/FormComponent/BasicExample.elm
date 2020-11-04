@@ -3,7 +3,9 @@ module Routes.FormComponent.BasicExample exposing (Model, Msg, example, init, up
 import Ant.Form as Form exposing (Form)
 import Ant.Form.PasswordField exposing (PasswordFieldValue)
 import Ant.Form.View as FV
+import Ant.Typography.Text as Text exposing (text)
 import Html exposing (Html)
+import Html.Attributes as A
 
 
 type EmailAddress
@@ -89,6 +91,14 @@ form =
                 }
 
         rememberMeCheckbox =
+            let
+                forgotPasswordLink =
+                    text "forgot password?"
+                        |> Text.withType (Text.Link "https://example.com/reset-password" Text.Self)
+                        |> Text.toHtml
+                        |> List.singleton
+                        |> Html.span [ A.style "margin-left" "20px" ]
+            in
             Form.checkboxField
                 { parser = Ok
                 , value = .rememberMe
@@ -97,6 +107,7 @@ form =
                 , attributes =
                     { label = "Remember me" }
                 }
+                |> Form.withAdjacentHtml forgotPasswordLink
 
         dummyCheckbox =
             Form.checkboxField
