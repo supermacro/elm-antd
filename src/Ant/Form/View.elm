@@ -25,7 +25,7 @@ module Ant.Form.View exposing
 
 # Custom
 
-@docs CustomConfig, FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
+@docs FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
 @docs CheckboxFieldConfig, RadioFieldConfig, SelectFieldConfig
 @docs FormListConfig, FormListItemConfig
 
@@ -153,23 +153,6 @@ type alias ViewConfig values msg =
 type Validation
     = ValidateOnSubmit
     | ValidateOnBlur
-
-
-type alias CustomConfig msg element =
-    { form : FormConfig msg element -> element
-    , inputField : InputFieldConfig msg -> element
-    , passwordField : PasswordFieldConfig msg -> element
-    , textareaField : InputFieldConfig msg -> element
-    , numberField : NumberFieldConfig msg -> element
-    , rangeField : RangeFieldConfig msg -> element
-    , checkboxField : CheckboxFieldConfig msg -> element
-    , radioField : RadioFieldConfig msg -> element
-    , selectField : SelectFieldConfig msg -> element
-    , group : List element -> element
-    , section : String -> List element -> element
-    , formList : FormListConfig msg element -> element
-    , formListItem : FormListItemConfig msg element -> element
-    }
 
 
 {-| Describes how a form should be rendered.
@@ -374,18 +357,17 @@ type alias FieldConfig values msg =
 
 
 renderField :
-    CustomConfig msg element
-    -> FieldConfig values msg
+    FieldConfig values msg
     -> Form.FilledField values
-    -> element
-renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConfig) field =
+    -> Html msg
+renderField ({ onChange, onBlur, disabled, showError } as fieldConfig) field =
     let
         blur label =
             Maybe.map (\onBlurEvent -> onBlurEvent label) onBlur
     in
     case field.state of
         Form.Password { attributes, value, update, isOptional } ->
-            customConfig.passwordField
+            passwordInputField
                 { onChange =
                     \inputVal ->
                         update { value = inputVal, textVisible = value.textVisible }
@@ -420,13 +402,13 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
             in
             case type_ of
                 Form.TextRaw ->
-                    customConfig.inputField config
+                    inputField config
 
                 Form.TextArea ->
-                    customConfig.textareaField config
+                    textareaField config
 
         Form.Number { attributes, value, update } ->
-            customConfig.numberField
+            numberField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
                 , disabled = field.isDisabled || disabled
@@ -441,7 +423,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 }
 
         Form.Range { attributes, value, update } ->
-            customConfig.rangeField
+            rangeField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
                 , adjacentHtml = field.adjacentHtml
@@ -456,7 +438,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 }
 
         Form.Checkbox { attributes, value, update } ->
-            customConfig.checkboxField
+            checkboxField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
                 , disabled = field.isDisabled || disabled
@@ -468,7 +450,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 }
 
         Form.Radio { attributes, value, update } ->
-            customConfig.radioField
+            radioField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
                 , disabled = field.isDisabled || disabled
@@ -483,7 +465,7 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 }
 
         Form.Select { attributes, value, update } ->
-            customConfig.selectField
+            selectField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
                 , disabled = field.isDisabled || disabled
@@ -499,21 +481,21 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
 
         Form.Group fields ->
             fields
-                |> List.map (maybeIgnoreChildError field.error >> renderField customConfig { fieldConfig | disabled = field.isDisabled || disabled })
-                |> customConfig.group
+                |> List.map (maybeIgnoreChildError field.error >> renderField { fieldConfig | disabled = field.isDisabled || disabled })
+                |> group
 
         Form.Section title fields ->
             fields
-                |> List.map (maybeIgnoreChildError field.error >> renderField customConfig { fieldConfig | disabled = field.isDisabled || disabled })
-                |> customConfig.section title
+                |> List.map (maybeIgnoreChildError field.error >> renderField { fieldConfig | disabled = field.isDisabled || disabled })
+                |> section title
 
         Form.List { forms, add, attributes } ->
-            customConfig.formList
+            formList
                 { forms =
                     List.map
                         (\{ fields, delete } ->
-                            customConfig.formListItem
-                                { fields = List.map (renderField customConfig fieldConfig) fields
+                            formListItem
+                                { fields = List.map (renderField fieldConfig) fields
                                 , delete =
                                     attributes.delete
                                         |> Maybe.map
@@ -549,28 +531,6 @@ maybeIgnoreChildError maybeParentError field =
 
 
 -- Basic HTML
-
-
-{-| Default [`CustomConfig`](#CustomConfig) implementation for HTML output.
--}
-htmlViewConfig : CustomConfig msg (Html msg)
-htmlViewConfig =
-    { form = form
-    , inputField = inputField
-    , group = group
-    , passwordField = passwordInputField
-
-    -- TODO: Un-integrated
-    , textareaField = textareaField
-    , numberField = numberField
-    , rangeField = rangeField
-    , checkboxField = checkboxField
-    , radioField = radioField
-    , selectField = selectField
-    , section = section
-    , formList = formList
-    , formListItem = formListItem
-    }
 
 
 {-| Render a form as HTML!
@@ -619,7 +579,6 @@ toHtml { onChange, action, loading, validation } form_ model =
 
         fieldToElement =
             renderField
-                htmlViewConfig
                 { onChange = \values -> onChange { model | values = values }
                 , onBlur = onBlur
                 , disabled = model.state == Loading
@@ -648,7 +607,7 @@ toHtml { onChange, action, loading, validation } form_ model =
         showError label =
             errorTracking.showAllErrors || Set.member label errorTracking.showFieldError
     in
-    htmlViewConfig.form
+    form
         { onSubmit = onSubmit
         , action = action
         , loading = loading
