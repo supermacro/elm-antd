@@ -14,6 +14,7 @@
         "Ant.Form.CheckboxField",
         "Ant.Form.InputField",
         "Ant.Form.PasswordField",
+        "Ant.Form.View",
         "Ant.Icons",
         "Ant.Input",
         "Ant.Layout",
