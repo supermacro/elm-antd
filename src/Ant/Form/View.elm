@@ -2,7 +2,6 @@ module Ant.Form.View exposing
     ( Model, State(..), idle
     , ViewConfig, Validation(..)
     , toHtml
-    , FormConfig
     )
 
 {-| This module provides helpers to render a [`Form`](Form#Form).
@@ -18,16 +17,9 @@ module Ant.Form.View exposing
 @docs ViewConfig, Validation
 
 
-# Basic HTML
+# Rendering the form
 
 @docs toHtml
-
-
-# Custom
-
-@docs FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
-@docs CheckboxFieldConfig, RadioFieldConfig, SelectFieldConfig
-@docs FormListConfig, FormListItemConfig
 
 -}
 
@@ -164,12 +156,12 @@ type Validation
   - `fields` contains the already rendered fields.
 
 -}
-type alias FormConfig msg element =
+type alias FormConfig msg =
     { onSubmit : Maybe msg
     , state : State
     , action : String
     , loading : String
-    , fields : List element
+    , fields : List (Html msg)
     }
 
 
@@ -662,7 +654,7 @@ formListItem { fields, delete, disabled } =
         (deleteButton :: fields)
 
 
-form : FormConfig msg (Html msg) -> Html msg
+form : FormConfig msg -> Html msg
 form { onSubmit, action, loading, state, fields } =
     let
         onSubmitEvent =
