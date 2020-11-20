@@ -27,7 +27,6 @@ module Ant.Button exposing
 
 import Ant.Css.Common exposing (..)
 import Ant.Icons as Icon exposing (Icon)
-import Ant.Theme exposing (Theme, defaultTheme)
 import Css exposing (..)
 import Html exposing (Html)
 import Html.Styled as H exposing (fromUnstyled, text, toUnstyled)
@@ -73,7 +72,6 @@ type alias Options msg =
     , href : Maybe String
     , onClick : Maybe msg
     , icon : Maybe (Icon msg)
-    , theme : Theme
 
     -- size : Size (Small, Medium, Large)
     -- etc etc
@@ -90,7 +88,6 @@ defaultOptions =
     , href = Nothing
     , onClick = Nothing
     , icon = Nothing
-    , theme = defaultTheme
     }
 
 
