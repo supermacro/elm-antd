@@ -283,8 +283,8 @@ viewMenuItem theme (MenuItem msg state itemContents) =
         [ fromUnstyled itemContents ]
 
 
-
-type alias SharedStyles = List ( String, String )
+type alias SharedStyles =
+    List ( String, String )
 
 
 sharedUnorderedListStyles : SharedStyles
@@ -294,11 +294,9 @@ sharedUnorderedListStyles =
     ]
 
 
-applySharedStyles : ( String -> String -> attribute ) -> SharedStyles -> List attribute
+applySharedStyles : (String -> String -> attribute) -> SharedStyles -> List attribute
 applySharedStyles fn =
-    List.map (\(property, value) -> fn property value)
-
-
+    List.map (\( property, value ) -> fn property value)
 
 
 viewItemGroup : Theme -> ItemGroup msg -> Styled.Html msg
@@ -335,10 +333,6 @@ viewSubMenuContent theme subMenuContent =
             viewSubMenu theme subMenu
 
 
-
-
-
-
 viewSubMenu : Theme -> SubMenu msg -> Styled.Html msg
 viewSubMenu theme (SubMenu _ subMenuContentList) =
     Styled.li []
@@ -365,7 +359,7 @@ viewMenuContent theme menuContent =
 toHtml : Menu msg -> Html msg
 toHtml (Menu config menuContents) =
     ul
-        (style "border-right" "1px solid #f0f0f0" ::
-            applySharedStyles style sharedUnorderedListStyles
+        (style "border-right" "1px solid #f0f0f0"
+            :: applySharedStyles style sharedUnorderedListStyles
         )
         (List.map (toUnstyled << viewMenuContent config.theme) menuContents)
