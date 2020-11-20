@@ -8,3 +8,7 @@ showcase/elm-stuff/
 showcase/node_modules/
 showcase/file-server/node_modules/
 
+# Ignore docker files that I use to test ci / cd workflows locally
+Dockerfile
+.dockerignore
+
