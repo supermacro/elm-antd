@@ -1,7 +1,7 @@
 module Ant.Input.Css exposing (createInputBoxShadow, styles)
 
 import Ant.Css.Common exposing (inputRootActiveClass, inputRootClass, passwordInputVisibilityToggleIconClass)
-import Ant.Internals.Typography exposing (commonFontStyles, textColorRgba)
+import Ant.Internals.Typography exposing (commonFontStyles, headingColorRgba)
 import Ant.Theme exposing (Theme)
 import Color as Color
 import Color.Convert exposing (colorToHexWithAlpha)
@@ -15,7 +15,7 @@ textColor : Color
 textColor =
     let
         { r, g, b, a } =
-            textColorRgba
+            headingColorRgba
     in
     rgba r g b a
 
@@ -61,6 +61,7 @@ styles theme =
             commonFontStyles
                 ++ [ color textColor
                    , property "caret-color" "#000"
+                   , fontSize (px 14)
                    ]
 
         inputBoxShadow =
@@ -112,7 +113,6 @@ styles theme =
         (inputStyles
             ++ [ border zero
                , width (pct 95)
-               , marginTop (px 1)
                , height (px 19)
                , active
                     [ outline none
