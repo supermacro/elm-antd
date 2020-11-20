@@ -9,7 +9,7 @@ module Router exposing
 import Ant.Css
 import Ant.Layout as Layout exposing (LayoutTree)
 import Ant.Menu as Menu exposing (Menu)
-import Ant.Theme exposing (createTheme)
+import Ant.Theme as Theme exposing (defaultTheme)
 import Base64
 import Browser
 import Browser.Navigation as Nav
@@ -690,12 +690,6 @@ getPageTitleAndContentView activeRoute =
 view : (Msg -> msg) -> Model -> Browser.Document msg
 view toMsg model =
     let
-        currentThemePrimaryColor =
-            model.footer.color
-
-        theme =
-            createTheme currentThemePrimaryColor
-
         ( label, componentContentView ) =
             getPageTitleAndContentView model.activeRoute
 
@@ -724,10 +718,19 @@ view toMsg model =
                         (Layout.footer <| toUnstyled <| Styled.map FooterMessage <| footer model.footer)
                     )
                 )
+
+        currentThemePrimaryColor =
+            model.footer.color
+
+        customTheme =
+            { defaultTheme
+                | colors =
+                    Theme.createMonochromaticColors currentThemePrimaryColor
+            }
     in
     { title = label ++ " - Elm Ant Design"
     , body =
-        [ Ant.Css.createThemedStyles theme
+        [ Ant.Css.createThemedStyles customTheme
         , Html.map toMsg <| Layout.toHtml layout
         ]
     }

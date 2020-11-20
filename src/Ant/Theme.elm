@@ -1,17 +1,12 @@
 module Ant.Theme exposing
     ( Theme
-    , createTheme
     , defaultTheme
+    , createMonochromaticColors
     )
 
 {-| This module allows you to create custom themes for your components.
 
 @docs Theme
-
-@docs createTheme
-
-
-### Leaked Internals. Do Not Use :)
 
 @docs defaultTheme
 
@@ -21,17 +16,6 @@ import Color exposing (Color)
 import Color.Manipulate exposing (darken, lighten)
 
 
-{-| The default antd theme. You shouldn't ever use the function since all components already use it under the hood. It is currently exposed as I transition other components over to the themable API. This function **will** be removed / hidden in the future.
--}
-defaultTheme : Theme
-defaultTheme =
-    let
-        antdDefaultPrimaryColor =
-            Color.rgb255 24 144 255
-    in
-    createTheme antdDefaultPrimaryColor
-
-
 type alias Colors =
     { primary : Color
     , primaryFaded : Color
@@ -39,49 +23,71 @@ type alias Colors =
     }
 
 
+type alias TypographyOptions =
+    { defaultTextColor : Color
+    , secondaryTextColor : Color
+    }
+
+
 {-| elm-antd theme info used to generate custom themes
 -}
 type alias Theme =
     { colors : Colors
+    , typography : TypographyOptions
     }
 
 
-{-| Create a theme based on a given Primary color. elm-antd takes care of generating the various shades of that color necessary. Note that you need to install `avh4/elm-color` in order to create a `Color` value.
+{-| Utility function to create a set of [monochromatic](https://www.w3schools.com/colors/colors_monochromatic.asp) colors based off of a given "main" color. This is what is used under the hood in Elm Antd to create the `Colors` record.
+-}
+createMonochromaticColors : Color -> Colors
+createMonochromaticColors mainColor =
+    { primary = mainColor
+    , primaryFaded =
+        mainColor
+            |> lighten 0.1
+    , primaryStrong =
+        mainColor
+            |> darken 0.1
+    }
 
-    import Ant.Button as Btn exposing (button)
-    import Ant.Css
-    import Ant.Theme exposing (createTheme)
-    import Color
-    import Html exposing (Html, div)
 
+{-| The default antd theme. This record is exposed to allow you to create custom themes without having to create a whole `Theme` record from scratch.
+
+    import Ant.Css exposing (createThemedStyles)
+    import Ant.Theme exposing (defaultTheme)
+
+
+    -- ...
     view : Html msg
     view =
         let
-            myThemePrimaryColor =
-                Color.rgb255 18 147 216
-
-            theme =
-                createTheme myThemePrimaryColor
+            myCustomTheme =
+                { defaultTheme
+                    | colors = myCustomColors
+                }
         in
-        div []
-            [ Ant.Css.createThemedStyles theme
-
-            -- This button will now be themed according to the primaryColor color you chose!
-            , Btn.toHtml <| button "Hello, elm-antd!"
-            ]
+        div [ createThemedStyles myCustomTheme ]
 
 -}
-createTheme : Color -> Theme
-createTheme primaryColor =
+defaultTheme : Theme
+defaultTheme =
     let
+        antdDefaultPrimaryColor =
+            Color.rgb255 24 144 255
+
         colors =
-            { primary = primaryColor
-            , primaryFaded =
-                primaryColor
-                    |> lighten 0.1
-            , primaryStrong =
-                primaryColor
-                    |> darken 0.1
+            createMonochromaticColors antdDefaultPrimaryColor
+
+        defaultTextColor =
+            Color.rgba 0 0 0 0.85
+
+        typography =
+            { defaultTextColor = defaultTextColor
+            , secondaryTextColor =
+                defaultTextColor
+                    |> lighten 0.2
             }
     in
-    { colors = colors }
+    { colors = colors
+    , typography = typography
+    }
