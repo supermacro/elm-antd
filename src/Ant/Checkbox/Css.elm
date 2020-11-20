@@ -50,6 +50,8 @@ styles theme =
         [ cursor notAllowed ]
 
     -- hide the default browser checkbox
+    -- the default browser checkbox is used to maintain the state of the checkbox.
+    -- We then use the state ("checked" or "unchecked" to style our checkbox appropriately)
     , makeSelector (checkboxLabelClass ++ "> input[type=\"checkbox\"]")
         [ display none
         ]
@@ -92,12 +94,12 @@ styles theme =
         , display block
         , visibility hidden
         , left (px 4)
-        , top (px 1.33)
+        , top (px 1.63)
         , width (px 5.5)
         , height (px 9)
         , borderStyle solid
         , borderColor (hex "#fff")
-        , borderWidth4 zero (px 2.5) (px 2.5) zero
+        , borderWidth4 zero (px 2) (px 2) zero
         , transform <| rotate (deg 45)
         ]
     , makeSelector (checkboxLabelClass ++ "> input[type=\"checkbox\"]:disabled ~" ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
