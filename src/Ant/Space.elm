@@ -25,7 +25,7 @@ Note that by default, a Space value is set to be horizontally layed out with a "
 
 -}
 
-import Css exposing (Px, column, displayFlex, flexDirection, marginBottom, marginRight, px, row)
+import Css exposing (Px, column, display, flexDirection, inlineFlex, marginBottom, marginRight, px, row)
 import Css.Global exposing (global, selector)
 import Html exposing (Html)
 import Html.Styled exposing (div, fromUnstyled, toUnstyled)
@@ -160,7 +160,9 @@ toHtml (Space config children) =
                 ]
 
         styledChildren =
-            List.map fromUnstyled children
+            List.map
+                (\child -> div [ class "elm-antd__space-item" ] [ fromUnstyled child ])
+                children
 
         direction_ =
             case config.direction of
@@ -173,7 +175,7 @@ toHtml (Space config children) =
         styledSpace =
             div
                 [ class spaceClass
-                , css [ displayFlex, flexDirection direction_ ]
+                , css [ display inlineFlex, flexDirection direction_ ]
                 ]
                 (spacingStyle :: styledChildren)
     in
