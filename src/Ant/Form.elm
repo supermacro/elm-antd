@@ -169,7 +169,7 @@ passwordField =
 
 {-| Create a form that contains a single textarea field.
 
-It has the same configuration options as [`inputField`](#inputField).
+It has the same configuration options as [`inputField`](#inputField), except the first argument specifies the vertical height of the text area as per the [`textarea` spec](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea)
 
 -}
 textareaField :
