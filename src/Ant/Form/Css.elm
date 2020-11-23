@@ -16,13 +16,12 @@ import Ant.Css.Common as Common
         , makeSelector
         )
 import Ant.Input.Css exposing (createInputBoxShadow)
-import Ant.Internals.Theme exposing (dangerColor)
 import Ant.Internals.Typography exposing (commonFontStyles, headingColorRgba)
 import Ant.Theme exposing (Theme)
-import Color.Convert exposing (hexToColor)
 import Css exposing (..)
 import Css.Global as CG exposing (Snippet)
 import Css.Transitions exposing (transition)
+import Color.Convert exposing (colorToHexWithAlpha)
 
 
 labelColor : Color
@@ -37,13 +36,10 @@ labelColor =
 styles : Theme -> List Snippet
 styles theme =
     let
-        -- TODO: this is a hack that works for now
-        -- but realistically, the dangerColor should be part of a theme
-        -- See https://github.com/supermacro/elm-antd/blob/master/src/Ant/Theme.elm#L35
-        errorBoxShadow =
-            hexToColor dangerColor
-                |> Result.withDefault theme.colors.primary
-                |> createInputBoxShadow
+        errorBoxShadow = createInputBoxShadow theme.colors.danger
+
+        dangerColorHex =
+            hex <| colorToHexWithAlpha theme.colors.danger
     in
     [ CG.class formClass
         [ width (pct 100)
@@ -76,7 +72,7 @@ styles theme =
                         [ Common.content "*"
                         , position relative
                         , bottom (px 3)
-                        , color (hex dangerColor)
+                        , color dangerColorHex
                         , marginRight (px 4)
                         ]
                     ]
@@ -113,7 +109,7 @@ styles theme =
         ]
     , CG.class formFieldErrorMessageClass
         (commonFontStyles
-            ++ [ color (hex dangerColor)
+            ++ [ color dangerColorHex
                , fontSize (px 14)
                , marginTop (px -1)
                , opacity (int 0)
@@ -130,13 +126,13 @@ styles theme =
                     ]
                 ]
             , CG.class inputRootClass
-                [ borderColor (hex dangerColor)
+                [ borderColor dangerColorHex
                 , hover
-                    [ borderColor (hex dangerColor)
+                    [ borderColor dangerColorHex
                     ]
                 , focus
                     [ errorBoxShadow
-                    , borderColor (hex dangerColor)
+                    , borderColor dangerColorHex
                     ]
                 ]
             , CG.class inputRootActiveClass

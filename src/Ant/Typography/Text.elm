@@ -20,14 +20,26 @@ module Ant.Typography.Text exposing
 
 -}
 
-import Ant.Internals.Theme exposing (dangerColor, warningColor)
-import Ant.Internals.Typography exposing (fontList, textColorRgba, textSelectionStyles)
-import Ant.Theme exposing (defaultTheme)
-import Color.Convert exposing (colorToHexWithAlpha)
+{-
+   A NOTE TO DEVELOPERS.
+
+   This component is themable.
+
+   See styles at src/Ant/Typography/Text/Css.elm
+-}
+
+import Ant.Typography.Text.Css as TextCss 
 import Css exposing (..)
 import Html exposing (Html)
-import Html.Styled as Styled exposing (text, toUnstyled)
-import Html.Styled.Attributes as A exposing (css)
+import Html.Attributes as Attr
+
+
+boolToString : Bool -> String
+boolToString val =
+    if val then
+        "true"
+    else
+        "false"
 
 
 {-| What kind of text is it?
@@ -270,151 +282,81 @@ listToHtml =
 toHtml : Text -> Html msg
 toHtml (Text opts value) =
     let
-        codeFontList : List String
-        codeFontList =
-            [ qt "SFMono-Regular"
-            , "Consolas"
-            , qt "Liberation Mono"
-            , "Menlo"
-            , "Courier"
-            , "monospace"
-            ]
+        textTypeClass =
+            case opts.type_ of
+                Link _ _ ->
+                    TextCss.textLinkClass
 
-        fontWeight =
-            if opts.strong then
-                Css.fontWeight (Css.int 600)
+                Primary ->
+                    TextCss.textPrimaryClass
 
-            else
-                Css.fontWeight Css.normal
+                Secondary ->
+                    TextCss.textSecondaryClass
 
-        textColor =
-            case ( opts.type_, opts.disabled ) of
-                ( _, True ) ->
-                    let
-                        { r, g, b } =
-                            textColorRgba
-                    in
-                    color (rgba r g b 0.25)
+                Warning ->
+                    TextCss.textWarningClass
 
-                ( Link _ _, _ ) ->
-                    color <| hex <| colorToHexWithAlpha defaultTheme.colors.primary
+                Danger ->
+                    TextCss.textDangerClass
 
-                ( Primary, _ ) ->
-                    let
-                        { r, g, b, a } =
-                            textColorRgba
-                    in
-                    color (rgba r g b a)
-
-                ( Secondary, _ ) ->
-                    let
-                        { r, g, b } =
-                            textColorRgba
-                    in
-                    color (rgba r g b 0.45)
-
-                ( Warning, _ ) ->
-                    color (hex warningColor)
-
-                ( Danger, _ ) ->
-                    color (hex dangerColor)
-
-        backgroundStyles =
-            if opts.highlighted then
-                Css.batch
-                    [ color (hex "#000")
-                    , backgroundColor (hex "#ffe58f")
-                    , maxWidth fitContent
-                    , property "max-width" "-moz-fit-content"
-                    ]
-
-            else
-                Css.batch []
-
-        cursorStyles =
-            if opts.disabled then
-                Css.batch
-                    [ property "user-select" "none"
-                    , cursor notAllowed
-                    ]
-
-            else
-                case opts.type_ of
-                    Link _ _ ->
-                        cursor pointer
-
-                    _ ->
-                        cursor inherit
-
-        underlineStyles =
-            if opts.underlined then
-                textDecorationLine underline
-
-            else if opts.lineThrough then
-                textDecorationLine Css.lineThrough
-
-            else
-                textDecorationLine inherit
-
-        borderStyles =
+        
+        borderStylesClass =
             case opts.borderStyle of
                 Code ->
-                    Css.batch
-                        [ Css.fontFamilies codeFontList
-                        , Css.backgroundColor (rgba 150 150 150 0.1)
-                        , padding3 (px 2.38) (px 4.76) (px 1.19)
-                        , marginLeft (px 2.3)
-                        , marginRight (px 2.3)
-                        , border3 (px 1) solid (rgba 0 0 0 0.06)
-                        , borderRadius (px 3)
-                        , Css.fontSize (px 11.9)
-                        , Css.lineHeight (px 18.7008)
-                        ]
+                    TextCss.textCodeClass
 
                 Keyboard ->
-                    Css.batch
-                        [ Css.fontFamilies codeFontList
-                        , Css.backgroundColor (rgba 150 150 150 0.06)
-                        , padding3 (px 2.38) (px 4.76) (px 1.19)
-                        , marginLeft (px 2.3)
-                        , marginRight (px 2.3)
-                        , border3 (px 1) solid (rgba 0 0 0 0.06)
-                        , borderRadius (px 3)
-                        , Css.fontSize (px 12.6)
-                        , Css.lineHeight (px 18.7008)
-                        ]
+                    TextCss.textKeyboardClass
 
                 None ->
-                    Css.batch
-                        [ Css.fontFamilies fontList
-                        , Css.lineHeight (px 18)
-                        , Css.fontSize (px 14)
-                        ]
+                    "no-border-class"
+
+        boldTextAttribute =
+            Attr.attribute "bold" (boolToString opts.strong)
+
+        underlinedAttribute =
+            Attr.attribute "underlined" (boolToString opts.underlined)
+
+        lineThroughAttribute =
+            Attr.attribute "lineThrough" (boolToString opts.lineThrough)
+
+        highlightedAttribute =
+            Attr.attribute "highlighted" (boolToString opts.highlighted)
+
+        disabledAttribute =
+            Attr.attribute "disabled" (boolToString opts.disabled)
+
 
         ( textContainer, additionalAttributes ) =
             case opts.type_ of
                 Link url linkTarget ->
-                    ( Styled.a
-                    , [ A.href url, A.target <| linkTargetToString linkTarget ]
+                    ( Html.a
+                    , [ Attr.href url
+                      , Attr.target <| linkTargetToString linkTarget 
+                      ]
                     )
 
                 _ ->
-                    ( Styled.span, [] )
+                    if opts.highlighted then
+                        ( Html.mark, [] )
+                    else
+                        case opts.borderStyle of
+                            Keyboard ->
+                                ( Html.kbd, [] )
+                            _ ->
+                                ( Html.span, [] )
     in
-    toUnstyled
-        (textContainer
-            (additionalAttributes
-                ++ [ css
-                        [ textSelectionStyles
-                        , borderStyles
-                        , fontWeight
-                        , cursorStyles
-                        , textColor
-                        , underlineStyles
-                        , backgroundStyles
-                        ]
-                   , A.disabled opts.disabled
-                   ]
-            )
-            [ Styled.text value ]
+    textContainer
+        (additionalAttributes
+            ++ [ Attr.class TextCss.textClass
+               , Attr.class textTypeClass
+               , Attr.class borderStylesClass
+               , disabledAttribute
+               , boldTextAttribute
+               , highlightedAttribute
+               , lineThroughAttribute
+               , underlinedAttribute
+               ]
         )
+        [ Html.text value ]
+        

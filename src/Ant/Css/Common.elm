@@ -15,6 +15,7 @@ module Ant.Css.Common exposing
     , checkboxCustomCheckmarkClass
     , checkboxLabelClass
     , content
+    , elmAntdPrefix
     , formCheckboxFieldClass
     , formClass
     , formFieldErrorMessageClass

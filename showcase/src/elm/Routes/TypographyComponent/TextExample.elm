@@ -7,31 +7,31 @@ import Html exposing (Html)
 
 example : Html msg
 example =
-    List.map Text.toHtml
-        [ text "Ant Design"
-        , text "Ant Design"
-            |> Text.withType Secondary
-        , text "Ant Design"
-            |> Text.withType Warning
-        , text "Ant Design"
-            |> Text.withType Danger
-        , text "Ant Design"
-            |> Text.disabled True
-        , text "Ant Design"
-            |> Text.highlighted True
-        , text "Ant Design"
-            |> Text.code
-        , text "Ant Design"
-            |> Text.keyboard
-        , text "Ant Design"
-            |> Text.underlined True
-        , text "Ant Design"
-            |> Text.lineThrough True
-        , text "Ant Design"
-            |> Text.strong
-        , text "Ant Design (Link)"
-            |> Text.withType (Link "https://elm-antd.netlify.app" Text.Blank)
-        ]
+    [ text "Ant Design (default)"
+    , text "Ant Design (secondary)"
+        |> Text.withType Secondary
+    , text "Ant Design (warning)"
+        |> Text.withType Warning
+    , text "Ant Design (danger)"
+        |> Text.withType Danger
+    , text "Ant Design (disabled)"
+        |> Text.disabled True
+    , text "Ant Design (mark)"
+        |> Text.highlighted True
+    , text "Ant Design (code)"
+        |> Text.code
+    , text "Ant Design (keyboard)"
+        |> Text.keyboard
+    , text "Ant Design (underlined)"
+        |> Text.underlined True
+    , text "Ant Design (delete)"
+        |> Text.lineThrough True
+    , text "Ant Design (strong)"
+        |> Text.strong
+    , text "Ant Design (Link)"
+        |> Text.withType (Link "https://elm-antd.netlify.app" Text.Blank)
+    ]
+        |> List.map Text.toHtml
         |> space
         |> Space.direction Space.Vertical
         |> Space.toHtml
