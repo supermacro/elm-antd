@@ -725,7 +725,7 @@ view toMsg model =
         customTheme =
             { defaultTheme
                 | colors =
-                    Theme.createMonochromaticColors currentThemePrimaryColor
+                    Theme.createMonochromaticColors currentThemePrimaryColor 0.1 defaultTheme.colors
             }
     in
     { title = label ++ " - Elm Ant Design"
