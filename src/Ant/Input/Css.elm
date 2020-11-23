@@ -87,6 +87,7 @@ styles theme =
                , height auto
                , paddingTop (px 8)
                , lineHeight (num 1.5715)
+               , maxHeight (pct 100)
                , resize vertical
                , focus
                     [ inputBorderColor
