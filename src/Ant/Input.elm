@@ -1,6 +1,6 @@
 module Ant.Input exposing
     ( Input, input
-    , InputSize(..), withSize, InputType(..), withPasswordType, withPlaceholder, withTextAreaType
+    , InputSize(..), withSize, withPasswordType, withPlaceholder, withTextAreaType
     , toHtml
     )
 
@@ -14,7 +14,7 @@ module Ant.Input exposing
 
 ## Modifying the input
 
-@docs InputSize, withSize, InputType, withPasswordType, withPlaceholder, withTextAreaType
+@docs InputSize, withSize, withPasswordType, withPlaceholder, withTextAreaType
 
 
 ## Rendering the input
