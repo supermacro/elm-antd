@@ -28,7 +28,7 @@ module Ant.Typography.Text exposing
    See styles at src/Ant/Typography/Text/Css.elm
 -}
 
-import Ant.Typography.Text.Css as TextCss 
+import Ant.Typography.Text.Css as TextCss
 import Css exposing (..)
 import Html exposing (Html)
 import Html.Attributes as Attr
@@ -38,6 +38,7 @@ boolToString : Bool -> String
 boolToString val =
     if val then
         "true"
+
     else
         "false"
 
@@ -299,7 +300,6 @@ toHtml (Text opts value) =
                 Danger ->
                     TextCss.textDangerClass
 
-        
         borderStylesClass =
             case opts.borderStyle of
                 Code ->
@@ -326,23 +326,24 @@ toHtml (Text opts value) =
         disabledAttribute =
             Attr.attribute "disabled" (boolToString opts.disabled)
 
-
         ( textContainer, additionalAttributes ) =
             case opts.type_ of
                 Link url linkTarget ->
                     ( Html.a
                     , [ Attr.href url
-                      , Attr.target <| linkTargetToString linkTarget 
+                      , Attr.target <| linkTargetToString linkTarget
                       ]
                     )
 
                 _ ->
                     if opts.highlighted then
                         ( Html.mark, [] )
+
                     else
                         case opts.borderStyle of
                             Keyboard ->
                                 ( Html.kbd, [] )
+
                             _ ->
                                 ( Html.span, [] )
     in
@@ -359,4 +360,3 @@ toHtml (Text opts value) =
                ]
         )
         [ Html.text value ]
-        

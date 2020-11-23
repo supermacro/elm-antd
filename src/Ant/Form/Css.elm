@@ -18,10 +18,10 @@ import Ant.Css.Common as Common
 import Ant.Input.Css exposing (createInputBoxShadow)
 import Ant.Internals.Typography exposing (commonFontStyles, headingColorRgba)
 import Ant.Theme exposing (Theme)
+import Color.Convert exposing (colorToHexWithAlpha)
 import Css exposing (..)
 import Css.Global as CG exposing (Snippet)
 import Css.Transitions exposing (transition)
-import Color.Convert exposing (colorToHexWithAlpha)
 
 
 labelColor : Color
@@ -36,7 +36,8 @@ labelColor =
 styles : Theme -> List Snippet
 styles theme =
     let
-        errorBoxShadow = createInputBoxShadow theme.colors.danger
+        errorBoxShadow =
+            createInputBoxShadow theme.colors.danger
 
         dangerColorHex =
             hex <| colorToHexWithAlpha theme.colors.danger
