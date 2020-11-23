@@ -17,7 +17,7 @@ Note that by default, a Space value is set to be horizontally layed out with a "
 
 # Customizing the layout between components
 
-@docs direction, withSize, SpaceDirection, SpaceSize
+@docs direction, withSize, SpaceDirection, SpaceSize, withFullCrossAxisSize
 
 
 # Rendering your Space component

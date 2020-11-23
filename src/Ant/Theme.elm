@@ -56,6 +56,8 @@ createMonochromaticColors mainColor delta colors =
     }
 
 
+{-| The default set of colors in the base Elm Antd theme. You can import this record to make your own custom Colors.
+-}
 defaultColors : Colors
 defaultColors =
     let
