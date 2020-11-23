@@ -1,8 +1,7 @@
 module Ant.Space exposing
     ( space
-    , direction, withSize, SpaceDirection(..), SpaceSize(..)
+    , direction, withSize, SpaceDirection(..), SpaceSize(..), withFullCrossAxisSize
     , toHtml
-    , withFullCrossAxisSize
     )
 
 {-| Utilities for setting spacing between components
