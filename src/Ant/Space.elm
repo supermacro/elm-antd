@@ -2,6 +2,7 @@ module Ant.Space exposing
     ( space
     , direction, withSize, SpaceDirection(..), SpaceSize(..)
     , toHtml
+    , withFullCrossAxisSize
     )
 
 {-| Utilities for setting spacing between components
@@ -48,9 +49,15 @@ type SpaceSize
     | Custom Float
 
 
+type CrossAxisSize
+    = Full
+    | Auto
+
+
 type alias SpaceConfig =
     { direction : SpaceDirection
     , size : SpaceSize
+    , crossAxisSize : CrossAxisSize
     }
 
 
@@ -58,6 +65,7 @@ defaultSpaceConfig : SpaceConfig
 defaultSpaceConfig =
     { direction = Horizontal
     , size = Small
+    , crossAxisSize = Auto
     }
 
 
@@ -105,6 +113,24 @@ withSize size (Space config children) =
     Space newConfig children
 
 
+{-| Whether to fill up the full space (100% width or 100% height) of the perpendicular axis. The main axis of a `Space` container is determined by the direction of the `Space` container.
+
+If the direction is `Horizontal` then the cross axis is vertical. Thus, `withFullCrossAxisSize` will set `height: 100%`.
+
+If the direction is `Vertical` then the cross axis is horizontal. Thus, `withFullCrossAxisSize` will set `width: 100%`.
+
+-}
+withFullCrossAxisSize : Space msg -> Space msg
+withFullCrossAxisSize (Space config children) =
+    let
+        newConfig =
+            { config
+                | crossAxisSize = Full
+            }
+    in
+    Space newConfig children
+
+
 spaceSizeToPixels : SpaceSize -> Px
 spaceSizeToPixels size =
     case size of
@@ -145,13 +171,31 @@ toHtml (Space config children) =
         spaceClass =
             "elm-antd__space_container-" ++ spaceSizeToString config.size
 
-        marginRule =
+        ( marginRule, crossAxisSpacingStyle ) =
             case config.direction of
                 Horizontal ->
-                    marginRight
+                    let
+                        verticalSpacing =
+                            case config.crossAxisSize of
+                                Full ->
+                                    Css.height (Css.pct 100)
+
+                                Auto ->
+                                    Css.height Css.auto
+                    in
+                    ( marginRight, verticalSpacing )
 
                 Vertical ->
-                    marginBottom
+                    let
+                        horizontalSpacing =
+                            case config.crossAxisSize of
+                                Full ->
+                                    Css.width (Css.pct 100)
+
+                                Auto ->
+                                    Css.width Css.auto
+                    in
+                    ( marginBottom, horizontalSpacing )
 
         spacingStyle =
             global
@@ -175,7 +219,7 @@ toHtml (Space config children) =
         styledSpace =
             div
                 [ class spaceClass
-                , css [ display inlineFlex, flexDirection direction_ ]
+                , css [ display inlineFlex, flexDirection direction_, crossAxisSpacingStyle ]
                 ]
                 (spacingStyle :: styledChildren)
     in
