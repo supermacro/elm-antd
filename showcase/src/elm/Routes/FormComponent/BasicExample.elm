@@ -27,12 +27,13 @@ type alias FormValues =
     , rememberMe : Bool
     , dummy : Bool
     , address : String
+    , comments : String
     }
 
 
 type Msg
     = FormChanged (FV.Model FormValues)
-    | LogIn EmailAddress String Checkboxes (Maybe String)
+    | LogIn EmailAddress String Checkboxes (Maybe String) String
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -41,7 +42,7 @@ update msg model =
         FormChanged newFormModel ->
             ( { loginFormState = newFormModel }, Cmd.none )
 
-        LogIn email password (Checkboxes rememberMe dummy) maybeAddress ->
+        LogIn email password (Checkboxes rememberMe dummy) maybeAddress comments ->
             let
                 loginFormState =
                     model.loginFormState
@@ -130,6 +131,20 @@ form =
                     , placeholder = "Address"
                     }
                 }
+
+        commentsField =
+            Form.textareaField
+                { rows = 10
+                }
+                { parser = Ok
+                , value = .comments
+                , update = \value values -> { values | comments = value }
+                , error = always Nothing
+                , attributes =
+                    { label = "Comments"
+                    , placeholder = ""
+                    }
+                }
     in
     Form.succeed LogIn
         |> Form.append emailField
@@ -144,6 +159,7 @@ form =
             )
         -- Make fields optional
         |> Form.append (Form.optional addressField)
+        |> Form.append commentsField
 
 
 init : Model
@@ -156,6 +172,7 @@ init =
                 , rememberMe = True
                 , dummy = True
                 , address = ""
+                , comments = ""
                 }
     in
     { loginFormState = formState

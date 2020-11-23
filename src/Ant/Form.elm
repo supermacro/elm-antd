@@ -1,6 +1,6 @@
 module Ant.Form exposing
     ( Form
-    , inputField, passwordField, checkboxField
+    , inputField, passwordField, checkboxField, textareaField
     , withAdjacentHtml
     , succeed, append, optional, disable, group, section, andThen, meta, list
     , map, mapValues
@@ -19,7 +19,7 @@ This is a port of [hecrj/composable-form](https://package.elm-lang.org/packages/
 
 # Fields
 
-@docs inputField, passwordField, checkboxField
+@docs inputField, passwordField, checkboxField, textareaField
 
 > FYI: I have hidden a bunch of fields because they have not yet been integrated to render elm-antd inputs yet. But PRs are always welcome!
 
@@ -173,15 +173,18 @@ It has the same configuration options as [`inputField`](#inputField).
 
 -}
 textareaField :
-    { parser : String -> Result String output
-    , value : values -> String
-    , update : String -> values -> values
-    , error : values -> Maybe String
-    , attributes : InputField.Attributes
+    { rows : Int
     }
+    ->
+        { parser : String -> Result String output
+        , value : values -> String
+        , update : String -> values -> values
+        , error : values -> Maybe String
+        , attributes : InputField.Attributes
+        }
     -> Form values output
-textareaField =
-    Base.field { isEmpty = String.isEmpty } (Text TextArea)
+textareaField textAreaConfig =
+    Base.field { isEmpty = String.isEmpty } (Text <| TextArea textAreaConfig)
 
 
 {-| Create a form that contains a single number field.
@@ -805,7 +808,7 @@ type Field values
 -}
 type TextType
     = TextRaw
-    | TextArea
+    | TextArea { rows : Int }
 
 
 

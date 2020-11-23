@@ -396,8 +396,8 @@ renderField ({ onChange, onBlur, disabled, showError } as fieldConfig) field =
                 Form.TextRaw ->
                     inputField config
 
-                Form.TextArea ->
-                    textareaField config
+                Form.TextArea textAreaConfig ->
+                    textareaField textAreaConfig config
 
         Form.Number { attributes, value, update } ->
             numberField
@@ -710,17 +710,12 @@ passwordInputField ({ onChange, onToggleTextVisibility, value, attributes, adjac
         |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
-textareaField : InputFieldConfig msg -> Html msg
-textareaField ({ onChange, onBlur, disabled, value, attributes, adjacentHtml } as fieldInfo) =
-    Html.textarea
-        ([ Events.onInput onChange
-         , Attributes.disabled disabled
-         , Attributes.placeholder attributes.placeholder
-         , Attributes.value value
-         ]
-            |> withMaybeAttribute Events.onBlur onBlur
-        )
-        []
+textareaField : { rows : Int } -> InputFieldConfig msg -> Html msg
+textareaField textAreaConfig ({ onChange, onBlur, disabled, value, attributes, adjacentHtml } as fieldInfo) =
+    input onChange
+        |> Input.withPlaceholder attributes.placeholder
+        |> Input.withTextAreaType textAreaConfig
+        |> Input.toHtml value
         |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
