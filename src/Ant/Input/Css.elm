@@ -81,6 +81,20 @@ styles theme =
                     ]
                ]
         )
+    , CG.selector ("textarea." ++ inputRootClass)
+        ((rootNodeStyles ++ inputStyles)
+            ++ [ transitionStyles
+               , height auto
+               , paddingTop (px 8)
+               , lineHeight (num 1.5715)
+               , resize vertical
+               , focus
+                    [ inputBorderColor
+                    , inputBoxShadow
+                    , outline none
+                    ]
+               ]
+        )
 
     -- Styles for wrapped inputs (i.e. password input) whose root node is a div
     , CG.selector ("div." ++ inputRootClass)

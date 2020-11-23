@@ -1,6 +1,6 @@
 module Ant.Input exposing
     ( Input, input
-    , InputSize(..), withSize, InputType(..), withPasswordType, withPlaceholder
+    , InputSize(..), withSize, InputType(..), withPasswordType, withPlaceholder, withTextAreaType
     , toHtml
     )
 
@@ -14,7 +14,7 @@ module Ant.Input exposing
 
 ## Modifying the input
 
-@docs InputSize, withSize, InputType, withPasswordType, withPlaceholder
+@docs InputSize, withSize, InputType, withPasswordType, withPlaceholder, withTextAreaType
 
 
 ## Rendering the input
@@ -64,6 +64,7 @@ type InputSize
 type InputType msg
     = Text
     | Password { textVisible : Bool } (Bool -> msg)
+    | TextArea { rows : Int }
 
 
 type alias InputOpts msg =
@@ -106,6 +107,35 @@ withSize size (Input inputOpts tagger) =
     let
         newOpts =
             { inputOpts | size = size }
+    in
+    Input newOpts tagger
+
+
+{-| Turn the input into a text area. You must specify the vertical height of the text area in rows as defined by the [`textarea` spec](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea).
+
+If you specify a value less than 1 for rows, then we'll use a default value of 4.
+
+    view : Html msg
+    view =
+        input TextAreaVAlueChanged
+            |> withTextAreaType { rows = 10 }
+            |> toHtml
+
+-}
+withTextAreaType : { rows : Int } -> Input msg -> Input msg
+withTextAreaType { rows } (Input inputOpts tagger) =
+    let
+        savedRows =
+            if rows < 1 then
+                4
+
+            else
+                rows
+
+        newOpts =
+            { inputOpts
+                | type_ = TextArea { rows = savedRows }
+            }
     in
     Input newOpts tagger
 
@@ -196,6 +226,15 @@ toHtml value (Input inputOpts tagger) =
             H.input
                 (baseAttributes
                     ++ [ Attr.type_ "text"
+                       , class inputRootClass
+                       ]
+                )
+                []
+
+        TextArea { rows } ->
+            H.textarea
+                (baseAttributes
+                    ++ [ Attr.rows rows
                        , class inputRootClass
                        ]
                 )
