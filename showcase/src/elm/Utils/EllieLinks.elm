@@ -10,6 +10,7 @@ fromSourceCode { version, elmCode } =
     let
         { title, code } =
             FileParser.elliefy elmCode
+                |> Result.withDefault { title = "parse error", code = "..." }
 
         -- Package parsing is interesting because every package has its own '&packages='
         packagesUrl =

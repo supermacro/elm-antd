@@ -15,37 +15,26 @@ import Url.Builder
 -------------------
 
 
-elliefy : String -> { title : String, code : String }
+elliefy : String -> Result String { title : String, code : String }
 elliefy srcCode =
     let
         ast =
             Parser.run fileParser srcCode
 
         title =
-            case ast of
-                Ok file ->
-                    getTitle file
+            Result.map getTitle ast
 
-                Err _ ->
-                    "Parsing Failure"
-
-        parsed =
-            Result.map (changeModuleNameTo "Main") ast
+        code =
+            ast
+                |> Result.map (changeModuleNameTo "Main") 
                 |> Result.map elliefyExports
                 |> Result.map toString
-
-        parsedSrcCode =
-            case parsed of
-                Err parserErr ->
-                    -- elm code will literally just contain the error message if parsing fails
-                    "Error! " ++ deadEndsToString parserErr
-
-                Ok code ->
-                    code
     in
-    { title = title
-    , code = parsedSrcCode
-    }
+    Result.map2 
+        (\t c -> { title = t, code = c })
+        title 
+        code
+        |> Result.mapError deadEndsToString
 
 
 
