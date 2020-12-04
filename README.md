@@ -41,6 +41,42 @@ view model =
       ]
 ```
 
+#### Apply Normalize Css
+
+Elm Ant Design is built with normalize.css as its blank canvas.
+
+You should add normalize.css to your project or else the components may not look as expected.
+
+You have three options:
+
+- Add normalize.css as a `link` tag to your html directly
+
+```html
+<link href="https://pagecdn.io/lib/normalize/8.0.1/normalize.min.css" rel="stylesheet" crossorigin="anonymous"  >
+```
+
+- Add normizlize.css as a Elm module using [elm-css-modern-normalize](https://package.elm-lang.org/packages/hmsk/elm-css-modern-normalize/latest)
+
+```elm
+import Css.ModernNormalize as ModernNormalize
+
+view : Model -> Html Msg
+view _ =
+    [ ModernNormalize.globalHtml
+    , Ant.Css.defaultStyles
+      -- Your application view comes here
+    ]
+
+```
+
+- Use a bundler for NodeJS to load normalize into your app at build-time.
+
+npm module Link: https://www.npmjs.com/package/normalize
+
+```javascript
+require('normalize')
+```
+
 #### [Optional] - Add Extra animations
 
 There are additional animations you can add to your `elm-antd` project by adding JS event handlers to your app.

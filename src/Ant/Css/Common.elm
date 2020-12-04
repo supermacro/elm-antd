@@ -15,10 +15,12 @@ module Ant.Css.Common exposing
     , checkboxCustomCheckmarkClass
     , checkboxLabelClass
     , content
+    , elmAntdPrefix
     , formCheckboxFieldClass
     , formClass
     , formFieldErrorMessageClass
     , formFieldErrorMessageShowingClass
+    , formGroupClass
     , formLabelClass
     , formLabelInnerClass
     , formRequiredFieldClass
@@ -180,6 +182,11 @@ formFieldErrorMessageClass =
 formFieldErrorMessageShowingClass : String
 formFieldErrorMessageShowingClass =
     formFieldErrorMessageClass ++ "_showing-error"
+
+
+formGroupClass : String
+formGroupClass =
+    formClass ++ "-group"
 
 
 formCheckboxFieldClass : String

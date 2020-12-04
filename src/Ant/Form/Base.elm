@@ -1,5 +1,5 @@
 module Ant.Form.Base exposing
-    ( Form
+    ( Form(..)
     , field, FieldConfig, custom, CustomField
     , succeed, append, andThen, optional, disable, meta
     , map, mapValues, mapField
@@ -67,6 +67,7 @@ import `Form.Base` every time we needed to use those operations with our brand n
 
 import Ant.Form.Error as Error exposing (Error)
 import Ant.Form.Field exposing (Field)
+import Html exposing (Html)
 
 
 {-| A [`Form`](Form#Form) that can contain any type of `field`.
@@ -169,6 +170,7 @@ field { isEmpty } build config =
                 { value = value
                 , update = update
                 , attributes = config.attributes
+                , isOptional = False
                 }
     in
     Form
@@ -185,7 +187,13 @@ field { isEmpty } build config =
                         Err ( firstError, _ ) ->
                             ( Just firstError, firstError == Error.RequiredFieldIsEmpty )
             in
-            { fields = [ { state = field_ values, error = error, isDisabled = False } ]
+            { fields =
+                [ { state = field_ values
+                  , error = error
+                  , isDisabled = False
+                  , adjacentHtml = Nothing
+                  }
+                ]
             , result = result
             , isEmpty = isEmpty_
             }
@@ -239,6 +247,7 @@ custom fillField =
                                 Err ( firstError, _ ) ->
                                     Just firstError
                   , isDisabled = False
+                  , adjacentHtml = Nothing
                   }
                 ]
             , result = filled.result
@@ -443,6 +452,7 @@ mapField fn form =
                         { state = fn filledField.state
                         , error = filledField.error
                         , isDisabled = filledField.isDisabled
+                        , adjacentHtml = filledField.adjacentHtml
                         }
                     )
                     filled.fields
@@ -474,6 +484,7 @@ type alias FilledField field =
     { state : field
     , error : Maybe Error
     , isDisabled : Bool
+    , adjacentHtml : Maybe (Html Never)
     }
 
 

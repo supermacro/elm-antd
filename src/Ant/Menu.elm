@@ -26,7 +26,7 @@ import Css.Transitions exposing (transition)
 import Html exposing (Html, div, li, text, ul)
 import Html.Attributes exposing (style)
 import Html.Styled as Styled exposing (fromUnstyled, toUnstyled)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attr exposing (css)
 import Html.Styled.Events exposing (onClick)
 
 
@@ -283,13 +283,29 @@ viewMenuItem theme (MenuItem msg state itemContents) =
         [ fromUnstyled itemContents ]
 
 
+type alias SharedStyles =
+    List ( String, String )
+
+
+sharedUnorderedListStyles : SharedStyles
+sharedUnorderedListStyles =
+    [ ( "padding-left", "0" )
+    , ( "list-style-type", "none" )
+    ]
+
+
+applySharedStyles : (String -> String -> attribute) -> SharedStyles -> List attribute
+applySharedStyles fn =
+    List.map (\( property, value ) -> fn property value)
+
+
 viewItemGroup : Theme -> ItemGroup msg -> Styled.Html msg
 viewItemGroup theme (ItemGroup title menuItems) =
     let
         itemGroupLabel =
             fromUnstyled
                 (Text.text title
-                    |> Text.textType Text.Secondary
+                    |> Text.withType Text.Secondary
                     |> Text.toHtml
                 )
     in
@@ -299,7 +315,7 @@ viewItemGroup theme (ItemGroup title menuItems) =
                 [ padding4 (px 8) (px 16) (px 8) (px 32) ]
             ]
             [ itemGroupLabel ]
-        , Styled.ul [] <|
+        , Styled.ul (applySharedStyles Attr.style sharedUnorderedListStyles) <|
             List.map (viewMenuItem theme) menuItems
         ]
 
@@ -320,7 +336,7 @@ viewSubMenuContent theme subMenuContent =
 viewSubMenu : Theme -> SubMenu msg -> Styled.Html msg
 viewSubMenu theme (SubMenu _ subMenuContentList) =
     Styled.li []
-        [ Styled.ul [] <|
+        [ Styled.ul (applySharedStyles Attr.style sharedUnorderedListStyles) <|
             List.map (viewSubMenuContent theme) subMenuContentList
         ]
 
@@ -343,6 +359,7 @@ viewMenuContent theme menuContent =
 toHtml : Menu msg -> Html msg
 toHtml (Menu config menuContents) =
     ul
-        [ style "border-right" "1px solid #f0f0f0"
-        ]
+        (style "border-right" "1px solid #f0f0f0"
+            :: applySharedStyles style sharedUnorderedListStyles
+        )
         (List.map (toUnstyled << viewMenuContent config.theme) menuContents)

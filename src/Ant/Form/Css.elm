@@ -6,18 +6,19 @@ import Ant.Css.Common as Common
         , formClass
         , formFieldErrorMessageClass
         , formFieldErrorMessageShowingClass
+        , formGroupClass
         , formLabelClass
         , formLabelInnerClass
         , formRequiredFieldClass
         , formSubmitButtonClass
         , inputRootActiveClass
         , inputRootClass
+        , makeSelector
         )
 import Ant.Input.Css exposing (createInputBoxShadow)
-import Ant.Internals.Theme exposing (dangerColor)
 import Ant.Internals.Typography exposing (commonFontStyles, headingColorRgba)
 import Ant.Theme exposing (Theme)
-import Color.Convert exposing (hexToColor)
+import Color.Convert exposing (colorToHexWithAlpha)
 import Css exposing (..)
 import Css.Global as CG exposing (Snippet)
 import Css.Transitions exposing (transition)
@@ -35,17 +36,22 @@ labelColor =
 styles : Theme -> List Snippet
 styles theme =
     let
-        -- TODO: this is a hack that works for now
-        -- but realistically, the dangerColor should be part of a theme
-        -- See https://github.com/supermacro/elm-antd/blob/master/src/Ant/Theme.elm#L35
         errorBoxShadow =
-            hexToColor dangerColor
-                |> Result.withDefault theme.colors.primary
-                |> createInputBoxShadow
+            createInputBoxShadow theme.colors.danger
+
+        dangerColorHex =
+            hex <| colorToHexWithAlpha theme.colors.danger
     in
     [ CG.class formClass
         [ width (pct 100)
         , maxWidth (px 700)
+        ]
+    , CG.class formGroupClass
+        [ displayFlex
+        , marginBottom (px 25)
+        ]
+    , makeSelector (formGroupClass ++ " > *:not(:first-child)")
+        [ marginLeft (px 18)
         ]
     , CG.class formCheckboxFieldClass
         [ marginLeft (pct 33)
@@ -60,6 +66,19 @@ styles theme =
         [ displayFlex
         , width (pct 100)
         , marginBottom (px 10)
+        , CG.withClass formRequiredFieldClass
+            [ CG.children
+                [ CG.class formLabelInnerClass
+                    [ before
+                        [ Common.content "*"
+                        , position relative
+                        , bottom (px 3)
+                        , color dangerColorHex
+                        , marginRight (px 4)
+                        ]
+                    ]
+                ]
+            ]
         , CG.children
             [ CG.class formLabelInnerClass
                 (commonFontStyles
@@ -69,13 +88,6 @@ styles theme =
                        , textAlign right
                        , marginTop auto
                        , marginBottom auto
-                       , before
-                            [ Common.content "*"
-                            , position relative
-                            , bottom (px 3)
-                            , color (hex dangerColor)
-                            , marginRight (px 4)
-                            ]
                        , after
                             [ Common.content ":"
                             , marginRight (px 8)
@@ -96,12 +108,9 @@ styles theme =
         , position relative
         , top (px 8)
         ]
-
-    -- TODO: figure out how rendering of optional fields is done
-    -- , CG.selector "." ++ formLabelClass ++ "." ++ formRequiredFieldClass ++ " > ." ++ formLabelInnerClass
     , CG.class formFieldErrorMessageClass
         (commonFontStyles
-            ++ [ color (hex dangerColor)
+            ++ [ color dangerColorHex
                , fontSize (px 14)
                , marginTop (px -1)
                , opacity (int 0)
@@ -118,16 +127,13 @@ styles theme =
                     ]
                 ]
             , CG.class inputRootClass
-                [ borderColor (hex dangerColor)
+                [ borderColor dangerColorHex
                 , hover
-                    [ borderColor (hex dangerColor)
+                    [ borderColor dangerColorHex
                     ]
                 , focus
-                    -- TODO: this is a hack that works for now
-                    -- but realistically, the dangerColor should be part of a theme
-                    -- See https://github.com/supermacro/elm-antd/blob/master/src/Ant/Theme.elm#L35
                     [ errorBoxShadow
-                    , borderColor (hex dangerColor)
+                    , borderColor dangerColorHex
                     ]
                 ]
             , CG.class inputRootActiveClass

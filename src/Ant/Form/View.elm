@@ -1,10 +1,7 @@
 module Ant.Form.View exposing
     ( Model, State(..), idle
     , ViewConfig, Validation(..)
-    , toHtml, htmlViewConfig
-    , CustomConfig, FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
-    , CheckboxFieldConfig, RadioFieldConfig, SelectFieldConfig
-    , FormListConfig, FormListItemConfig
+    , toHtml
     )
 
 {-| This module provides helpers to render a [`Form`](Form#Form).
@@ -20,16 +17,9 @@ module Ant.Form.View exposing
 @docs ViewConfig, Validation
 
 
-# Basic HTML
+# Rendering the form
 
-@docs toHtml, htmlViewConfig
-
-
-# Custom
-
-@docs CustomConfig, FormConfig, InputFieldConfig, NumberFieldConfig, RangeFieldConfig
-@docs CheckboxFieldConfig, RadioFieldConfig, SelectFieldConfig
-@docs FormListConfig, FormListItemConfig
+@docs toHtml
 
 -}
 
@@ -40,19 +30,21 @@ import Ant.Css.Common
         ( formCheckboxFieldClass
         , formFieldErrorMessageClass
         , formFieldErrorMessageShowingClass
+        , formGroupClass
         , formLabelClass
         , formLabelInnerClass
+        , formRequiredFieldClass
         , formSubmitButtonClass
         )
 import Ant.Form as Form exposing (Form)
-import Ant.Form.Base.CheckboxField as CheckboxField
 import Ant.Form.Base.NumberField as NumberField
-import Ant.Form.Base.PasswordField as PasswordField
 import Ant.Form.Base.RadioField as RadioField
 import Ant.Form.Base.RangeField as RangeField
 import Ant.Form.Base.SelectField as SelectField
-import Ant.Form.Base.TextField as TextField
+import Ant.Form.CheckboxField as CheckboxField
 import Ant.Form.Error as Error exposing (Error)
+import Ant.Form.InputField as InputField
+import Ant.Form.PasswordField as PasswordField
 import Ant.Input as Input exposing (input)
 import Html exposing (Html)
 import Html.Attributes as Attributes
@@ -155,35 +147,6 @@ type Validation
     | ValidateOnBlur
 
 
-
--- Custom
-
-
-{-| The configuration needed to create a custom view function.
-
-It needs functions to render each of [the supported `Form` fields](Form#fields), a function to
-render a [`group`](Form#group) of fields, and a function to wrap the fields together in a `form`.
-
--}
-type alias CustomConfig msg element =
-    { form : FormConfig msg element -> element
-    , inputField : InputFieldConfig msg -> element
-    , emailField : InputFieldConfig msg -> element
-    , passwordField : PasswordFieldConfig msg -> element
-    , textareaField : InputFieldConfig msg -> element
-    , searchField : InputFieldConfig msg -> element
-    , numberField : NumberFieldConfig msg -> element
-    , rangeField : RangeFieldConfig msg -> element
-    , checkboxField : CheckboxFieldConfig msg -> element
-    , radioField : RadioFieldConfig msg -> element
-    , selectField : SelectFieldConfig msg -> element
-    , group : List element -> element
-    , section : String -> List element -> element
-    , formList : FormListConfig msg element -> element
-    , formListItem : FormListItemConfig msg element -> element
-    }
-
-
 {-| Describes how a form should be rendered.
 
   - `onSubmit` contains the output of the form if there are no validation errors.
@@ -193,13 +156,19 @@ type alias CustomConfig msg element =
   - `fields` contains the already rendered fields.
 
 -}
-type alias FormConfig msg element =
+type alias FormConfig msg =
     { onSubmit : Maybe msg
     , state : State
     , action : String
     , loading : String
-    , fields : List element
+    , fields : List (Html msg)
     }
+
+
+{-| Represents non-interactive HTML that a user _MIGHT_ want to add to form fields
+-}
+type alias AdjacentHtml =
+    Maybe (Html Never)
 
 
 {-| Describes how a text field should be rendered.
@@ -212,7 +181,7 @@ type alias FormConfig msg element =
   - `error` might contain a field [`Error`](Form-Error#Error).
   - `showError` tells you if you should show the `error` for this particular field. Its value
     depends on the [validation strategy](#Validation).
-  - `attributes` are [`TextField.Attributes`](Form-Base-TextField#Attributes).
+  - `attributes` are [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 type alias InputFieldConfig msg =
@@ -222,7 +191,9 @@ type alias InputFieldConfig msg =
     , value : String
     , error : Maybe Error
     , showError : Bool
-    , attributes : TextField.Attributes
+    , attributes : InputField.Attributes
+    , isOptional : Bool
+    , adjacentHtml : AdjacentHtml
 
     --, modifiers : List (Input msg -> Input msg)
     }
@@ -237,6 +208,8 @@ type alias PasswordFieldConfig msg =
     , error : Maybe Error
     , showError : Bool
     , attributes : PasswordField.Attributes
+    , adjacentHtml : AdjacentHtml
+    , isOptional : Bool
     }
 
 
@@ -256,7 +229,9 @@ type alias NumberFieldConfig msg =
     , value : String
     , error : Maybe Error
     , showError : Bool
+    , adjacentHtml : AdjacentHtml
     , attributes : NumberField.Attributes Float
+    , isOptional : Bool
     }
 
 
@@ -277,6 +252,8 @@ type alias RangeFieldConfig msg =
     , error : Maybe Error
     , showError : Bool
     , attributes : RangeField.Attributes Float
+    , adjacentHtml : AdjacentHtml
+    , isOptional : Bool
     }
 
 
@@ -291,6 +268,7 @@ type alias CheckboxFieldConfig msg =
     , onBlur : Maybe msg
     , disabled : Bool
     , value : Bool
+    , adjacentHtml : AdjacentHtml
     , error : Maybe Error
     , showError : Bool
     , attributes : CheckboxField.Attributes
@@ -309,8 +287,10 @@ type alias RadioFieldConfig msg =
     , disabled : Bool
     , value : String
     , error : Maybe Error
+    , adjacentHtml : AdjacentHtml
     , showError : Bool
     , attributes : RadioField.Attributes
+    , isOptional : Bool
     }
 
 
@@ -326,8 +306,10 @@ type alias SelectFieldConfig msg =
     , disabled : Bool
     , value : String
     , error : Maybe Error
+    , adjacentHtml : AdjacentHtml
     , showError : Bool
     , attributes : SelectField.Attributes
+    , isOptional : Bool
     }
 
 
@@ -367,18 +349,17 @@ type alias FieldConfig values msg =
 
 
 renderField :
-    CustomConfig msg element
-    -> FieldConfig values msg
+    FieldConfig values msg
     -> Form.FilledField values
-    -> element
-renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConfig) field =
+    -> Html msg
+renderField ({ onChange, onBlur, disabled, showError } as fieldConfig) field =
     let
         blur label =
             Maybe.map (\onBlurEvent -> onBlurEvent label) onBlur
     in
     case field.state of
-        Form.Password { attributes, value, update } ->
-            customConfig.passwordField
+        Form.Password { attributes, value, update, isOptional } ->
+            passwordInputField
                 { onChange =
                     \inputVal ->
                         update { value = inputVal, textVisible = value.textVisible }
@@ -393,9 +374,11 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , error = field.error
                 , showError = showError attributes.label
                 , attributes = attributes
+                , isOptional = isOptional
+                , adjacentHtml = field.adjacentHtml
                 }
 
-        Form.Text type_ { attributes, value, update } ->
+        Form.Text type_ { attributes, value, update, isOptional } ->
             let
                 config =
                     { onChange = update >> onChange
@@ -405,23 +388,19 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                     , error = field.error
                     , showError = showError attributes.label
                     , attributes = attributes
+                    , isOptional = isOptional
+                    , adjacentHtml = field.adjacentHtml
                     }
             in
             case type_ of
                 Form.TextRaw ->
-                    customConfig.inputField config
+                    inputField config
 
-                Form.TextArea ->
-                    customConfig.textareaField config
-
-                Form.TextEmail ->
-                    customConfig.emailField config
-
-                Form.TextSearch ->
-                    customConfig.searchField config
+                Form.TextArea textAreaConfig ->
+                    textareaField textAreaConfig config
 
         Form.Number { attributes, value, update } ->
-            customConfig.numberField
+            numberField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
                 , disabled = field.isDisabled || disabled
@@ -429,69 +408,86 @@ renderField customConfig ({ onChange, onBlur, disabled, showError } as fieldConf
                 , error = field.error
                 , showError = showError attributes.label
                 , attributes = attributes
+                , adjacentHtml = field.adjacentHtml
+
+                -- FIXME: hard-coding for now because this field is not in use / exported
+                , isOptional = False
                 }
 
         Form.Range { attributes, value, update } ->
-            customConfig.rangeField
+            rangeField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
+                , adjacentHtml = field.adjacentHtml
                 , disabled = field.isDisabled || disabled
                 , value = value
                 , error = field.error
                 , showError = showError attributes.label
                 , attributes = attributes
+
+                -- FIXME: hard-coding for now because this field is not in use / exported
+                , isOptional = False
                 }
 
         Form.Checkbox { attributes, value, update } ->
-            customConfig.checkboxField
+            checkboxField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
                 , disabled = field.isDisabled || disabled
                 , value = value
                 , error = field.error
+                , adjacentHtml = field.adjacentHtml
                 , showError = showError attributes.label
                 , attributes = attributes
                 }
 
         Form.Radio { attributes, value, update } ->
-            customConfig.radioField
+            radioField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
                 , disabled = field.isDisabled || disabled
                 , value = value
                 , error = field.error
+                , adjacentHtml = field.adjacentHtml
                 , showError = showError attributes.label
                 , attributes = attributes
+
+                -- FIXME: hard-coding for now because this field is not in use / exported
+                , isOptional = False
                 }
 
         Form.Select { attributes, value, update } ->
-            customConfig.selectField
+            selectField
                 { onChange = update >> onChange
                 , onBlur = blur attributes.label
                 , disabled = field.isDisabled || disabled
                 , value = value
                 , error = field.error
+                , adjacentHtml = field.adjacentHtml
                 , showError = showError attributes.label
                 , attributes = attributes
+
+                -- FIXME: hard-coding for now because this field is not in use / exported
+                , isOptional = False
                 }
 
         Form.Group fields ->
             fields
-                |> List.map (maybeIgnoreChildError field.error >> renderField customConfig { fieldConfig | disabled = field.isDisabled || disabled })
-                |> customConfig.group
+                |> List.map (maybeIgnoreChildError field.error >> renderField { fieldConfig | disabled = field.isDisabled || disabled })
+                |> group
 
         Form.Section title fields ->
             fields
-                |> List.map (maybeIgnoreChildError field.error >> renderField customConfig { fieldConfig | disabled = field.isDisabled || disabled })
-                |> customConfig.section title
+                |> List.map (maybeIgnoreChildError field.error >> renderField { fieldConfig | disabled = field.isDisabled || disabled })
+                |> section title
 
         Form.List { forms, add, attributes } ->
-            customConfig.formList
+            formList
                 { forms =
                     List.map
                         (\{ fields, delete } ->
-                            customConfig.formListItem
-                                { fields = List.map (renderField customConfig fieldConfig) fields
+                            formListItem
+                                { fields = List.map (renderField fieldConfig) fields
                                 , delete =
                                     attributes.delete
                                         |> Maybe.map
@@ -527,45 +523,6 @@ maybeIgnoreChildError maybeParentError field =
 
 
 -- Basic HTML
-
-
-{-| Default [`CustomConfig`](#CustomConfig) implementation for HTML output.
-
-You can update a subset of the `CustomConfig` fields to implement a view function that overrides the behavior of `toHtml`. For example:
-
-    htmlView : ViewConfig values msg -> Form values msg -> Model values -> Html msg
-    htmlView =
-        custom
-            { htmlViewConfig
-                | selectField = mySelectField
-                , radioField = myRadioField
-            }
-
-In fact, [`toHtml`](#toHtml) is just implemented as:
-
-    toHtml : ViewConfig values msg -> Form values msg -> Model values -> Html msg
-    toHtml =
-        custom htmlViewConfig
-
--}
-htmlViewConfig : CustomConfig msg (Html msg)
-htmlViewConfig =
-    { form = form
-    , inputField = newInputField
-    , emailField = inputField "email"
-    , passwordField = passwordInputField
-    , searchField = inputField "search"
-    , textareaField = textareaField
-    , numberField = numberField
-    , rangeField = rangeField
-    , checkboxField = checkboxField
-    , radioField = radioField
-    , selectField = selectField
-    , group = group
-    , section = section
-    , formList = formList
-    , formListItem = formListItem
-    }
 
 
 {-| Render a form as HTML!
@@ -614,7 +571,6 @@ toHtml { onChange, action, loading, validation } form_ model =
 
         fieldToElement =
             renderField
-                htmlViewConfig
                 { onChange = \values -> onChange { model | values = values }
                 , onBlur = onBlur
                 , disabled = model.state == Loading
@@ -643,7 +599,7 @@ toHtml { onChange, action, loading, validation } form_ model =
         showError label =
             errorTracking.showAllErrors || Set.member label errorTracking.showFieldError
     in
-    htmlViewConfig.form
+    form
         { onSubmit = onSubmit
         , action = action
         , loading = loading
@@ -698,7 +654,7 @@ formListItem { fields, delete, disabled } =
         (deleteButton :: fields)
 
 
-form : FormConfig msg (Html msg) -> Html msg
+form : FormConfig msg -> Html msg
 form { onSubmit, action, loading, state, fields } =
     let
         onSubmitEvent =
@@ -737,54 +693,34 @@ form { onSubmit, action, loading, state, fields } =
         )
 
 
-newInputField : InputFieldConfig msg -> Html msg
-newInputField { onChange, value, attributes, error, showError } =
+inputField : InputFieldConfig msg -> Html msg
+inputField ({ onChange, value, attributes, adjacentHtml } as fieldInfo) =
     input onChange
         |> Input.withPlaceholder attributes.placeholder
         |> Input.toHtml value
-        |> withLabelAndError attributes.label showError error
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 passwordInputField : PasswordFieldConfig msg -> Html msg
-passwordInputField { onChange, onToggleTextVisibility, value, attributes, error, showError } =
+passwordInputField ({ onChange, onToggleTextVisibility, value, attributes, adjacentHtml } as fieldInfo) =
     input onChange
         |> Input.withPlaceholder attributes.placeholder
         |> Input.withPasswordType onToggleTextVisibility value.textVisible
         |> Input.toHtml value.value
-        |> withLabelAndError attributes.label showError error
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
-inputField : String -> InputFieldConfig msg -> Html msg
-inputField type_ { onChange, onBlur, disabled, value, error, showError, attributes } =
-    Html.input
-        ([ Events.onInput onChange
-         , Attributes.disabled disabled
-         , Attributes.value value
-         , Attributes.placeholder attributes.placeholder
-         , Attributes.type_ type_
-         ]
-            |> withMaybeAttribute Events.onBlur onBlur
-        )
-        []
-        |> withLabelAndError attributes.label showError error
-
-
-textareaField : InputFieldConfig msg -> Html msg
-textareaField { onChange, onBlur, disabled, value, error, showError, attributes } =
-    Html.textarea
-        ([ Events.onInput onChange
-         , Attributes.disabled disabled
-         , Attributes.placeholder attributes.placeholder
-         , Attributes.value value
-         ]
-            |> withMaybeAttribute Events.onBlur onBlur
-        )
-        []
-        |> withLabelAndError attributes.label showError error
+textareaField : { rows : Int } -> InputFieldConfig msg -> Html msg
+textareaField textAreaConfig ({ onChange, onBlur, disabled, value, attributes, adjacentHtml } as fieldInfo) =
+    input onChange
+        |> Input.withPlaceholder attributes.placeholder
+        |> Input.withTextAreaType textAreaConfig
+        |> Input.toHtml value
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 numberField : NumberFieldConfig msg -> Html msg
-numberField { onChange, onBlur, disabled, value, error, showError, attributes } =
+numberField ({ onChange, onBlur, disabled, value, attributes, adjacentHtml } as fieldInfo) =
     let
         stepAttr =
             attributes.step
@@ -804,11 +740,11 @@ numberField { onChange, onBlur, disabled, value, error, showError, attributes } 
             |> withMaybeAttribute Events.onBlur onBlur
         )
         []
-        |> withLabelAndError attributes.label showError error
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 rangeField : RangeFieldConfig msg -> Html msg
-rangeField { onChange, onBlur, disabled, value, error, showError, attributes } =
+rangeField ({ onChange, onBlur, disabled, value, attributes, adjacentHtml } as fieldInfo) =
     Html.div
         [ Attributes.class "elm-form-range-field" ]
         [ Html.input
@@ -825,7 +761,7 @@ rangeField { onChange, onBlur, disabled, value, error, showError, attributes } =
             []
         , Html.span [] [ Html.text (value |> Maybe.map String.fromFloat |> Maybe.withDefault "") ]
         ]
-        |> withLabelAndError attributes.label showError error
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 {-| TODO:
@@ -841,7 +777,7 @@ opportunity for refactoring:
 
 -}
 checkboxField : CheckboxFieldConfig msg -> Html msg
-checkboxField { onChange, value, disabled, attributes } =
+checkboxField { onChange, value, disabled, attributes, adjacentHtml } =
     let
         checkboxHtml =
             checkbox
@@ -850,11 +786,11 @@ checkboxField { onChange, value, disabled, attributes } =
                 |> Checkbox.withDisabled disabled
                 |> Checkbox.toHtml value
     in
-    Html.div [ Attributes.class formCheckboxFieldClass ] [ checkboxHtml ]
+    Html.div [ Attributes.class formCheckboxFieldClass ] [ checkboxHtml, createAdjacentHtmlNode adjacentHtml ]
 
 
 radioField : RadioFieldConfig msg -> Html msg
-radioField { onChange, onBlur, disabled, value, error, showError, attributes } =
+radioField ({ onChange, onBlur, disabled, value, error, showError, attributes } as fieldInfo) =
     let
         radio ( key, label ) =
             Html.label []
@@ -872,7 +808,7 @@ radioField { onChange, onBlur, disabled, value, error, showError, attributes } =
                 , Html.text label
                 ]
     in
-    Html.div (fieldContainerAttributes showError error)
+    Html.div (fieldContainerAttributes fieldInfo)
         ((fieldLabel attributes.label
             :: List.map radio attributes.options
          )
@@ -881,7 +817,7 @@ radioField { onChange, onBlur, disabled, value, error, showError, attributes } =
 
 
 selectField : SelectFieldConfig msg -> Html msg
-selectField { onChange, onBlur, disabled, value, error, showError, attributes } =
+selectField ({ onChange, onBlur, disabled, value, error, showError, attributes, adjacentHtml } as fieldInfo) =
     let
         toOption ( key, label_ ) =
             Html.option
@@ -904,12 +840,12 @@ selectField { onChange, onBlur, disabled, value, error, showError, attributes } 
             |> withMaybeAttribute Events.onBlur onBlur
         )
         (placeholderOption :: List.map toOption attributes.options)
-        |> withLabelAndError attributes.label showError error
+        |> withLabelAndError fieldInfo attributes.label adjacentHtml
 
 
 group : List (Html msg) -> Html msg
 group =
-    Html.div [ Attributes.class "elm-form-group" ]
+    Html.div [ Attributes.class formGroupClass ]
 
 
 section : String -> List (Html msg) -> Html msg
@@ -920,29 +856,49 @@ section title fields =
         )
 
 
-wrapInFieldContainer : Bool -> Maybe Error -> List (Html msg) -> Html msg
-wrapInFieldContainer showError error =
-    Html.label (fieldContainerAttributes showError error)
+type alias FieldInfo a =
+    { a
+        | showError : Bool
+        , error : Maybe Error
+        , isOptional : Bool
+    }
 
 
-fieldContainerAttributes : Bool -> Maybe Error -> List (Html.Attribute msg)
-fieldContainerAttributes showError error =
+createAdjacentHtmlNode : Maybe (Html Never) -> Html msg
+createAdjacentHtmlNode maybeAdjacentHtml =
+    case maybeAdjacentHtml of
+        Just node ->
+            Html.map never node
+
+        Nothing ->
+            Html.text ""
+
+
+wrapInFieldContainer : FieldInfo a -> List (Html msg) -> Html msg
+wrapInFieldContainer fieldInfo =
+    Html.label <| fieldContainerAttributes fieldInfo
+
+
+fieldContainerAttributes : FieldInfo a -> List (Html.Attribute msg)
+fieldContainerAttributes { isOptional, showError, error } =
     [ Attributes.classList
         [ ( formLabelClass, True )
+        , ( formRequiredFieldClass, not isOptional )
         , ( formFieldErrorMessageShowingClass, showError && error /= Nothing )
         ]
     ]
 
 
-withLabelAndError : String -> Bool -> Maybe Error -> Html msg -> Html msg
-withLabelAndError label showError error fieldAsHtml =
+withLabelAndError : FieldInfo a -> String -> Maybe (Html Never) -> Html msg -> Html msg
+withLabelAndError ({ showError, error } as fieldInfo) label maybeAdjacentNode fieldAsHtml =
     [ fieldLabel label
     , Html.div []
         [ fieldAsHtml
         , maybeErrorMessage showError error
+        , createAdjacentHtmlNode maybeAdjacentNode
         ]
     ]
-        |> wrapInFieldContainer showError error
+        |> wrapInFieldContainer fieldInfo
 
 
 fieldLabel : String -> Html msg

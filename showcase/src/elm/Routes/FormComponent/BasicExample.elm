@@ -1,13 +1,19 @@
 module Routes.FormComponent.BasicExample exposing (Model, Msg, example, init, update)
 
 import Ant.Form as Form exposing (Form)
-import Ant.Form.Base.PasswordField exposing (PasswordFieldValue)
+import Ant.Form.PasswordField exposing (PasswordFieldValue)
 import Ant.Form.View as FV
+import Ant.Typography.Text as Text exposing (text)
 import Html exposing (Html)
+import Html.Attributes as A
 
 
 type EmailAddress
     = EmailAddress String
+
+
+type Checkboxes
+    = Checkboxes Bool Bool
 
 
 type alias Model =
@@ -19,12 +25,15 @@ type alias FormValues =
     { email : String
     , password : PasswordFieldValue
     , rememberMe : Bool
+    , dummy : Bool
+    , address : String
+    , comments : String
     }
 
 
 type Msg
     = FormChanged (FV.Model FormValues)
-    | LogIn EmailAddress String Bool
+    | LogIn EmailAddress String Checkboxes (Maybe String) String
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -33,7 +42,7 @@ update msg model =
         FormChanged newFormModel ->
             ( { loginFormState = newFormModel }, Cmd.none )
 
-        LogIn email password rememberMe ->
+        LogIn email password (Checkboxes rememberMe dummy) maybeAddress comments ->
             let
                 loginFormState =
                     model.loginFormState
@@ -59,7 +68,7 @@ form : Form FormValues Msg
 form =
     let
         emailField =
-            Form.textField
+            Form.inputField
                 { parser = parseEmailAddress
                 , value = .email
                 , update = \email values -> { values | email = email }
@@ -83,6 +92,14 @@ form =
                 }
 
         rememberMeCheckbox =
+            let
+                forgotPasswordLink =
+                    text "forgot password?"
+                        |> Text.withType (Text.Link "https://example.com/reset-password" Text.Self)
+                        |> Text.toHtml
+                        |> List.singleton
+                        |> Html.span [ A.style "margin-left" "20px" ]
+            in
             Form.checkboxField
                 { parser = Ok
                 , value = .rememberMe
@@ -91,11 +108,58 @@ form =
                 , attributes =
                     { label = "Remember me" }
                 }
+                |> Form.withAdjacentHtml forgotPasswordLink
+
+        dummyCheckbox =
+            Form.checkboxField
+                { parser = Ok
+                , value = .dummy
+                , update = \value values -> { values | dummy = value }
+                , error = always Nothing
+                , attributes =
+                    { label = "Test123" }
+                }
+
+        addressField =
+            Form.inputField
+                { parser = Ok
+                , value = .address
+                , update = \value values -> { values | address = value }
+                , error = always Nothing
+                , attributes =
+                    { label = "Address"
+                    , placeholder = "Address"
+                    }
+                }
+
+        commentsField =
+            Form.textareaField
+                { rows = 10
+                }
+                { parser = Ok
+                , value = .comments
+                , update = \value values -> { values | comments = value }
+                , error = always Nothing
+                , attributes =
+                    { label = "Comments"
+                    , placeholder = ""
+                    }
+                }
     in
     Form.succeed LogIn
         |> Form.append emailField
         |> Form.append passwordField
-        |> Form.append rememberMeCheckbox
+        |> Form.append
+            -- horizontally render groups of fields using the
+            -- `group` function
+            (Form.succeed Checkboxes
+                |> Form.append rememberMeCheckbox
+                |> Form.append dummyCheckbox
+                |> Form.group
+            )
+        -- Make fields optional
+        |> Form.append (Form.optional addressField)
+        |> Form.append commentsField
 
 
 init : Model
@@ -106,6 +170,9 @@ init =
                 { email = ""
                 , password = { value = "", textVisible = False }
                 , rememberMe = True
+                , dummy = True
+                , address = ""
+                , comments = ""
                 }
     in
     { loginFormState = formState

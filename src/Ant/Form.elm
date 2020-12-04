@@ -1,7 +1,7 @@
 module Ant.Form exposing
     ( Form
-    , textField, emailField, passwordField, textareaField, numberField, rangeField, checkboxField
-    , radioField, selectField
+    , inputField, passwordField, checkboxField, textareaField
+    , withAdjacentHtml
     , succeed, append, optional, disable, group, section, andThen, meta, list
     , map, mapValues
     , Field(..), TextType(..), FilledField, fill
@@ -19,8 +19,11 @@ This is a port of [hecrj/composable-form](https://package.elm-lang.org/packages/
 
 # Fields
 
-@docs textField, emailField, passwordField, textareaField, numberField, rangeField, checkboxField
-@docs radioField, selectField
+@docs inputField, passwordField, checkboxField, textareaField
+
+> FYI: I have hidden a bunch of fields because they have not yet been integrated to render elm-antd inputs yet. But PRs are always welcome!
+
+@docs withAdjacentHtml
 
 
 # Composition
@@ -44,23 +47,23 @@ This section describes how to fill a `Form` with its `values` and obtain its
 different fields and its `output`. This is mostly used to write custom view code.
 
 If you just want to render a simple form as `Html`, check [`Form.View`](Form-View) first as it
-might suit your needs.
 
 @docs Field, TextType, FilledField, fill
 
 -}
 
 import Ant.Form.Base as Base
-import Ant.Form.Base.CheckboxField as CheckboxField exposing (CheckboxField)
 import Ant.Form.Base.FormList as FormList exposing (FormList)
 import Ant.Form.Base.NumberField as NumberField exposing (NumberField)
-import Ant.Form.Base.PasswordField as PasswordField exposing (PasswordField)
 import Ant.Form.Base.RadioField as RadioField exposing (RadioField)
 import Ant.Form.Base.RangeField as RangeField exposing (RangeField)
 import Ant.Form.Base.SelectField as SelectField exposing (SelectField)
-import Ant.Form.Base.TextField as TextField exposing (TextField)
+import Ant.Form.CheckboxField as CheckboxField exposing (CheckboxField)
 import Ant.Form.Error exposing (Error)
 import Ant.Form.Field as Field
+import Ant.Form.InputField as InputField exposing (InputField)
+import Ant.Form.PasswordField as PasswordField exposing (PasswordField)
+import Html exposing (Html)
 
 
 
@@ -99,7 +102,7 @@ It requires some configuration:
   - `value` describes how to obtain the field value from the form `values`
   - `update` describes how the current form `values` should be updated with a new field value
   - `attributes` let you define the specific attributes of the field (`label` and `placeholder`
-    in this case, see [`TextField.Attributes`](Form-Base-TextField#Attributes))
+    in this case, see [`InputField.Attributes`](Form-Base-InputField#Attributes))
 
 It might seem like a lot of configuration, but don't be scared! In practice, it isn't!
 For instance, you could use this function to build a `nameField` that only succeeds when the
@@ -107,7 +110,7 @@ inputted name has at least 2 characters, like this:
 
     nameField : Form { r | name : String } String
     nameField =
-        Form.textField
+        Form.inputField
             { parser =
                 \name ->
                     if String.length name < 2 then
@@ -133,38 +136,21 @@ As you can see:
   - `attributes` are most of the time a simple record
 
 -}
-textField :
+inputField :
     { parser : String -> Result String output
     , value : values -> String
     , update : String -> values -> values
     , error : values -> Maybe String
-    , attributes : TextField.Attributes
+    , attributes : InputField.Attributes
     }
     -> Form values output
-textField =
-    TextField.form (Text TextRaw)
-
-
-{-| Create a form that contains a single email field.
-
-It has the same configuration options as [`textField`](#textField).
-
--}
-emailField :
-    { parser : String -> Result String output
-    , value : values -> String
-    , update : String -> values -> values
-    , error : values -> Maybe String
-    , attributes : TextField.Attributes
-    }
-    -> Form values output
-emailField =
-    TextField.form (Text TextEmail)
+inputField =
+    Base.field { isEmpty = String.isEmpty } (Text TextRaw)
 
 
 {-| Create a form that contains a single password field.
 
-It has the same configuration options as [`textField`](#textField).
+It has the same configuration options as [`inputField`](#inputField).
 
 -}
 passwordField :
@@ -176,49 +162,37 @@ passwordField :
     }
     -> Form values output
 passwordField =
-    PasswordField.form Password
+    Base.field
+        { isEmpty = \{ value } -> String.isEmpty value }
+        Password
 
 
 {-| Create a form that contains a single textarea field.
 
-It has the same configuration options as [`textField`](#textField).
+It has the same configuration options as [`inputField`](#inputField), except the first argument specifies the vertical height of the text area as per the [`textarea` spec](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea)
 
 -}
 textareaField :
-    { parser : String -> Result String output
-    , value : values -> String
-    , update : String -> values -> values
-    , error : values -> Maybe String
-    , attributes : TextField.Attributes
+    { rows : Int
     }
+    ->
+        { parser : String -> Result String output
+        , value : values -> String
+        , update : String -> values -> values
+        , error : values -> Maybe String
+        , attributes : InputField.Attributes
+        }
     -> Form values output
-textareaField =
-    TextField.form (Text TextArea)
-
-
-{-| Create a form that contains a single search field.
-
-It has the same configuration options as [`textField`](#textField).
-
--}
-searchField :
-    { parser : String -> Result String output
-    , value : values -> String
-    , update : String -> values -> values
-    , error : values -> Maybe String
-    , attributes : TextField.Attributes
-    }
-    -> Form values output
-searchField =
-    TextField.form (Text TextSearch)
+textareaField textAreaConfig =
+    Base.field { isEmpty = String.isEmpty } (Text <| TextArea textAreaConfig)
 
 
 {-| Create a form that contains a single number field.
 
-It has a very similar configuration to [`textField`](#textField), the only difference is:
+It has a very similar configuration to [`inputField`](#inputField), the only difference is:
 
   - Its attributes are [`NumberField.Attributes`](Form-Base-NumberField#Attributes)
-    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).
+    instead of [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 numberField :
@@ -235,10 +209,10 @@ numberField =
 
 {-| Create a form that contains a single range field.
 
-It has a very similar configuration to [`textField`](#textField), the only difference is:
+It has a very similar configuration to [`inputField`](#inputField), the only difference is:
 
   - Its attributes are [`RangeField.Attributes`](Form-Base-RangeField#Attributes)
-    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).
+    instead of [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 rangeField :
@@ -255,11 +229,11 @@ rangeField =
 
 {-| Create a form that contains a single checkbox field.
 
-It has a very similar configuration to [`textField`](#textField), the only differences are:
+It has a very similar configuration to [`inputField`](#inputField), the only differences are:
 
   - Its value is a `Bool` instead of `String`.
   - Its attributes are [`CheckboxField.Attributes`](Form-Base-CheckboxField#Attributes)
-    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).
+    instead of [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 checkboxField :
@@ -271,15 +245,15 @@ checkboxField :
     }
     -> Form values output
 checkboxField =
-    CheckboxField.form Checkbox
+    Base.field { isEmpty = always False } Checkbox
 
 
 {-| Create a form that contains a single fieldset of radio fields.
 
-It has a very similar configuration to [`textField`](#textField), the only difference is:
+It has a very similar configuration to [`inputField`](#inputField), the only difference is:
 
   - Its attributes are [`RadioField.Attributes`](Form-Base-RadioField#Attributes)
-    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).
+    instead of [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 radioField :
@@ -296,10 +270,10 @@ radioField =
 
 {-| Create a form that contains a single select field.
 
-It has a very similar configuration to [`textField`](#textField), the only difference is:
+It has a very similar configuration to [`inputField`](#inputField), the only difference is:
 
   - Its attributes are [`SelectField.Attributes`](Form-Base-SelectField#Attributes)
-    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).
+    instead of [`InputField.Attributes`](Form-Base-InputField#Attributes).
 
 -}
 selectField :
@@ -400,7 +374,16 @@ are filled correctly.
 -}
 optional : Form values output -> Form values (Maybe output)
 optional =
-    Base.optional
+    let
+        markFieldAsOptional filledField =
+            case filledField of
+                Text textType fieldInfo ->
+                    Text textType { fieldInfo | isOptional = True }
+
+                a ->
+                    a
+    in
+    Base.optional >> Base.mapField markFieldAsOptional
 
 
 {-| Disable a form.
@@ -414,11 +397,9 @@ disable =
     Base.disable
 
 
-{-| Wraps a form in a group.
+{-| Render a group of fields horizontally.
 
-Using this function does not affect the behavior of the form in any way. However, groups of fields
-might be rendered differently. For instance, [`Form.View`](Form-View) renders groups of
-fields horizontally.
+Using this function does not affect the behavior of the form in any way. It is simply to change the layout of a set of fields.
 
 -}
 group : Form values output -> Form values output
@@ -454,6 +435,41 @@ section title form =
             { state = Section title fields
             , result = result
             , isEmpty = isEmpty
+            }
+        )
+
+
+{-| Add arbitrary Html to a field.
+
+**Use this only on individual fields**, not on an entire composed form. See example below of correct usage:
+
+        rememberMeCheckbox =
+            Form.checkboxField
+                { parser = Ok
+                , value = .rememberMe
+                , update = \value values -> { values | rememberMe = value }
+                , error = always Nothing
+                , attributes =
+                    { label = "Remember me" }
+                }
+                |> Form.withAdjacentHtml (Html.a [ A.style "cursor" "pointer" ] [ Html.text "forgot password?" ])
+
+-}
+withAdjacentHtml : Html Never -> Form values output -> Form values output
+withAdjacentHtml node form =
+    Base.Form
+        (\values ->
+            let
+                filledForm =
+                    fill form values
+
+                filledFieldsWithAdjacentHtml =
+                    List.map
+                        (\filledField -> { filledField | adjacentHtml = Just node })
+                        filledForm.fields
+            in
+            { filledForm
+                | fields = filledFieldsWithAdjacentHtml
             }
         )
 
@@ -515,7 +531,7 @@ to choose between different forms, like this:
                         Question ->
                             let
                                 titleField =
-                                    Form.textField
+                                    Form.inputField
                                         { -- ...
                                         }
 
@@ -621,6 +637,7 @@ list config elementForIndex =
                         { state = mapFieldValues update values filledField.state
                         , error = filledField.error
                         , isDisabled = filledField.isDisabled
+                        , adjacentHtml = filledField.adjacentHtml
                         }
                     )
                     filledElement.fields
@@ -721,6 +738,7 @@ mapFieldValues update values field =
                         { state = mapFieldValues update values filledField.state
                         , error = filledField.error
                         , isDisabled = filledField.isDisabled
+                        , adjacentHtml = filledField.adjacentHtml
                         }
                     )
                     fields
@@ -733,6 +751,7 @@ mapFieldValues update values field =
                         { state = mapFieldValues update values filledField.state
                         , error = filledField.error
                         , isDisabled = filledField.isDisabled
+                        , adjacentHtml = filledField.adjacentHtml
                         }
                     )
                     fields
@@ -749,6 +768,7 @@ mapFieldValues update values field =
                                         { state = mapFieldValues update values filledField.state
                                         , error = filledField.error
                                         , isDisabled = filledField.isDisabled
+                                        , adjacentHtml = filledField.adjacentHtml
                                         }
                                     )
                                     fields
@@ -772,7 +792,7 @@ using the result of [`fill`](#fill).
 
 -}
 type Field values
-    = Text TextType (TextField values)
+    = Text TextType (InputField values)
     | Password (PasswordField values)
     | Number (NumberField Float values)
     | Range (RangeField Float values)
@@ -788,9 +808,12 @@ type Field values
 -}
 type TextType
     = TextRaw
-    | TextEmail
-    | TextArea
-    | TextSearch
+    | TextArea { rows : Int }
+
+
+
+-- | TextEmail
+-- | TextSearch
 
 
 {-| Represents a filled field.

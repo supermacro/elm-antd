@@ -1,8 +1,7 @@
 module Ant.Button exposing
     ( Button
-    , button, onClick, ButtonType(..), withType, withIcon, ButtonSize(..), disabled
+    , button, onClick, ButtonType(..), withType, withIcon, ButtonSize(..), disabled, withHtmlType, HtmlButtonType(..)
     , toHtml
-    , HtmlButtonType(..), withHtmlType
     )
 
 {-| Button component
@@ -12,7 +11,7 @@ module Ant.Button exposing
 
 # Customizing the Button
 
-@docs button, onClick, ButtonType, withType, withIcon, ButtonSize, disabled
+@docs button, onClick, ButtonType, withType, withIcon, ButtonSize, disabled, withHtmlType, HtmlButtonType
 
 @docs toHtml
 
@@ -28,7 +27,6 @@ module Ant.Button exposing
 
 import Ant.Css.Common exposing (..)
 import Ant.Icons as Icon exposing (Icon)
-import Ant.Theme exposing (Theme, defaultTheme)
 import Css exposing (..)
 import Html exposing (Html)
 import Html.Styled as H exposing (fromUnstyled, text, toUnstyled)
@@ -74,7 +72,6 @@ type alias Options msg =
     , href : Maybe String
     , onClick : Maybe msg
     , icon : Maybe (Icon msg)
-    , theme : Theme
 
     -- size : Size (Small, Medium, Large)
     -- etc etc
@@ -91,7 +88,6 @@ defaultOptions =
     , href = Nothing
     , onClick = Nothing
     , icon = Nothing
-    , theme = defaultTheme
     }
 
 
@@ -144,6 +140,8 @@ withIcon icon (Button options label) =
     Button newOptions label
 
 
+{-| Specify the "type" attribute of the button.
+-}
 withHtmlType : HtmlButtonType -> Button msg -> Button msg
 withHtmlType htmlType (Button opts label) =
     let

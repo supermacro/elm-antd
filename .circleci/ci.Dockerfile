@@ -13,7 +13,7 @@ RUN npm -g config set user root && \
     ./install-elm.sh && \
     #
     # Installing Cypress-related deps
-    apt-get install -y xvfb && \
+    apt-get install -y xvfb libxss1 libxtst-dev && \
     #
     # Installing puppeteer-related deps
     # https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-circleci

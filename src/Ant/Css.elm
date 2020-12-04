@@ -12,6 +12,7 @@ import Ant.Checkbox.Css as CheckboxCss
 import Ant.Form.Css as FormCss
 import Ant.Input.Css as InputCss
 import Ant.Theme exposing (Theme, defaultTheme)
+import Ant.Typography.Text.Css as TextCss
 import Css.Global as CG
 import Html exposing (Html)
 import Html.Styled exposing (toUnstyled)
@@ -39,6 +40,7 @@ createThemedStyles theme =
                 , CheckboxCss.styles
                 , FormCss.styles
                 , InputCss.styles
+                , TextCss.styles
                 ]
     in
     allStyles

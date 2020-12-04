@@ -1,7 +1,4 @@
-module Ant.Form.Base.CheckboxField exposing
-    ( CheckboxField, Attributes
-    , form
-    )
+module Ant.Form.CheckboxField exposing (CheckboxField, Attributes)
 
 {-| This module contains a reusable `CheckboxField` type.
 
@@ -10,14 +7,8 @@ module Ant.Form.Base.CheckboxField exposing
 
 @docs CheckboxField, Attributes
 
-
-# Helpers
-
-@docs form
-
 -}
 
-import Ant.Form.Base as Base
 import Ant.Form.Field exposing (Field)
 
 
@@ -42,17 +33,3 @@ You need to provide these to:
 -}
 type alias Attributes =
     { label : String }
-
-
-{-| Builds a [`Form`](Form-Base#Form) with a single `CheckboxField`.
-
-**Note:** You should not need to care about this unless you are creating your own
-custom fields.
-
--}
-form :
-    (CheckboxField values -> field)
-    -> Base.FieldConfig Attributes Bool values output
-    -> Base.Form values output field
-form =
-    Base.field { isEmpty = always False }

@@ -24,6 +24,7 @@ spacedOutAlerts =
         |> space
         |> Space.direction Space.Vertical
         |> Space.withSize Space.Medium
+        |> Space.withFullCrossAxisSize
         |> Space.toHtml
 
 

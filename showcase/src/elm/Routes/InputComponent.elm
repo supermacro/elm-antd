@@ -5,6 +5,7 @@ import Html.Styled as Styled exposing (div, fromUnstyled, text)
 import Html.Styled.Attributes exposing (css)
 import Routes.InputComponent.BasicExample as BasicExample
 import Routes.InputComponent.PasswordExample as PasswordExample
+import Routes.InputComponent.TextAreaExample as TextAreaExample
 import UI.Container as Container
 import UI.Typography as Typography
     exposing
@@ -24,6 +25,7 @@ title =
 type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
     , passwordExample : Container.Model PasswordExample.Model PasswordExample.Msg
+    , textAreaExample : Container.Model TextAreaExample.Model TextAreaExample.Msg
     , version : Maybe String
     }
 
@@ -31,6 +33,7 @@ type alias Model =
 type DemoBox
     = Basic (Container.Msg BasicExample.Msg)
     | Password (Container.Msg PasswordExample.Msg)
+    | TextArea (Container.Msg TextAreaExample.Msg)
 
 
 type Msg
@@ -56,6 +59,11 @@ route =
                     "PasswordExample.elm"
                     PasswordExample.init
                     PasswordExample.update
+            , textAreaExample =
+                Container.initStatefulModel
+                    "TextAreaExample.elm"
+                    TextAreaExample.init
+                    TextAreaExample.update
             , version = v
             }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
@@ -81,10 +89,18 @@ update msg model =
                     in
                     ( { model | passwordExample = passwordModel }, passwordCmd )
 
+                TextArea textAreaExampleMsg ->
+                    let
+                        ( textAreaExampleModel, textAreaExampleCmd ) =
+                            Container.update (DemoBoxMsg << TextArea) textAreaExampleMsg model.textAreaExample
+                    in
+                    ( { model | textAreaExample = textAreaExampleModel }, textAreaExampleCmd )
+
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
                 | basicExample = Container.setSourceCode model.version examplesSourceCode model.basicExample
                 , passwordExample = Container.setSourceCode model.version examplesSourceCode model.passwordExample
+                , textAreaExample = Container.setSourceCode model.version examplesSourceCode model.textAreaExample
               }
             , Cmd.none
             )
@@ -122,6 +138,22 @@ passwordExample model =
         metaInfo
 
 
+textAreaExample : Model -> Styled.Html Msg
+textAreaExample model =
+    let
+        metaInfo =
+            { title = "TextArea"
+            , content = "For multi-line input."
+            , ellieDemo = "https://ellie-app.com/9mjyZ2xHwN9a1"
+            }
+    in
+    Container.createDemoBox
+        (DemoBoxMsg << TextArea)
+        model.textAreaExample
+        TextAreaExample.example
+        metaInfo
+
+
 view : Model -> Styled.Html Msg
 view model =
     div []
@@ -136,7 +168,9 @@ view model =
         , div [ css [ displayFlex ] ]
             [ div
                 [ css [ width (pct 45), marginRight (px 13) ] ]
-                [ basicExample model ]
+                [ basicExample model
+                , textAreaExample model
+                ]
             , div
                 [ css [ width (pct 100), maxWidth (pct 45) ] ]
                 [ passwordExample model ]
