@@ -125,8 +125,7 @@ setSourceCode elmAntdVersion sourceCodeList model =
         ellieLink =
             case ( maybeSourceCode, elmAntdVersion ) of
                 ( Just elmCode, Just version ) ->
-                    Just <| EllieLinks.fromSourceCode { version = version, elmCode = elmCode }
-
+                    Result.toMaybe <| EllieLinks.fromSourceCode { version = version, elmCode = elmCode }
                 _ ->
                     Nothing
     in

@@ -5,36 +5,33 @@ import Url.Builder
 import Utils.FileParser as FileParser
 
 
-fromSourceCode : { version : String, elmCode : String } -> String
+fromSourceCode : { version : String, elmCode : String } -> Result String String
 fromSourceCode { version, elmCode } = 
-    let
-        { title, code } =
-            FileParser.elliefy elmCode
-                |> Result.withDefault { title = "parse error", code = "..." }
+    case FileParser.elliefy elmCode of 
+        Err err -> 
+            Debug.log "Failed to parse source code!" <| Err err 
 
-        -- Package parsing is interesting because every package has its own '&packages='
-        packagesUrl =
-            packages version
-                |> List.map packageToString
-                |> List.map (\p -> ( "packages", p ))
-
-        link =
-            Url.Builder.crossOrigin
-                "https://ellie-app.com/a/example/v1"
-                []
-                ([ ( "title", title )
-                 , ( "elmcode", code )
-                 , ( "htmlcode", htmlCode )
-                 ]
-                    ++ packagesUrl
-                    ++ [ ( "elmversion", "0.19.1" ) ]
-                    |> List.map
-                        (\( key, value ) -> Url.Builder.string key value)
-                )
-    in
-    link
-
-
+        Ok { title, code } -> 
+            let 
+                packagesUrl =
+                    packages version
+                        |> List.map packageToString
+                        |> List.map (\p -> ( "packages", p ))
+                link = 
+                    Url.Builder.crossOrigin
+                        "https://ellie-app.com/a/example/v1"
+                        []
+                        ([ ( "title", title )
+                        , ( "elmcode", code )
+                        , ( "htmlcode", htmlCode )
+                        ]
+                            ++ packagesUrl
+                            ++ [ ( "elmversion", "0.19.1" ) ]
+                            |> List.map
+                                (\( key, value ) -> Url.Builder.string key value)
+                        )
+            in
+            Ok link
 
 ---- PACKAGES
 
