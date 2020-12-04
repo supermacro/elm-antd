@@ -5,8 +5,8 @@ import Url.Builder
 import Utils.FileParser as FileParser
 
 
-fromSourceCode : String -> String -> String
-fromSourceCode version elmCode =
+fromSourceCode : { version : String, elmCode : String } -> String
+fromSourceCode { version, elmCode } = 
     let
         { title, code } =
             FileParser.elliefy elmCode
