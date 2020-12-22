@@ -30,10 +30,18 @@ module Ant.Css.Common exposing
     , inputRootClass
     , makeSelector
     , passwordInputVisibilityToggleIconClass
+    , userSelectNone
     )
 
 import Css exposing (Style)
 import Css.Global as CG exposing (Snippet)
+
+
+userSelectNone : List Style
+userSelectNone =
+    [ Css.property "user-select" "none"
+    , Css.property "-webkit-user-select" "none"
+    ]
 
 
 makeSelector : String -> List Style -> Snippet

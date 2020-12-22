@@ -10,7 +10,7 @@ module Ant.Typography.Text.Css exposing
     , textWarningClass
     )
 
-import Ant.Css.Common exposing (elmAntdPrefix)
+import Ant.Css.Common exposing (elmAntdPrefix, userSelectNone)
 import Ant.Internals.Typography exposing (fontList, textSelectionStyles)
 import Ant.Theme exposing (Theme)
 import Color
@@ -150,10 +150,11 @@ styles theme =
         [ cursor pointer
         ]
     , CG.selector ("." ++ textClass ++ "[disabled=true]")
-        [ property "user-select" "none"
-        , cursor notAllowed
-        , color (hex <| colorToHexWithAlpha <| Manipulate.fadeOut 0.2 theme.typography.secondaryTextColor)
-        ]
+        (userSelectNone
+            ++ [ cursor notAllowed
+               , color (hex <| colorToHexWithAlpha <| Manipulate.fadeOut 0.2 theme.typography.secondaryTextColor)
+               ]
+        )
     , CG.selector ("." ++ textClass ++ "[underlined=true]")
         [ textDecoration underline
         ]

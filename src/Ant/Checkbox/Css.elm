@@ -1,6 +1,6 @@
 module Ant.Checkbox.Css exposing (styles)
 
-import Ant.Css.Common exposing (checkboxCustomCheckmarkClass, checkboxLabelClass, makeSelector)
+import Ant.Css.Common exposing (checkboxCustomCheckmarkClass, checkboxLabelClass, makeSelector, userSelectNone)
 import Ant.Internals.Typography exposing (commonFontStyles, headingColorRgba)
 import Ant.Theme exposing (Theme)
 import Color.Convert exposing (colorToHexWithAlpha)
@@ -17,11 +17,6 @@ textColor =
     rgba r g b a
 
 
-userSelectNone : Style
-userSelectNone =
-    property "user-select" "none"
-
-
 emptyContent : Style
 emptyContent =
     property "content" "\"\""
@@ -35,6 +30,7 @@ styles theme =
     in
     [ CG.class checkboxLabelClass
         (commonFontStyles
+            ++ userSelectNone
             ++ [ display inlineBlock
                , height (px 22)
                , color textColor
@@ -43,7 +39,6 @@ styles theme =
                , paddingTop (px 1)
                , fontSize (px 14)
                , cursor pointer
-               , userSelectNone
                ]
         )
     , CG.class (checkboxLabelClass ++ "--disabled")
