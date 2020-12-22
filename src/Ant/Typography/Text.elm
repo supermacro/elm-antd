@@ -30,8 +30,8 @@ module Ant.Typography.Text exposing
 
 import Ant.Typography.Text.Css as TextCss
 import Css exposing (..)
-import Html exposing (Html, Attribute)
-import Html.Attributes as Attr 
+import Html exposing (Attribute, Html)
+import Html.Attributes as Attr
 
 
 boolToString : Bool -> String
@@ -104,7 +104,7 @@ defaultTextOptions =
     }
 
 
-linkTargetToString : LinkTarget -> Attribute msg 
+linkTargetToString : LinkTarget -> Attribute msg
 linkTargetToString trgt =
     case trgt of
         Blank ->
