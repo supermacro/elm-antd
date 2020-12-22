@@ -29,7 +29,7 @@ example =
     , text "Ant Design (strong)"
         |> Text.strong
     , text "Ant Design (Link)"
-        |> Text.withType (Link "https://elm-antd.netlify.app" Text.Blank)
+        |> Text.withType (Link "https://elm-antd.netlify.app" Text.Self)
     ]
         |> List.map Text.toHtml
         |> space

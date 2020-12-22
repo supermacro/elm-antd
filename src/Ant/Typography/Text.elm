@@ -30,8 +30,8 @@ module Ant.Typography.Text exposing
 
 import Ant.Typography.Text.Css as TextCss
 import Css exposing (..)
-import Html exposing (Html)
-import Html.Attributes as Attr
+import Html exposing (Html, Attribute)
+import Html.Attributes as Attr 
 
 
 boolToString : Bool -> String
@@ -104,20 +104,20 @@ defaultTextOptions =
     }
 
 
-linkTargetToString : LinkTarget -> String
+linkTargetToString : LinkTarget -> Attribute msg 
 linkTargetToString trgt =
     case trgt of
         Blank ->
-            "_blank"
+            Attr.target "_blank"
 
         Self ->
-            "_self"
+            Attr.attribute "no-op" "no-op"
 
         Parent ->
-            "_parent"
+            Attr.target "_parent"
 
         Top ->
-            "_top"
+            Attr.target "_top"
 
 
 {-| Create a text value
@@ -331,7 +331,7 @@ toHtml (Text opts value) =
                 Link url linkTarget ->
                     ( Html.a
                     , [ Attr.href url
-                      , Attr.target <| linkTargetToString linkTarget
+                      , linkTargetToString linkTarget
                       ]
                     )
 
