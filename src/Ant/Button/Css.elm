@@ -44,6 +44,8 @@ simpleDisabledRules =
     [ disabledBorderColor
     , borderStyle solid
     , cursorHoverEnabled False
+    , color (rgba 0 0 0 0.25)
+    , backgroundColor (rgb 245 245 245)
     ]
 
 
@@ -109,6 +111,7 @@ styles theme =
                    , fontSize (px 14)
                    , height (px 30)
                    , outline none
+                   , fontWeight (int 400)
                    , focus
                         [ outline none ]
                    ]
