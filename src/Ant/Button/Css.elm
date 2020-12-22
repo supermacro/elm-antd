@@ -101,14 +101,17 @@ styles theme =
                 ]
 
         baseAttributes =
-            [ borderRadius (px 2)
-            , padding2 (px 4) (px 15)
-            , fontFamilies fontList
-            , borderWidth (px 1)
-            , fontSize (px 14)
-            , height (px 30)
-            , outline none
-            ]
+            userSelectNone
+                ++ [ borderRadius (px 2)
+                   , padding2 (px 4) (px 15)
+                   , fontFamilies fontList
+                   , borderWidth (px 1)
+                   , fontSize (px 14)
+                   , height (px 30)
+                   , outline none
+                   , focus
+                        [ outline none ]
+                   ]
 
         defaultButtonStyles =
             [ color textColor
