@@ -112,14 +112,16 @@ styles theme =
         (commonFontStyles
             ++ [ color dangerColorHex
                , fontSize (px 14)
-               , marginTop (px -1)
+               , marginTop (px -7)
                , opacity (int 0)
                ]
         )
     , CG.class formFieldErrorMessageShowingClass
         [ CG.descendants
             [ CG.class formFieldErrorMessageClass
-                [ marginTop (px 5)
+                [ lineHeight (num 1.5715)
+                , marginTop zero
+                , textAlign left
                 , opacity (int 1)
                 , transition
                     [ Css.Transitions.marginTop 400
