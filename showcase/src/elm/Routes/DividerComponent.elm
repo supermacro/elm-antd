@@ -28,6 +28,7 @@ type alias Model =
     , textWithoutHeadingExample : StatelessDemo
     , withTitleExample : StatelessDemo
     , verticalExample : StatelessDemo
+    , version : Maybe String
     }
 
 
@@ -82,10 +83,10 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | verticalExample = Container.setSourceCode examplesSourceCode model.verticalExample
-                , withTitleExample = Container.setSourceCode examplesSourceCode model.withTitleExample
-                , horizontalExample = Container.setSourceCode examplesSourceCode model.horizontalExample
-                , textWithoutHeadingExample = Container.setSourceCode examplesSourceCode model.textWithoutHeadingExample
+                | verticalExample = Container.setSourceCode model.version examplesSourceCode model.verticalExample
+                , withTitleExample = Container.setSourceCode model.version examplesSourceCode model.withTitleExample
+                , horizontalExample = Container.setSourceCode model.version examplesSourceCode model.horizontalExample
+                , textWithoutHeadingExample = Container.setSourceCode model.version examplesSourceCode model.textWithoutHeadingExample
               }
             , Cmd.none
             )
@@ -98,11 +99,13 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { horizontalExample = Container.initModel "HorizontalExample.elm"
-        , textWithoutHeadingExample = Container.initModel "TextWithoutHeadingExample.elm"
-        , withTitleExample = Container.initModel "WithTitleExample.elm"
-        , verticalExample = Container.initModel "VerticalExample.elm"
-        }
+        \v ->
+            { horizontalExample = Container.initModel "HorizontalExample.elm"
+            , textWithoutHeadingExample = Container.initModel "TextWithoutHeadingExample.elm"
+            , withTitleExample = Container.initModel "WithTitleExample.elm"
+            , verticalExample = Container.initModel "VerticalExample.elm"
+            , version = v
+            }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
 

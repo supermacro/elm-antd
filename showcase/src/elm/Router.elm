@@ -366,7 +366,7 @@ fetchComponentExamples { commitHash, fileServerUrl, examplesFetched } routeName 
 
 
 init : Url -> Flags -> ( Model, Cmd Msg )
-init url { commitHash, fileServerUrl } =
+init url { commitHash, fileServerUrl, elmAntdVersion } =
     let
         route =
             fromUrl url
@@ -377,15 +377,15 @@ init url { commitHash, fileServerUrl } =
             , commitHash = commitHash
             , fileServerUrl = fileServerUrl
             , footer = Footer.initialModel
-            , alertPageModel = AlertPage.route.initialModel
-            , buttonPageModel = ButtonPage.route.initialModel
-            , checkboxPageModel = CheckboxPage.route.initialModel
-            , dividerPageModel = DividerPage.route.initialModel
-            , formPageModel = FormPage.route.initialModel
-            , inputPageModel = InputPage.route.initialModel
-            , spacePageModel = SpacePage.route.initialModel
-            , typographyPageModel = TypographyPage.route.initialModel
-            , tooltipPageModel = TooltipPage.route.initialModel
+            , alertPageModel = AlertPage.route.initialModel elmAntdVersion
+            , buttonPageModel = ButtonPage.route.initialModel elmAntdVersion
+            , checkboxPageModel = CheckboxPage.route.initialModel elmAntdVersion
+            , dividerPageModel = DividerPage.route.initialModel elmAntdVersion
+            , formPageModel = FormPage.route.initialModel elmAntdVersion
+            , inputPageModel = InputPage.route.initialModel elmAntdVersion
+            , spacePageModel = SpacePage.route.initialModel elmAntdVersion
+            , typographyPageModel = TypographyPage.route.initialModel elmAntdVersion
+            , tooltipPageModel = TooltipPage.route.initialModel elmAntdVersion
             }
     in
     ( model

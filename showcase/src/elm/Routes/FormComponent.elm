@@ -19,6 +19,7 @@ import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
 type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
+    , version : Maybe String
     }
 
 
@@ -45,7 +46,7 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
+                | basicExample = Container.setSourceCode model.version examplesSourceCode model.basicExample
               }
             , Cmd.none
             )
@@ -59,9 +60,11 @@ route =
     , update = update
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     , initialModel =
-        { basicExample =
-            Container.initStatefulModel "BasicExample.elm" BasicExample.init BasicExample.update
-        }
+        \v ->
+            { basicExample =
+                Container.initStatefulModel "BasicExample.elm" BasicExample.init BasicExample.update
+            , version = v
+            }
     }
 
 

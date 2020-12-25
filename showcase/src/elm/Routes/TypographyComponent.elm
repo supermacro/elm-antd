@@ -20,6 +20,7 @@ type alias Model =
     { basicExample : StatelessDemo
     , titleExample : StatelessDemo
     , textExample : StatelessDemo
+    , version : Maybe String
     }
 
 
@@ -29,10 +30,12 @@ route =
     , category = General
     , view = view
     , initialModel =
-        { basicExample = Container.initModel "BasicExample.elm"
-        , titleExample = Container.initModel "TextExample.elm"
-        , textExample = Container.initModel "TitleComponent.elm"
-        }
+        \v ->
+            { basicExample = Container.initModel "BasicExample.elm"
+            , titleExample = Container.initModel "TextExample.elm"
+            , textExample = Container.initModel "TitleComponent.elm"
+            , version = v
+            }
     , update = update
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
@@ -77,9 +80,9 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
-                , textExample = Container.setSourceCode examplesSourceCode model.textExample
-                , titleExample = Container.setSourceCode examplesSourceCode model.titleExample
+                | basicExample = Container.setSourceCode model.version examplesSourceCode model.basicExample
+                , textExample = Container.setSourceCode model.version examplesSourceCode model.textExample
+                , titleExample = Container.setSourceCode model.version examplesSourceCode model.titleExample
               }
             , Cmd.none
             )

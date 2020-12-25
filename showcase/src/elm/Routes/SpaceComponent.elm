@@ -28,6 +28,7 @@ type alias StatelessDemo =
 type alias Model =
     { basicExample : StatelessDemo
     , verticalAndSpacingExample : StatelessDemo
+    , version : Maybe String
     }
 
 
@@ -48,11 +49,13 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { basicExample =
-            Container.initModel "BasicExample.elm"
-        , verticalAndSpacingExample =
-            Container.initModel "VerticalAndSpacingExample.elm"
-        }
+        \v ->
+            { basicExample =
+                Container.initModel "BasicExample.elm"
+            , verticalAndSpacingExample =
+                Container.initModel "VerticalAndSpacingExample.elm"
+            , version = v
+            }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
 
@@ -78,8 +81,8 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
-                , verticalAndSpacingExample = Container.setSourceCode examplesSourceCode model.verticalAndSpacingExample
+                | basicExample = Container.setSourceCode model.version examplesSourceCode model.basicExample
+                , verticalAndSpacingExample = Container.setSourceCode model.version examplesSourceCode model.verticalAndSpacingExample
               }
             , Cmd.none
             )

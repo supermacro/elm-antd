@@ -22,6 +22,7 @@ type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
     , disabledExample : Container.Model () Never
     , controlledExample : Container.Model ControlledExample.Model ControlledExample.Msg
+    , version : Maybe String
     }
 
 
@@ -64,9 +65,9 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
-                , disabledExample = Container.setSourceCode examplesSourceCode model.disabledExample
-                , controlledExample = Container.setSourceCode examplesSourceCode model.controlledExample
+                | basicExample = Container.setSourceCode model.version examplesSourceCode model.basicExample
+                , disabledExample = Container.setSourceCode model.version examplesSourceCode model.disabledExample
+                , controlledExample = Container.setSourceCode model.version examplesSourceCode model.controlledExample
               }
             , Cmd.none
             )
@@ -80,13 +81,15 @@ route =
     , update = update
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     , initialModel =
-        { basicExample =
-            Container.initStatefulModel "BasicExample.elm" BasicExample.init BasicExample.update
-        , controlledExample =
-            Container.initStatefulModel "ControlledExample.elm" ControlledExample.init ControlledExample.update
-        , disabledExample =
-            Container.initModel "DisabledExample.elm"
-        }
+        \v ->
+            { basicExample =
+                Container.initStatefulModel "BasicExample.elm" BasicExample.init BasicExample.update
+            , controlledExample =
+                Container.initStatefulModel "ControlledExample.elm" ControlledExample.init ControlledExample.update
+            , disabledExample =
+                Container.initModel "DisabledExample.elm"
+            , version = v
+            }
     }
 
 

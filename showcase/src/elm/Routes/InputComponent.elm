@@ -26,6 +26,7 @@ type alias Model =
     { basicExample : Container.Model BasicExample.Model BasicExample.Msg
     , passwordExample : Container.Model PasswordExample.Model PasswordExample.Msg
     , textAreaExample : Container.Model TextAreaExample.Model TextAreaExample.Msg
+    , version : Maybe String
     }
 
 
@@ -47,22 +48,24 @@ route =
     , view = view
     , update = update
     , initialModel =
-        { basicExample =
-            Container.initStatefulModel
-                "BasicExample.elm"
-                BasicExample.init
-                BasicExample.update
-        , passwordExample =
-            Container.initStatefulModel
-                "PasswordExample.elm"
-                PasswordExample.init
-                PasswordExample.update
-        , textAreaExample =
-            Container.initStatefulModel
-                "TextAreaExample.elm"
-                TextAreaExample.init
-                TextAreaExample.update
-        }
+        \v ->
+            { basicExample =
+                Container.initStatefulModel
+                    "BasicExample.elm"
+                    BasicExample.init
+                    BasicExample.update
+            , passwordExample =
+                Container.initStatefulModel
+                    "PasswordExample.elm"
+                    PasswordExample.init
+                    PasswordExample.update
+            , textAreaExample =
+                Container.initStatefulModel
+                    "TextAreaExample.elm"
+                    TextAreaExample.init
+                    TextAreaExample.update
+            , version = v
+            }
     , saveExampleSourceCodeToModel = ExampleSourceCodeLoaded
     }
 
@@ -95,9 +98,9 @@ update msg model =
 
         ExampleSourceCodeLoaded examplesSourceCode ->
             ( { model
-                | basicExample = Container.setSourceCode examplesSourceCode model.basicExample
-                , passwordExample = Container.setSourceCode examplesSourceCode model.passwordExample
-                , textAreaExample = Container.setSourceCode examplesSourceCode model.textAreaExample
+                | basicExample = Container.setSourceCode model.version examplesSourceCode model.basicExample
+                , passwordExample = Container.setSourceCode model.version examplesSourceCode model.passwordExample
+                , textAreaExample = Container.setSourceCode model.version examplesSourceCode model.textAreaExample
               }
             , Cmd.none
             )

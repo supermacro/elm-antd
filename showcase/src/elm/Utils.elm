@@ -21,6 +21,7 @@ type alias CommitHash =
 type alias Flags =
     { commitHash : CommitHash
     , fileServerUrl : String
+    , elmAntdVersion : Maybe String
     }
 
 
@@ -48,13 +49,18 @@ type alias RouteTitle =
    type alias ExamplesSourceCode = Dict FileName Source
 -}
 
+type alias Versioned a =
+    { a | version : Maybe String }
+
+-- oddly enough `DocumentationRoute (Versioned model) msg` gives a type error
+
 
 type alias DocumentationRoute model msg =
     { title : RouteTitle
-    , update : msg -> model -> ( model, Cmd msg )
+    , update : msg -> Versioned model -> ( Versioned model, Cmd msg )
     , category : ComponentCategory
-    , view : model -> Styled.Html msg
-    , initialModel : model
+    , view : Versioned model -> Styled.Html msg
+    , initialModel : Maybe String -> Versioned model
     , saveExampleSourceCodeToModel : List SourceCode -> msg
     }
 
