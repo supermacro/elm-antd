@@ -5,8 +5,6 @@
  */
 
 const github = require('octonode')
-const { SHOWCASE_ELM_SRC_DIR } = require('./constants')
-
 
 const client = github.client()
 const repo = client.repo('supermacro/elm-antd')
