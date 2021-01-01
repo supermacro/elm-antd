@@ -5,7 +5,7 @@ const github = require('./github')
 const { SHOWCASE_ELM_SRC_DIR } = require('./constants')
 
 const currentWorkingDirectory = process.cwd()
-const showcaseElmPath = currentWorkingDirectory.replace('file-server', SHOWCASE_ELM_SRC_DIR)
+const showcaseElmPath = currentWorkingDirectory.replace('showcase/file-server', SHOWCASE_ELM_SRC_DIR)
 
 
 
