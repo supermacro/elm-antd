@@ -15,7 +15,7 @@ Styled entirely using `elm-css`! No external stylesheet needed. Just `elm instal
 
 **Early Development Notice:**
 
-> Elm Ant Design is not fully implemented and in a early / exploratory phase. The current API is subject to change, but because Elm is super cool 😎, any breaking changes will be released under a Major release (as per semver).
+> Elm Ant Design is not fully implemented and in a early / exploratory phase. A lot of APIs may not work yet (in the event that this is the case, please report it as an issue - which I will prioritize). The current API is subject to frequent change, but because Elm is super cool 😎, any breaking changes are guaranteed to be released under a Major release (as per semver).
 
 ## Installation
 
