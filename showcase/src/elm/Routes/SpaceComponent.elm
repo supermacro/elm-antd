@@ -1,7 +1,7 @@
 module Routes.SpaceComponent exposing (Model, Msg, route)
 
-import Css exposing (displayFlex, maxWidth, pct)
-import Html.Styled as Styled exposing (div, fromUnstyled, text)
+import Css exposing (maxWidth, pct)
+import Html.Styled as Styled exposing (div, text)
 import Html.Styled.Attributes exposing (css)
 import Routes.SpaceComponent.BasicExample as BasicExample
 import Routes.SpaceComponent.VerticalAndSpacingExample as VerticalAndSpacingExample
@@ -11,7 +11,6 @@ import UI.Typography as Typography
         ( documentationHeading
         , documentationSubheading
         , documentationText
-        , documentationUnorderedList
         )
 import Utils exposing (ComponentCategory(..), DocumentationRoute, SourceCode)
 
