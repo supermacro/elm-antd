@@ -21,7 +21,7 @@ This is a port of [hecrj/composable-form](https://package.elm-lang.org/packages/
 
 @docs inputField, passwordField, checkboxField, textareaField
 
-> FYI: I have hidden a bunch of fields because they have not yet been integrated to render elm-antd inputs yet. But PRs are always welcome!
+> FYI: I have hidden a bunch of fields because they have not been integrated to render elm-antd inputs yet. But PRs are always welcome!
 
 @docs withAdjacentHtml
 
