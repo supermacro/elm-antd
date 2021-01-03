@@ -11,6 +11,7 @@ import Ant.Button.Css as ButtonCss
 import Ant.Checkbox.Css as CheckboxCss
 import Ant.Form.Css as FormCss
 import Ant.Input.Css as InputCss
+import Ant.Modal.Css as ModalCss
 import Ant.Theme exposing (Theme, defaultTheme)
 import Ant.Typography.Text.Css as TextCss
 import Css.Global as CG
@@ -40,6 +41,7 @@ createThemedStyles theme =
                 , CheckboxCss.styles
                 , FormCss.styles
                 , InputCss.styles
+                , ModalCss.styles
                 , TextCss.styles
                 ]
     in

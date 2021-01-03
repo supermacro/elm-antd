@@ -43,6 +43,7 @@ import Routes.DividerComponent as DividerPage
 import Routes.FormComponent as FormPage
 import Routes.Home exposing (homePage)
 import Routes.InputComponent as InputPage
+import Routes.ModalComponent as ModalPage
 import Routes.NotFound exposing (notFound)
 import Routes.NotImplemented exposing (notImplemented)
 import Routes.SpaceComponent as SpacePage
@@ -89,6 +90,7 @@ type alias Model =
     , dividerPageModel : DividerPage.Model
     , formPageModel : FormPage.Model
     , inputPageModel : InputPage.Model
+    , modalPageModel : ModalPage.Model
     , spacePageModel : SpacePage.Model
     , typographyPageModel : TypographyPage.Model
     , tooltipPageModel : TooltipPage.Model
@@ -108,6 +110,7 @@ type Msg
     | DividerPageMessage DividerPage.Msg
     | FormPageMessage FormPage.Msg
     | InputPageMessage InputPage.Msg
+    | ModalPageMessage ModalPage.Msg
     | SpacePageMessage SpacePage.Msg
     | TooltipPageMessage TooltipPage.Msg
     | TypographyPageMessage TypographyPage.Msg
@@ -175,7 +178,6 @@ unimplementedComponents =
         , ( "Tabs", DataDisplay )
         , ( "Table", DataDisplay )
         , ( "Drawer", Feedback )
-        , ( "Modal", Feedback )
         , ( "Message", Feedback )
         , ( "Notification", Feedback )
         , ( "Progress", Feedback )
@@ -228,6 +230,10 @@ componentList =
             InputPage.route.view model.inputPageModel
                 |> Styled.map InputPageMessage
 
+        modalPageView model =
+            ModalPage.route.view model.modalPageModel
+                |> Styled.map ModalPageMessage
+
         spacePageView model =
             SpacePage.route.view model.spacePageModel
                 |> Styled.map SpacePageMessage
@@ -276,6 +282,12 @@ componentList =
              , view = inputPageView
              , saveExampleSourceCode =
                 triggerSaveExampleSourceCode InputPageMessage InputPage.route.saveExampleSourceCodeToModel
+             }
+           , { route = ModalPage.route.title
+             , category = ModalPage.route.category
+             , view = modalPageView
+             , saveExampleSourceCode =
+                triggerSaveExampleSourceCode ModalPageMessage ModalPage.route.saveExampleSourceCodeToModel
              }
            , { route = SpacePage.route.title
              , category = SpacePage.route.category
@@ -383,6 +395,7 @@ init url { commitHash, fileServerUrl } =
             , dividerPageModel = DividerPage.route.initialModel
             , formPageModel = FormPage.route.initialModel
             , inputPageModel = InputPage.route.initialModel
+            , modalPageModel = ModalPage.route.initialModel
             , spacePageModel = SpacePage.route.initialModel
             , typographyPageModel = TypographyPage.route.initialModel
             , tooltipPageModel = TooltipPage.route.initialModel
@@ -520,6 +533,17 @@ update navKey msg model =
                 | inputPageModel = inputPageModel
               }
             , Cmd.map InputPageMessage inputPageCmd
+            )
+
+        ModalPageMessage modalPageMsg ->
+            let
+                ( modalPageModel, modalPageCmd ) =
+                    ModalPage.route.update modalPageMsg model.modalPageModel
+            in
+            ( { model
+                | modalPageModel = modalPageModel
+              }
+            , Cmd.map ModalPageMessage modalPageCmd
             )
 
         SpacePageMessage spacePageMsg ->

@@ -30,6 +30,7 @@ homePage =
             , internalLink "/components/input" "Input"
             , link "https://github.com/supermacro/elm-antd/issues/23" "Layout"
             , link "https://github.com/supermacro/elm-antd/issues/25" "Menu"
+            , internalLink "/components/modal" "Modal"
             , internalLink "/components/space" "Space"
             , internalLink "/components/tooltip" "Tooltip"
             , internalLink "/components/typography" "Typography"

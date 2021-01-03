@@ -19,6 +19,7 @@
         "Ant.Input",
         "Ant.Layout",
         "Ant.Menu",
+        "Ant.Modal",
         "Ant.Space",
         "Ant.Theme",
         "Ant.Tooltip",
