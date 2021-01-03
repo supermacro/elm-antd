@@ -70,7 +70,7 @@ module Ant.Modal exposing
 
 #### Footer Configuration
 
-@docs ModalFooter, footer, withOnConfirm, withOnConfirmText
+@docs ModalFooter, footer, withCancelText, withOnConfirm, withOnConfirmText
 
 
 # Rendering the Modal
