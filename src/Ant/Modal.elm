@@ -283,25 +283,25 @@ This ensures that the onClick event only gets fired when you click on the OUTSID
 
 This ensures that "click" events from CHILD elements do not propagate to the element containing this onClick event.
 
-
 Example: The user calls `modal` with a `input` or a `button` element. When those elements are clicked, a "click" event will travel up the dom.
 This custom function ensures that the event isn't called in those situations.
+
 -}
 customOnClick : msg -> Attribute msg
 customOnClick tagger =
     let
         decoder =
             targetValue
-            |> Json.andThen
-                (\val ->
-                    if val == "modal-root" then
-                        Json.succeed tagger
-                    else
-                        Json.fail ""
-                )
+                |> Json.andThen
+                    (\val ->
+                        if val == "modal-root" then
+                            Json.succeed tagger
+
+                        else
+                            Json.fail ""
+                    )
     in
     E.on "click" decoder
-
 
 
 closeIcon : ModalOptions msg -> Html msg
