@@ -286,6 +286,18 @@ This ensures that "click" events from CHILD elements do not propagate to the ele
 Example: The user calls `modal` with a `input` or a `button` element. When those elements are clicked, a "click" event will travel up the dom.
 This custom function ensures that the event isn't called in those situations.
 
+---
+
+Note that an alternative, slightly less hacky, solution might be to make the mask a sibling of the contents that are generating "click events".
+
+As mentioned in the elm slack group, something like the following should achieve the same level of visual correctess for the mask:
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
 -}
 customOnClick : msg -> Attribute msg
 customOnClick tagger =
