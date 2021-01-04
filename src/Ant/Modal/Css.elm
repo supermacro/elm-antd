@@ -60,7 +60,7 @@ styles theme =
         [ CG.withAttribute "visible=false"
             [ opacity zero
             , pointerEvents none
-            , float right
+            , position absolute
             ]
         , CG.withAttribute "visible=true"
             [ zIndex (int 99)
