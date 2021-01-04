@@ -72,11 +72,9 @@ styles theme =
 
             -- FIXME: this animation isn't working
             -- , animationName zoomInAnimation
-
             , CG.withAttribute "mask-visible=true"
                 [ backgroundColor (rgba 59 59 59 0.2)
                 ]
-
             , CG.children
                 [ CG.class modalContainerClass
                     [ position absolute

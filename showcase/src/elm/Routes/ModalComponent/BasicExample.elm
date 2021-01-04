@@ -24,7 +24,8 @@ init =
 
 
 launchTheMissles : Cmd msg
-launchTheMissles = Cmd.none
+launchTheMissles =
+    Cmd.none
 
 
 update : Msg -> Model -> ( Model, Cmd msg )

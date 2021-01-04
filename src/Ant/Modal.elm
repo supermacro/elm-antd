@@ -1,17 +1,9 @@
 module Ant.Modal exposing
-    ( Modal
-    , ModalFooter
-    , ModalState
-    , footer
-    , modal
-    , toHtml
-    , withClosable
-    , withOnConfirmText
+    ( Modal, ModalState
+    , modal, withClosable, withMask, withOnCancel, withTitle
     , withFooter
-    , withMask
-    , withOnCancel
-    , withOnConfirm
-    , withTitle
+    , ModalFooter, footer, withCancelText, withOnConfirm, withOnConfirmText
+    , toHtml
     )
 
 {-| Render a Modal dialog to the page.
@@ -20,10 +12,9 @@ module Ant.Modal exposing
 # Example:
 
     type Msg
-        = ModalStateChanged Ant.Modal.ModalState 
+        = ModalStateChanged Ant.Modal.ModalState
         | ModalConfirmClicked Ant.Modal.ModalState
         | LaunchMisslesButtonClicked
-
 
     update : Msg -> Model -> ( Model, Cmd msg )
     update msg model =
@@ -36,10 +27,10 @@ module Ant.Modal exposing
 
             ModalConfirmClicked newState ->
                 let
-                    cmd = initiateLaunchSequence model
+                    cmd =
+                        initiateLaunchSequence model
                 in
                 ( { model | modalOpen = newState }, cmd )
-
 
     view : Model -> Html Msg
     view model =
@@ -66,7 +57,8 @@ module Ant.Modal exposing
 
 # Definition
 
-@docs Modal, ModalState 
+@docs Modal, ModalState
+
 
 # Creating and configuring a Modal
 
@@ -74,16 +66,17 @@ module Ant.Modal exposing
 
 @docs withFooter
 
+
 #### Footer Configuration
 
-@docs ModalFooter, footer, withOnConfirm, withOnConfirmText
+@docs ModalFooter, footer, withCancelText, withOnConfirm, withOnConfirmText
+
 
 # Rendering the Modal
 
 @docs toHtml
 
 -}
-
 
 import Ant.Button as Btn exposing (button)
 import Ant.Icons as Icon exposing (closeOutlined)
@@ -104,6 +97,7 @@ import Json.Decode as Json
 {-| State of the Modal, currently this is a simple Bool alias that represents the Modal's visibility, but it may change in the future to hold other state.
 
 This value must be saved in your Model.
+
 -}
 type alias ModalState =
     Bool
@@ -127,10 +121,10 @@ type alias ModalOptions msg =
     }
 
 
-
 {-| Represents a configurable Modal footer. See the [`footer`](#footer) function for creating this type.
 
 See the [Footer Configuration](#footer-configuration) section on options for configuring a `ModalFooter`.
+
 -}
 type ModalFooter msg
     = ModalFooter (FooterConfig msg)
@@ -153,12 +147,14 @@ defaultModalOptions =
     }
 
 
+
 -- Footer Configuration
 
 
 {-| Create a configurable [`Footer`](#Footer) to be rendered with the [`withFooter`](#withFooter) function.
 
 By default, a footer is rendered with nothing inside of it. If you want a "canel" button, you need to call `withOnCancel` on the Modal itself. And if you want a confirm button, you need to call [`withOnConfirm`](#withOnConfirm) on the footer.
+
 -}
 footer : ModalFooter msg
 footer =
@@ -185,6 +181,7 @@ footer =
 
     myModal = Modal.modal
         |> Modal.withFooter modalFooter
+
 -}
 withOnConfirm : (ModalState -> msg) -> ModalFooter msg -> ModalFooter msg
 withOnConfirm setVisibility (ModalFooter opts) =
@@ -194,13 +191,26 @@ withOnConfirm setVisibility (ModalFooter opts) =
         }
 
 
-{-| Set a custom value for the primary call-to-action on the modal footer.
+{-| Set a custom prompt for the primary call-to-action on the modal footer.
 -}
 withOnConfirmText : String -> ModalFooter msg -> ModalFooter msg
 withOnConfirmText val (ModalFooter opts) =
     ModalFooter
         { opts
             | confirmText = val
+        }
+
+
+{-| Set a custom prompt for the cancel button on the modal footer.
+
+Recall that to actually render a "cancel" button, you need to call [`withOnCancel`](#withOnCancel) on the Modal itself.
+
+-}
+withCancelText : String -> ModalFooter msg -> ModalFooter msg
+withCancelText val (ModalFooter opts) =
+    ModalFooter
+        { opts
+            | cancelText = val
         }
 
 
@@ -227,21 +237,21 @@ withTitle title (Modal options contents) =
 The default is `True` already.
 
 Note that this icon will only render if the option is toggled on **AND** the `withOnCancel` function has been called.
+
 -}
 withClosable : Bool -> Modal msg -> Modal msg
 withClosable toggle (Modal opts contents) =
     Modal { opts | closable = toggle } contents
 
 
-
 {-| Whether a [`ModalFooter`](#ModalFooter) should be added to the Modal. By default the Modal does not have a footer.
 
 See the [Footer Configuration](#footer-configuration) section on creating and configuring footers.
+
 -}
 withFooter : ModalFooter msg -> Modal msg -> Modal msg
 withFooter footer_ (Modal opts contents) =
     Modal { opts | footer = Just footer_ } contents
-
 
 
 {-| Specify a `msg` tag that will be triggered when a user clicks out of the Modal (on the opaque mask surrounding the Modal), [close button on top right](#withClosable) or Cancel button on the [`footer`](#footer).
@@ -256,10 +266,12 @@ withOnCancel setVisibility (Modal opts contents) =
 By default this value is set to `True`.
 
 The "click out" behaviour is not affected by this combinator. Clicking outside of the modal still hides the Modal if you have configured [`withOnCancel`](#withOnCancel).
+
 -}
 withMask : Bool -> Modal msg -> Modal msg
 withMask toggle (Modal opts contents) =
     Modal { opts | showMask = toggle } contents
+
 
 
 -- View Code
@@ -372,7 +384,7 @@ viewFooter opts =
                             S.text ""
 
                         Just updateVisibility ->
-                            button "Cancel"
+                            button footer_.cancelText
                                 |> Btn.onClick (updateVisibility False)
                                 |> Btn.toHtml
                                 |> fromUnstyled
@@ -456,7 +468,7 @@ toHtml isVisible (Modal opts contents) =
                 ]
 
         visibilityAttr =
-            attribute "visible" << boolToString 
+            attribute "visible" << boolToString
 
         maskVisibilityAttr =
             attribute "mask-visible" << boolToString
@@ -492,12 +504,10 @@ toHtml isVisible (Modal opts contents) =
             [ modalHtml ]
 
 
-
-
 boolToString : Bool -> String
 boolToString val =
     if val then
         "true"
+
     else
         "false"
-
