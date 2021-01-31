@@ -8,6 +8,7 @@ import Css exposing (..)
 import Css.Global as CG exposing (Snippet)
 import Css.Transitions exposing (transition, easeInOut, Transition)
 import Css.Animations as Animations
+import Ant.Css.Common exposing (checkboxWrapperClass)
 
 textColor : Color
 textColor =
@@ -30,7 +31,14 @@ styles theme =
             hex <| colorToHexWithAlpha theme.colors.primary
         checkboxEffect = (Animations.keyframes [(0, [(Animations.opacity (num 0.5)), (Animations.transform [scale 1.0])]), (100, [(Animations.opacity (num 0)), (Animations.transform [scale 1.6])])])
     in
-    [ CG.class "checkbox-wrapper"
+    
+    [ CG.class checkboxLabelClass 
+        [ displayFlex
+        , fontSize (px 14)
+        , cursor pointer
+        ]
+
+    , CG.class checkboxWrapperClass
         (commonFontStyles
             ++ userSelectNone
             ++ [ display inlineBlock
@@ -38,29 +46,27 @@ styles theme =
                , width (px 16)
                , color textColor
                , position relative
-               --, paddingLeft (px 22)
+               , marginRight (px 5)
                , paddingTop (px 1)
-               , fontSize (px 14)
-               , cursor pointer
                ]
         )
-    , CG.class ("checkbox-wrapper" ++ "--disabled")
+    , CG.class (checkboxLabelClass ++ "--disabled")
         [ cursor notAllowed ]
-
     -- hide the default browser checkbox
     -- the default browser checkbox is used to maintain the state of the checkbox.
     -- We then use the state ("checked" or "unchecked" to style our checkbox appropriately)
-    , makeSelector ("checkbox-wrapper" ++ "> input[type=\"checkbox\"]")
+    , makeSelector (checkboxWrapperClass ++ "> input[type=\"checkbox\"]")
         [ display none
         ]
+    , CG.class (checkboxLabelClass ++ "--disabled" ++ "> " ++ ("." ++ checkboxWrapperClass ++ "::after" ))
+        [ visibility hidden]
 
-    , makeSelector ("checkbox-wrapper--checked::after")
+    , makeSelector (checkboxWrapperClass ++ "--checked" ++ "::after")
         [ emptyContent
         , borderRadius (px 2)
         , borderWidth (px 1)
         , borderStyle solid
-        , borderColor (hex "#ff1818")
-        --, visibility hidden
+        , borderColor primaryColor
         , width (pct 100)
         , height (pct 100)
         , top zero
@@ -73,7 +79,7 @@ styles theme =
         ]
 
     -- base custom checkbox / checkmark styles
-    , makeSelector ("checkbox-wrapper" ++ "> " ++ ("." ++ checkboxCustomCheckmarkClass))
+    , makeSelector (checkboxWrapperClass ++ "> " ++ ("." ++ checkboxCustomCheckmarkClass))
         [ position absolute
         , top zero
         , left zero
@@ -88,24 +94,24 @@ styles theme =
         ]
 
     -- checked checkbox styles
-    , makeSelector ("checkbox-wrapper" ++ "> input[type=\"checkbox\"]:checked ~ " ++ "." ++ checkboxCustomCheckmarkClass)
+    , makeSelector (checkboxWrapperClass ++ "> input[type=\"checkbox\"]:checked ~ " ++ "." ++ checkboxCustomCheckmarkClass)
         [ backgroundColor primaryColor
         , borderColor primaryColor
         ]
-    , makeSelector ("checkbox-wrapper" ++ "> input[type=\"checkbox\"]:active ~ " ++ "." ++ checkboxCustomCheckmarkClass)
+    , makeSelector (checkboxWrapperClass ++ "> input[type=\"checkbox\"]:active ~ " ++ "." ++ checkboxCustomCheckmarkClass)
         [ borderColor primaryColor
         ]
-    , makeSelector ("checkbox-wrapper" ++ "> input[type=\"checkbox\"]:hover ~ " ++ "." ++ checkboxCustomCheckmarkClass)
+    , makeSelector (checkboxWrapperClass ++ "> input[type=\"checkbox\"]:hover ~ " ++ "." ++ checkboxCustomCheckmarkClass)
         [ borderColor primaryColor
         ]
-    , makeSelector ("checkbox-wrapper" ++ "> input[type=\"checkbox\"]:disabled ~ " ++ "." ++ checkboxCustomCheckmarkClass)
+    , makeSelector (checkboxWrapperClass ++ "> input[type=\"checkbox\"]:disabled ~ " ++ "." ++ checkboxCustomCheckmarkClass)
         [ borderColor (hex "#d9d9d9")
         , backgroundColor (hex "#f5f5f5")
         , cursor notAllowed
         ]
 
     -- checkmark styles
-    , makeSelector ("checkbox-wrapper" ++ "> " ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
+    , makeSelector (checkboxWrapperClass ++ "> " ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
         [ emptyContent
         , position absolute
         , display block
@@ -119,12 +125,12 @@ styles theme =
         , borderWidth4 zero (px 2) (px 2) zero
         , transform <| rotate (deg 45)
         ]
-    , makeSelector ("checkbox-wrapper" ++ "> input[type=\"checkbox\"]:disabled ~" ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
+    , makeSelector (checkboxWrapperClass ++ "> input[type=\"checkbox\"]:disabled ~" ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
         [ borderColor (hex "#b8b8b8")
         ]
 
     -- show checkmark when checkbox is checked
-    , makeSelector ("checkbox-wrapper" ++ "> " ++ "input[type=\"checkbox\"]:checked ~ " ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
+    , makeSelector (checkboxWrapperClass ++ "> " ++ "input[type=\"checkbox\"]:checked ~ " ++ "." ++ checkboxCustomCheckmarkClass ++ ":after")
         [ visibility visible
         ]
     ]
