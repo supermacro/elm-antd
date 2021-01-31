@@ -144,18 +144,25 @@ toHtml checked (Checkbox config) =
         labelEnabledClass =
             if config.disabled then
                 checkboxLabelClass ++ "--disabled"
-
             else
                 checkboxLabelClass ++ "--enabled"
+
+        checkedClass = 
+            if checked then
+                [Attr.class ("checkbox-wrapper" ++ "--checked")]
+            else
+                []
+        
     in
     H.label [ Attr.class checkboxLabelClass, Attr.class labelEnabledClass ]
-        [ H.text <| Maybe.withDefault "" config.label
-        , H.input
-            [ Attr.type_ "checkbox"
-            , Attr.checked checked
-            , optionalOnCheckEvent
-            , Attr.disabled config.disabled
-            ]
-            []
-        , H.span [ Attr.class checkboxCustomCheckmarkClass ] []
+        [ H.span (List.concat [ checkedClass, [ Attr.class "checkbox-wrapper" ]])
+            [ H.input
+                [ Attr.type_ "checkbox"
+                , Attr.checked checked
+                , optionalOnCheckEvent
+                , Attr.disabled config.disabled
+                ]
+                []
+            , H.span [ Attr.class checkboxCustomCheckmarkClass ] []]
+        , H.text <| Maybe.withDefault "" config.label
         ]
