@@ -4,6 +4,7 @@ module Ant.Modal exposing
     , withFooter
     , ModalFooter, footer, withCancelText, withOnConfirm, withOnConfirmText
     , toHtml
+    , withVerticalOffset
     )
 
 {-| Render a Modal dialog to the page.
@@ -50,6 +51,7 @@ module Ant.Modal exposing
                     |> Modal.withTitle "Are you sure you want to launch ze missles?"
                     |> Modal.withOnCancel ModalStateChanged
                     |> Modal.withFooter modalFooter
+                    |> Modal.withVerticalOffset 35
                     |> Modal.toHtml model.modalOpen
         in
         div [] [ htmlModal, buttonToggle ]
@@ -62,7 +64,7 @@ module Ant.Modal exposing
 
 # Creating and configuring a Modal
 
-@docs modal, withClosable, withMask, withOnCancel, withTitle
+@docs modal, withClosable, withMask, withOnCancel, withTitle, withVerticalOffset
 
 @docs withFooter
 
@@ -114,6 +116,9 @@ type alias ModalOptions msg =
     , closable : Bool
     , showMask : Bool
 
+    -- A percentage value used to vertically position the modal
+    , verticalOffset : Float
+
     -- A function that will be called when a user clicks mask,
     -- close button on top right or Cancel button
     , onCancel : Maybe (ModalState -> msg)
@@ -142,6 +147,7 @@ defaultModalOptions =
     { title = Nothing
     , closable = True
     , showMask = True
+    , verticalOffset = 15.0
     , onCancel = Nothing
     , footer = Nothing
     }
@@ -273,6 +279,16 @@ withMask toggle (Modal opts contents) =
     Modal { opts | showMask = toggle } contents
 
 
+{-| Specify a percentage value for positioning the modal vertically with respect to the documents height.
+
+By default this value is set to `15`.
+
+-}
+withVerticalOffset : Float -> Modal msg -> Modal msg
+withVerticalOffset verticalOffsetPercentage (Modal opts contents) =
+    Modal { opts | verticalOffset = verticalOffsetPercentage } contents
+
+
 
 -- View Code
 
@@ -316,7 +332,7 @@ customOnClick tagger =
     E.on "click" decoder
 
 
-closeIcon : ModalOptions msg -> Html msg
+closeIcon : ModalOptions msg -> S.Html msg
 closeIcon opts =
     let
         black =
@@ -356,7 +372,7 @@ closeIcon opts =
                                     ]
                                 ]
     in
-    toUnstyled styledHtml
+    styledHtml
 
 
 makeBorder : (Px -> BorderStyle (TextDecorationStyle {}) -> Color -> a) -> a
@@ -368,7 +384,7 @@ makeBorder f =
     f width style color
 
 
-viewHeader : ModalOptions msg -> Html msg
+viewHeader : ModalOptions msg -> S.Html msg
 viewHeader opts =
     let
         headerTitle title =
@@ -393,13 +409,13 @@ viewHeader opts =
                 Nothing ->
                     S.text ""
     in
-    toUnstyled styledHtml
+    styledHtml
 
 
-viewFooter : ModalOptions msg -> Html msg
+viewFooter : ModalOptions msg -> S.Html msg
 viewFooter opts =
     let
-        viewFooter_ : ModalFooter msg -> Html msg
+        viewFooter_ : ModalFooter msg -> S.Html msg
         viewFooter_ (ModalFooter footer_) =
             let
                 cancelButton =
@@ -441,11 +457,11 @@ viewFooter opts =
                         ]
                         [ cancelButton, okButton ]
             in
-            toUnstyled styledFooter
+            styledFooter
     in
     case opts.footer of
         Nothing ->
-            H.text ""
+            S.text ""
 
         Just footer_ ->
             viewFooter_ footer_
@@ -474,7 +490,7 @@ toHtml isVisible (Modal opts contents) =
         layoutInfoAttr =
             let
                 attr =
-                    attribute "layout"
+                    A.attribute "layout"
             in
             case opts.footer of
                 Just _ ->
@@ -484,12 +500,19 @@ toHtml isVisible (Modal opts contents) =
                     attr "2-row"
 
         modalHtml =
-            H.div [ class modalContainerClass, layoutInfoAttr ]
+            S.div
+                [ A.class modalContainerClass
+                , layoutInfoAttr
+                , css
+                    [ top (pct opts.verticalOffset)
+                    ]
+                ]
                 [ closeIcon opts
                 , viewHeader opts
-                , H.div [ class modalContentsClass ] [ contents ]
+                , S.div [ A.class modalContentsClass ] [ S.fromUnstyled contents ]
                 , viewFooter opts
                 ]
+                |> S.toUnstyled
 
         visibilityAttr =
             attribute "visible" << boolToString
