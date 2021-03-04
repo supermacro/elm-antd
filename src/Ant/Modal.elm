@@ -359,10 +359,7 @@ closeIcon opts =
     toUnstyled styledHtml
 
 
-
--- TODO: add type anotation
-
-
+makeBorder : (Px -> BorderStyle (TextDecorationStyle {}) -> Color -> a) -> a
 makeBorder f =
     let
         ( width, style, color ) =
