@@ -153,7 +153,7 @@ defaultModalOptions =
 
 {-| Create a configurable [`Footer`](#Footer) to be rendered with the [`withFooter`](#withFooter) function.
 
-By default, a footer is rendered with nothing inside of it. If you want a "canel" button, you need to call `withOnCancel` on the Modal itself. And if you want a confirm button, you need to call [`withOnConfirm`](#withOnConfirm) on the footer.
+By default, a footer is rendered with nothing inside of it. If you want a "cancel" button, you need to call `withOnCancel` on the Modal itself. And if you want a confirm button, you need to call [`withOnConfirm`](#withOnConfirm) on the footer.
 
 -}
 footer : ModalFooter msg
