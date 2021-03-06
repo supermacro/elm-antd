@@ -4,7 +4,7 @@ module Ant.Modal exposing
     , withFooter
     , ModalFooter, footer, withCancelText, withOnConfirm, withOnConfirmText
     , toHtml
-    , withVerticalOffset
+    , withVerticalOffsetInPercentage, withVerticalOffsetInPixels
     )
 
 {-| Render a Modal dialog to the page.
@@ -51,7 +51,7 @@ module Ant.Modal exposing
                     |> Modal.withTitle "Are you sure you want to launch ze missles?"
                     |> Modal.withOnCancel ModalStateChanged
                     |> Modal.withFooter modalFooter
-                    |> Modal.withVerticalOffset 35
+                    |> Modal.withVerticalOffsetInPercentage 35
                     |> Modal.toHtml model.modalOpen
         in
         div [] [ htmlModal, buttonToggle ]
@@ -64,7 +64,7 @@ module Ant.Modal exposing
 
 # Creating and configuring a Modal
 
-@docs modal, withClosable, withMask, withOnCancel, withTitle, withVerticalOffset
+@docs modal, withClosable, withMask, withOnCancel, withTitle, withVerticalOffsetInPercentage, withVerticalOffsetInPixels
 
 @docs withFooter
 
@@ -89,7 +89,7 @@ import Css.Global as CG
 import Css.Transitions exposing (transition)
 import Html as H exposing (Attribute, Html)
 import Html.Attributes as Attr exposing (attribute, class)
-import Html.Events as E exposing (stopPropagationOn, targetValue)
+import Html.Events as E exposing (targetValue)
 import Html.Styled as S exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes as A exposing (css)
 import Html.Styled.Events as StyledEvents
@@ -105,6 +105,11 @@ type alias ModalState =
     Bool
 
 
+type VerticalOffset
+    = Percentage Float
+    | Pixels Float
+
+
 {-| Opaque type that represents a configurable Modal.
 -}
 type Modal msg
@@ -116,8 +121,8 @@ type alias ModalOptions msg =
     , closable : Bool
     , showMask : Bool
 
-    -- A percentage value used to vertically position the modal
-    , verticalOffset : Float
+    -- A percentage/pixel value used to vertically position the modal
+    , verticalOffset : VerticalOffset
 
     -- A function that will be called when a user clicks mask,
     -- close button on top right or Cancel button
@@ -147,7 +152,7 @@ defaultModalOptions =
     { title = Nothing
     , closable = True
     , showMask = True
-    , verticalOffset = 15.0
+    , verticalOffset = Percentage 15.0
     , onCancel = Nothing
     , footer = Nothing
     }
@@ -284,9 +289,16 @@ withMask toggle (Modal opts contents) =
 By default this value is set to `15`.
 
 -}
-withVerticalOffset : Float -> Modal msg -> Modal msg
-withVerticalOffset verticalOffsetPercentage (Modal opts contents) =
-    Modal { opts | verticalOffset = verticalOffsetPercentage } contents
+withVerticalOffsetInPercentage : Float -> Modal msg -> Modal msg
+withVerticalOffsetInPercentage verticalOffset (Modal opts contents) =
+    Modal { opts | verticalOffset = Percentage verticalOffset } contents
+
+
+{-| Specify a pixel value for positioning the modal vertically with respect to the documents height.
+-}
+withVerticalOffsetInPixels : Float -> Modal msg -> Modal msg
+withVerticalOffsetInPixels verticalOffset (Modal opts contents) =
+    Modal { opts | verticalOffset = Pixels verticalOffset } contents
 
 
 
@@ -504,7 +516,12 @@ toHtml isVisible (Modal opts contents) =
                 [ A.class modalContainerClass
                 , layoutInfoAttr
                 , css
-                    [ top (pct opts.verticalOffset)
+                    [ case opts.verticalOffset of
+                        Percentage pcts ->
+                            top (pct pcts)
+
+                        Pixels pxs ->
+                            top (px pxs)
                     ]
                 ]
                 [ closeIcon opts

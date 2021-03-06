@@ -71,7 +71,7 @@ view model =
                 |> Modal.withTitle "Basic Modal"
                 |> Modal.withOnCancel ModalStateChanged
                 |> Modal.withFooter modalFooter
-                |> Modal.withVerticalOffset 35
+                |> Modal.withVerticalOffsetInPercentage 35
                 |> Modal.toHtml model.modalOpen
     in
     div [] [ htmlModal, buttonToggle ]
