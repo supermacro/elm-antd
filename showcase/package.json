@@ -20,7 +20,7 @@
     "@webpack-cli/serve": "^1.1.0",
     "cypress": "^4.12.1",
     "elm-webpack-loader": "^7.0.1",
-    "html-webpack-plugin": "^4.5.0",
+    "html-webpack-plugin": "^4.5.2",
     "serve": "^11.3.2",
     "webpack": "^4.44.2",
     "webpack-cli": "^4.2.0",
