@@ -79,7 +79,6 @@ styles theme =
                 [ CG.class modalContainerClass
                     [ position absolute
                     , zIndex (int 100)
-                    , top (pct 15)
                     , left (pct 50)
                     , transform <| translate <| pct -50
                     , backgroundColor (hex "#fff")
