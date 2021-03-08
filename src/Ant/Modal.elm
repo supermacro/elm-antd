@@ -1,10 +1,9 @@
 module Ant.Modal exposing
     ( Modal, ModalState
-    , modal, withClosable, withMask, withOnCancel, withTitle
+    , modal, withClosable, withMask, withOnCancel, withTitle, withVerticalOffsetInPercentage, withVerticalOffsetInPixels
     , withFooter
     , ModalFooter, footer, withCancelText, withOnConfirm, withOnConfirmText
     , toHtml
-    , withVerticalOffsetInPercentage, withVerticalOffsetInPixels
     )
 
 {-| Render a Modal dialog to the page.
