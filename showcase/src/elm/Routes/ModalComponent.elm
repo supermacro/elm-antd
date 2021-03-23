@@ -70,7 +70,7 @@ basicExample : Model -> Html Msg
 basicExample model =
     let
         metaInfo =
-            { title = "Bsaic"
+            { title = "Basic"
             , content = "Basic Modal"
             , ellieDemo = "https://ellie-app.com/9mjDjrRz2dBa1"
             }
