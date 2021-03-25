@@ -1,14 +1,14 @@
 module Ant.Checkbox.Css exposing (styles)
 
-import Ant.Css.Common exposing (checkboxCustomCheckmarkClass, checkboxLabelClass, makeSelector, userSelectNone)
+import Ant.Css.Common exposing (checkboxCustomCheckmarkClass, checkboxLabelClass, checkboxWrapperClass, makeSelector, userSelectNone)
 import Ant.Internals.Typography exposing (commonFontStyles, headingColorRgba)
 import Ant.Theme exposing (Theme)
 import Color.Convert exposing (colorToHexWithAlpha)
 import Css exposing (..)
-import Css.Global as CG exposing (Snippet)
-import Css.Transitions exposing (transition, easeInOut, Transition)
 import Css.Animations as Animations
-import Ant.Css.Common exposing (checkboxWrapperClass)
+import Css.Global as CG exposing (Snippet)
+import Css.Transitions exposing (Transition, easeInOut, transition)
+
 
 textColor : Color
 textColor =
@@ -29,15 +29,15 @@ styles theme =
     let
         primaryColor =
             hex <| colorToHexWithAlpha theme.colors.primary
-        checkboxEffect = (Animations.keyframes [(0, [(Animations.opacity (num 0.5)), (Animations.transform [scale 1.0])]), (100, [(Animations.opacity (num 0)), (Animations.transform [scale 1.6])])])
+
+        checkboxEffect =
+            Animations.keyframes [ ( 0, [ Animations.opacity (num 0.5), Animations.transform [ scale 1.0 ] ] ), ( 100, [ Animations.opacity (num 0), Animations.transform [ scale 1.6 ] ] ) ]
     in
-    
-    [ CG.class checkboxLabelClass 
+    [ CG.class checkboxLabelClass
         [ displayFlex
         , fontSize (px 14)
         , cursor pointer
         ]
-
     , CG.class checkboxWrapperClass
         (commonFontStyles
             ++ userSelectNone
@@ -52,15 +52,15 @@ styles theme =
         )
     , CG.class (checkboxLabelClass ++ "--disabled")
         [ cursor notAllowed ]
+
     -- hide the default browser checkbox
     -- the default browser checkbox is used to maintain the state of the checkbox.
     -- We then use the state ("checked" or "unchecked" to style our checkbox appropriately)
     , makeSelector (checkboxWrapperClass ++ "> input[type=\"checkbox\"]")
         [ display none
         ]
-    , CG.class (checkboxLabelClass ++ "--disabled" ++ "> " ++ ("." ++ checkboxWrapperClass ++ "::after" ))
-        [ visibility hidden]
-
+    , CG.class (checkboxLabelClass ++ "--disabled" ++ "> " ++ ("." ++ checkboxWrapperClass ++ "::after"))
+        [ visibility hidden ]
     , makeSelector (checkboxWrapperClass ++ "--checked" ++ "::after")
         [ emptyContent
         , borderRadius (px 2)
@@ -116,7 +116,7 @@ styles theme =
         , position absolute
         , display block
         , visibility hidden
-        , left (px 4)
+        , left (px 4) -- TODO should be computed. Compute values can be found in antd css
         , top (px 1.63)
         , width (px 5.5)
         , height (px 9)

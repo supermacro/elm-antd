@@ -151,9 +151,11 @@ checkboxLabelClass : String
 checkboxLabelClass =
     checkboxClass ++ "-label"
 
+
 checkboxWrapperClass : String
 checkboxWrapperClass =
     checkboxClass ++ "-wrapper"
+
 
 checkboxCustomCheckmarkClass : String
 checkboxCustomCheckmarkClass =
