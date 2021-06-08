@@ -17,7 +17,7 @@
   "license": "MIT",
   "devDependencies": {
     "@percy/cypress": "^2.3.2",
-    "@webpack-cli/serve": "^1.1.0",
+    "@webpack-cli/serve": "^1.5.1",
     "cypress": "^4.12.1",
     "elm-webpack-loader": "^7.0.1",
     "html-webpack-plugin": "^4.5.0",
